@@ -17,6 +17,7 @@ jobs:
         run: |
           rsync -Rr . ./addon
           zip -r GodotAnnotate.zip ./addon
+          ls -R
           
       - name: Retrieve Release
         id: retrieve_release
@@ -36,4 +37,4 @@ jobs:
           -H "X-GitHub-Api-Version: 2022-11-28" \
           -H "Content-Type: application/octet-stream" \
           "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ fromJson(steps.retrieve_release.outputs.data).id }}/assets?name=GodotAnnotate.zip" \
-          --data-binary "@GodotAnnotate.zip"
+          --data-binary "@./GodotAnnotate.zip"
