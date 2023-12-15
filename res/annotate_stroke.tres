@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AnnotateStroke" load_steps=2 format=3 uid="uid://1shyejc7lytc"]
+
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_stroke.gd" id="1_qqrlx"]
+
+[resource]
+script = ExtResource("1_qqrlx")
+size = 0.0
+color = Color(0, 0, 0, 1)
+boundary = Rect2(0, 0, 0, 0)
+points = Array[Vector2]([])
