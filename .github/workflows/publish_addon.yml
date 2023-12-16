@@ -23,8 +23,8 @@ jobs:
       
     - name: Create Addon Folder
       run: |
-        rsync -Rr . ./addon
-        zip -r GodotAnnotate.zip ./addon -x "**/.*/*"
+        rsync -Rr . ./addons
+        zip -r GodotAnnotate.zip ./addons -x "**/.*/*"
         ls -R
         
     - name: Retrieve Release
