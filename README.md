@@ -3,7 +3,7 @@
   <img src=annotate_layer.svg alt="Icon" width="200" height="200"/>
 </div>
 
-[![Godot Assets](https://img.shields.io/badge/Godot_Asset_Library-blue)](#)
+[![Godot Assets](https://img.shields.io/badge/Godot_Asset_Library-blue)](https://godotengine.org/asset-library/asset/2432)
 
 This is a [Godot](https://godotengine.org/) plugin which allows one to make planning  annotations and sketches directly in the 2D editor, without affecting runtime visuals, using a custom 'AnnotateCanvas' node.
 
@@ -45,7 +45,7 @@ Use Right Mouse Button to erase annotate strokes on the currently selected 'Anno
 
 ## Links
 
-[Godot Assets](#)
+[Godot Assets](https://godotengine.org/asset-library/asset/2432)
 
 ## License
 
