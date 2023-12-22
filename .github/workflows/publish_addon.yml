@@ -23,8 +23,9 @@ jobs:
       
     - name: Create Addon Folder
       run: |
-        mkdir addons
-        rsync -Rr . addons/GodotAnnotate
+        mkdir ${{ github.sha }}/addons
+        rsync -Rr . ${{ github.sha }}/addons/GodotAnnotate
+        rm -r ${{ github.sha }}/addons/GodotAnnotate/${{ github.sha }}
         zip -r GodotAnnotate.zip ./addons/GodotAnnotate -x "**/.*/*"
         ls -R
         
