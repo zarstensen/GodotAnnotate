@@ -26,7 +26,6 @@ jobs:
         mkdir -p ${{ github.sha }}/addons
         rsync -Rr . ${{ github.sha }}/addons/GodotAnnotate
         rm -r ${{ github.sha }}/addons/GodotAnnotate/${{ github.sha }}
-        rm -r ${{ github.sha }}/addons/GodotAnnotate/examples
         zip -r GodotAnnotate.zip ./${{ github.sha }}/addons/GodotAnnotate -x "**/.*/*"
         ls -R
         
