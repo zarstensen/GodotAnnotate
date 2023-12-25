@@ -20,31 +20,50 @@ var stroke_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
 @export
 var show_when_running := false
 
+## Percentage of brush radius must be between a new point inserted with [method insert_point],
+## for it to be added to the [member points] array.
+@export
+var min_point_distance = 0.25
+
 ## Current [AnnotateLayer] resource which is painted on when user annotates.
 @export
 var layer_resource: AnnotateLayer = AnnotateLayer.new()
 
 ## Stroke currently being painted by the user.
-var _active_stroke: AnnotateStroke
+var _active_stroke: AnnotateStrokeLine
 ## [code] true [/code] if user is currently trying to erase strokes.
 var _erasing := false
 
+## Array of [AnnotateStrokeLine]s, which all visually represents all of the [AnnotateStroke] resources
+## in the layer_resource array.
+var _stroke_lines: Array[AnnotateStrokeLine] = [ ]
 
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
+	
+	# restore lines from previously saved state.
+	
+	for stroke in layer_resource.strokes:
+		print(stroke.points)
+		var line := AnnotateStrokeLine.from_stroke(stroke)
+		add_child(line)
+		_stroke_lines.append(line)
 
 func _on_begin_stroke():
-	_active_stroke = AnnotateStroke.new(stroke_size / 100 * max_stroke_size, stroke_color)
-	layer_resource.strokes.append(_active_stroke)
+	_active_stroke = AnnotateStrokeLine.new(stroke_size / 100 * max_stroke_size, stroke_color)
+	add_child(_active_stroke)
+	_stroke_lines.append(_active_stroke)
 	# instantly insert a point, to avoid the user having to drag the cursor,
 	# in order to insert a point.
-	_active_stroke.insert_point(get_global_mouse_position())
+	_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, true)
 
 func _on_end_stroke():
 	# force insert final point, as the stroke should end where the user stopped the stroke,
 	# even if the final point is within AnnotateStroke.MIN_POINT_DISTANCE.
-	_active_stroke.insert_point(get_global_mouse_position(), true)	
+	_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, true)
+	
+	layer_resource.strokes.append(_active_stroke.to_stroke())
 	_active_stroke = null
 	
 func _on_begin_erase():
@@ -55,50 +74,30 @@ func _on_end_erase():
 
 func _process(delta):
 	if _active_stroke:
-		_active_stroke.insert_point(get_global_mouse_position())
+		_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, false)
 		
 	if _erasing:
 		var erase_stroke_indexes: Array[int] = []
 		
-		for i in range(layer_resource.strokes.size()):
-			var stroke := layer_resource.strokes[i]
-			
-			var nearest_x := max(stroke.boundary.position.x, min(get_global_mouse_position().x, stroke.boundary.end.x))
-			var nearest_y := max(stroke.boundary.position.y, min(get_global_mouse_position().y, stroke.boundary.end.y))
-			# check if erase circle overlaps with stroke boundary
-			var nearest_boundary_point := Vector2(nearest_x, nearest_y)
-			
-			if nearest_boundary_point.distance_squared_to(get_global_mouse_position()) > (stroke_size / 100 * max_stroke_size / 2) ** 2:
-				continue
-				
-			# check if erase circle overlaps with any points in stroke line,
-			# only if above is true to reduce number of distance checks.
-			for stroke_points in stroke.points:
-				if stroke_points.distance_squared_to(get_global_mouse_position()) < (stroke.size / 2 + stroke_size / 100 * max_stroke_size / 2) ** 2:
-					erase_stroke_indexes.append(i)
-					break
+		for i in range(_stroke_lines.size()):
+			if _stroke_lines[i].collides_with(get_global_mouse_position(), stroke_size / 100 * max_stroke_size):
+				erase_stroke_indexes.append(i)
 		
 		for erase_count in range(erase_stroke_indexes.size()):
 			# subtract the target index by the amount of strokes deleted,
 			# since these strokes no longer exist in the array.
-			layer_resource.strokes.remove_at(erase_stroke_indexes[erase_count] - erase_count)
-
+			
+			var remove_index := erase_stroke_indexes[erase_count] - erase_count
+			
+			layer_resource.strokes.remove_at(remove_index)
+			_stroke_lines[remove_index].queue_free()
+			_stroke_lines.remove_at(remove_index)
+		
 	queue_redraw()
 
 func _draw():
+	
 	if _erasing:
 		draw_arc(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
 	elif GodotAnnotate.selected_layer == self:
 		draw_circle(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, stroke_color)
-	
-	for stroke in layer_resource.strokes:
-		
-		if stroke.points.size() < 2:
-			continue
-		
-		draw_polyline(stroke.points, stroke.color, stroke.size, true)
-		
-		# draw round stroke ends
-		
-		draw_circle(stroke.points[0], stroke.size / 2, stroke.color)
-		draw_circle(stroke.points[stroke.points.size() - 1], stroke.size / 2, stroke.color)
