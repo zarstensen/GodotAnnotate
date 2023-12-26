@@ -43,6 +43,8 @@ Use Left Mouse Button to annotate on the currenty selected 'AnnotateCanvas' node
 
 Use Right Mouse Button to erase annotate strokes on the currently selected 'AnnotateCanvas' node.
 
+Use Shift + Mouse Scroll to quickly change the brush size.
+
 ## Links
 
 [Godot Assets](https://godotengine.org/asset-library/asset/2432)
