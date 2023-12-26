@@ -14,3 +14,6 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Only used for asset library, so no .import file is needed.
+annotate_layer.png.import

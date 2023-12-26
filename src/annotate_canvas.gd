@@ -3,13 +3,16 @@ class_name AnnotateCanvas
 extends Node2D
 ## Node allowing user to paint and view [AnnotateStroke]s on a [AnnotateLayer] in the 2D editor.
 
+## Percentage size increase to stroke size caused by shift + scroll.
+const SIZE_SCROLL_PERC: float = 0.1
+
 ## How large the brush size will be when [member stroke_size] = 100.
 @export_range(0, 9999, 1.0, "or_greater")
 var max_stroke_size: float = 50
 
 ## Current size of the brush used to paint strokes.
 ## Represents a percentage of [member max_stroke_size], which is used for constructing [AnnotateStroke]s.
-@export_range(0, 100, 0.1)
+@export_range(1, 100, 0.1)
 var stroke_size: float = 50
 
 @export
@@ -45,7 +48,6 @@ func _ready():
 	# restore lines from previously saved state.
 	
 	for stroke in layer_resource.strokes:
-		print(stroke.points)
 		var line := AnnotateStrokeLine.from_stroke(stroke)
 		add_child(line)
 		_stroke_lines.append(line)
@@ -72,6 +74,10 @@ func _on_begin_erase():
 func _on_end_erase():
 	_erasing = false
 
+func _on_stroke_resize(direction: float):
+	stroke_size *= 1 + direction * SIZE_SCROLL_PERC
+	stroke_size = min(100, max(stroke_size, 1))
+
 func _process(delta):
 	if _active_stroke:
 		_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, false)
@@ -96,8 +102,7 @@ func _process(delta):
 	queue_redraw()
 
 func _draw():
-	
 	if _erasing:
 		draw_arc(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
-	elif GodotAnnotate.selected_layer == self:
+	elif GodotAnnotate.selected_canvas == self:
 		draw_circle(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, stroke_color)
