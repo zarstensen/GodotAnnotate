@@ -24,10 +24,13 @@ func _init(size: float, color: Color):
 static func from_stroke(stroke: AnnotateStroke) -> AnnotateStrokeLine:
 	var stroke_line = AnnotateStrokeLine.new(stroke.size, stroke.color)
 	stroke_line.boundary = stroke.boundary
-
-	for point in stroke.points:
-		stroke_line.add_point(point)
-
+	
+	# v0.1.x uses Array[Vector2] instead of PackedVector2Array in the AnnotateStroke resource.
+	if stroke.points is Array[Vector2]:
+		stroke.points = PackedVector2Array(stroke.points)
+	
+	stroke_line.points = stroke.points
+	
 	return stroke_line
 
 ## Convert the stroke line back to a [AnnotateStroke] resource,

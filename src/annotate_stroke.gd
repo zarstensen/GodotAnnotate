@@ -15,8 +15,9 @@ var boundary: Rect2
 
 ## List of points representing the shape of the brush,
 ## with the stroke starting at the first element and ending at the last.
+# points is not typed for compatility for v0.1.x, should be typed in future versions.
 @export
-var points: PackedVector2Array = PackedVector2Array()
+var points = PackedVector2Array()
 
 ## Construct a stroke with the given brush information.
 ## use [method insert_point] to modify stroke.
