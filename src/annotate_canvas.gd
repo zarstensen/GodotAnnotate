@@ -6,17 +6,25 @@ extends Node2D
 ## Percentage size increase to stroke size caused by shift + scroll.
 const SIZE_SCROLL_PERC: float = 0.1
 
-## How large the brush size will be when [member stroke_size] = 100.
+@export_group("Brush")
+
+## How large the brush size will be when [member brush_size] = 100.
 @export_range(0, 9999, 1.0, "or_greater")
-var max_stroke_size: float = 50
+var max_brush_size: float = 50
 
 ## Current size of the brush used to paint strokes.
-## Represents a percentage of [member max_stroke_size], which is used for constructing [AnnotateStroke]s.
+## Represents a percentage of [member max_brush_size], which is used for constructing [AnnotateStroke]s.
+## [br]
+## [br]
+## Shortcut: shift + scroll 
 @export_range(1, 100, 0.1)
-var stroke_size: float = 50
+var brush_size: float = 50
+
 
 @export
-var stroke_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
+var brush_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
+
+@export_group("Advanced")
 
 ## Do not remove [AnnotateCanvas] node from scene when running outside editor.
 ## User will not be able to paint on the canvas, even if this is set to [code] true [/code]
@@ -25,7 +33,7 @@ var show_when_running := false
 
 ## Percentage of brush radius must be between a new point inserted with [method insert_point],
 ## for it to be added to the [member points] array.
-@export
+@export_range(0, 2, 0.05)
 var min_point_distance = 0.25
 
 ## Current [AnnotateLayer] resource which is painted on when user annotates.
@@ -53,7 +61,7 @@ func _ready():
 		_stroke_lines.append(line)
 
 func _on_begin_stroke():
-	_active_stroke = AnnotateStrokeLine.new(stroke_size / 100 * max_stroke_size, stroke_color)
+	_active_stroke = AnnotateStrokeLine.new(brush_size / 100 * max_brush_size, brush_color)
 	add_child(_active_stroke)
 	_stroke_lines.append(_active_stroke)
 	# instantly insert a point, to avoid the user having to drag the cursor,
@@ -75,8 +83,8 @@ func _on_end_erase():
 	_erasing = false
 
 func _on_stroke_resize(direction: float):
-	stroke_size *= 1 + direction * SIZE_SCROLL_PERC
-	stroke_size = min(100, max(stroke_size, 1))
+	brush_size *= 1 + direction * SIZE_SCROLL_PERC
+	brush_size = min(100, max(brush_size, 1))
 
 func _process(delta):
 	if _active_stroke:
@@ -86,7 +94,7 @@ func _process(delta):
 		var erase_stroke_indexes: Array[int] = []
 		
 		for i in range(_stroke_lines.size()):
-			if _stroke_lines[i].collides_with(get_global_mouse_position(), stroke_size / 100 * max_stroke_size):
+			if _stroke_lines[i].collides_with(get_global_mouse_position(), brush_size / 100 * max_brush_size):
 				erase_stroke_indexes.append(i)
 		
 		for erase_count in range(erase_stroke_indexes.size()):
@@ -104,6 +112,6 @@ func _process(delta):
 func _draw():
 	
 	if _erasing:
-		draw_arc(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
+		draw_arc(get_global_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
 	elif GodotAnnotate.selected_canvas == self:
-		draw_circle(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, stroke_color)
+		draw_circle(get_global_mouse_position(), brush_size / 100 * max_brush_size / 2, brush_color)
