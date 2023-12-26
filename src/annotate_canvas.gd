@@ -20,6 +20,7 @@ var max_brush_size: float = 50
 @export_range(1, 100, 0.1)
 var brush_size: float = 50
 
+
 @export
 var brush_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
 
@@ -109,6 +110,7 @@ func _process(delta):
 	queue_redraw()
 
 func _draw():
+	
 	if _erasing:
 		draw_arc(get_global_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
 	elif GodotAnnotate.selected_canvas == self:
