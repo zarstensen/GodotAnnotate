@@ -102,6 +102,7 @@ func _process(delta):
 	queue_redraw()
 
 func _draw():
+	
 	if _erasing:
 		draw_arc(get_global_mouse_position(), stroke_size / 100 * max_stroke_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
 	elif GodotAnnotate.selected_canvas == self:
