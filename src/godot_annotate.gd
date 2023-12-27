@@ -13,7 +13,7 @@ func _exit_tree():
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.
 func _forward_canvas_gui_input(event):
-	if not selected_canvas:
+	if not selected_canvas or selected_canvas.lock_canvas:
 		return false
 		
 	if event is InputEventMouseButton:
