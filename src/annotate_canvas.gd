@@ -54,7 +54,6 @@ func _ready():
 		queue_free()
 	
 	# restore lines from previously saved state.
-	
 	for stroke in layer_resource.strokes:
 		var line := AnnotateStrokeLine.from_stroke(stroke)
 		add_child(line)
@@ -62,16 +61,18 @@ func _ready():
 
 func _on_begin_stroke():
 	_active_stroke = AnnotateStrokeLine.new(brush_size / 100 * max_brush_size, brush_color)
+	
 	add_child(_active_stroke)
 	_stroke_lines.append(_active_stroke)
+
 	# instantly insert a point, to avoid the user having to drag the cursor,
 	# in order to insert a point.
-	_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, true)
+	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
 
 func _on_end_stroke():
 	# force insert final point, as the stroke should end where the user stopped the stroke,
 	# even if the final point is within AnnotateStroke.MIN_POINT_DISTANCE.
-	_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, true)
+	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
 	
 	layer_resource.strokes.append(_active_stroke.to_stroke())
 	_active_stroke = null
@@ -88,13 +89,13 @@ func _on_stroke_resize(direction: float):
 
 func _process(delta):
 	if _active_stroke:
-		_active_stroke.try_annotate_point(get_global_mouse_position(), min_point_distance, false)
+		_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, false)
 		
 	if _erasing:
 		var erase_stroke_indexes: Array[int] = []
 		
 		for i in range(_stroke_lines.size()):
-			if _stroke_lines[i].collides_with(get_global_mouse_position(), brush_size / 100 * max_brush_size):
+			if _stroke_lines[i].collides_with(get_local_mouse_position(), brush_size / 100 * max_brush_size):
 				erase_stroke_indexes.append(i)
 		
 		for erase_count in range(erase_stroke_indexes.size()):
@@ -112,6 +113,6 @@ func _process(delta):
 func _draw():
 	
 	if _erasing:
-		draw_arc(get_global_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
+		draw_arc(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
 	elif GodotAnnotate.selected_canvas == self:
-		draw_circle(get_global_mouse_position(), brush_size / 100 * max_brush_size / 2, brush_color)
+		draw_circle(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, brush_color)

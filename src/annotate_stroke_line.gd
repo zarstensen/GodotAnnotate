@@ -79,13 +79,13 @@ func collides_with(brush_center: Vector2, brush_width: float) -> bool:
 	# check if erase circle overlaps with stroke boundary
 	var nearest_boundary_point := Vector2(nearest_x, nearest_y)
 	
-	if nearest_boundary_point.distance_squared_to(get_global_mouse_position()) > (brush_width / 2) ** 2:
+	if nearest_boundary_point.distance_squared_to(brush_center) > (brush_width / 2) ** 2:
 		return false
 
 	# check if erase circle overlaps with any points in stroke line,
 	# only if above is true to reduce number of distance checks.
 	for stroke_points in points:
-		if stroke_points.distance_squared_to(get_global_mouse_position()) < (width / 2 + brush_width / 2) ** 2:
+		if stroke_points.distance_squared_to(brush_center) < (width / 2 + brush_width / 2) ** 2:
 			return true
 
 	return false
