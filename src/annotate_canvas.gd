@@ -31,6 +31,10 @@ var brush_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
 @export
 var show_when_running := false
 
+## Lock [AnnotateCanvas] node from being drawn on.
+@export
+var lock_canvas := false
+
 ## Percentage of brush radius must be between a new point inserted with [method insert_point],
 ## for it to be added to the [member points] array.
 @export_range(0, 2, 0.05)
@@ -111,6 +115,8 @@ func _process(delta):
 	queue_redraw()
 
 func _draw():
+	if lock_canvas:
+		return
 	
 	if _erasing:
 		draw_arc(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
