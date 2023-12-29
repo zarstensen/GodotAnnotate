@@ -66,6 +66,7 @@ func _ready():
 		queue_free()
 	
 	# restore lines from previously saved state.
+	
 	for stroke in layer_resource.strokes:
 		var line := AnnotateStrokeLine.from_stroke(stroke)
 		add_child(line)
@@ -73,19 +74,18 @@ func _ready():
 
 func _on_begin_stroke():
 	_active_stroke = AnnotateStrokeLine.new(brush_size / 100 * max_brush_size, brush_color)
-	
 	add_child(_active_stroke)
 	_stroke_lines.append(_active_stroke)
-
 	# instantly insert a point, to avoid the user having to drag the cursor,
 	# in order to insert a point.
 	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
 
 func _on_end_stroke():
-	# force insert final point, as the stroke should end where the user stopped the stroke,
-	# even if the final point is within AnnotateStroke.MIN_POINT_DISTANCE.
-	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
-	
+	if !GodotAnnotate.poly_in_progress:
+		# force insert final point, as the stroke should end where the user stopped the stroke,
+		# even if the final point is within AnnotateStroke.MIN_POINT_DISTANCE.
+		_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
+		
 	layer_resource.strokes.append(_active_stroke.to_stroke())
 	_active_stroke = null
 	
@@ -95,6 +95,9 @@ func _on_begin_erase():
 func _on_end_erase():
 	_erasing = false
 
+func _on_draw_poly_stroke():
+	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, false)
+
 func _on_stroke_resize(direction: float):
 	brush_size *= 1 + direction * SIZE_SCROLL_PERC
 	brush_size = min(100, max(brush_size, 1))
@@ -103,7 +106,7 @@ func _on_capture_canvas(file: String, scale: float):
 	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
 func _process(delta):
-	if _active_stroke:
+	if _active_stroke && !GodotAnnotate.poly_in_progress:
 		_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, false)
 		
 	if _erasing:
@@ -128,6 +131,9 @@ func _process(delta):
 func _draw():
 	if lock_canvas:
 		return
+	
+	if GodotAnnotate.poly_in_progress:
+		draw_dashed_line(_active_stroke.points[-1], get_local_mouse_position(), brush_color, brush_size * 0.125, brush_size * 0.25)
 	
 	if _erasing:
 		draw_arc(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)

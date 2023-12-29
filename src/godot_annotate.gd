@@ -4,6 +4,9 @@ extends EditorPlugin
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
 
 static var selected_canvas: AnnotateCanvas
+
+static var poly_in_progress := false
+
 static var canvas_image_dialog_scene := preload("../res/CanvasImageDialog.tscn")
 static var upscale_factor_dialog_scene := preload("../res/UpscaleFactorDialog.tscn")
 
@@ -39,14 +42,29 @@ func _forward_canvas_gui_input(event):
 			
 			get_editor_interface().popup_dialog_centered(upscale_factor_dialog)
 		
+		# polygon drawing
+		if poly_in_progress:
+			if event.keycode == KEY_ALT && !event.pressed:
+				selected_canvas._on_end_stroke()
+				poly_in_progress = false
+				return true
+	
 	if event is InputEventMouseButton:
 		# drawing
 		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
-			selected_canvas._on_begin_stroke()
+			if event.alt_pressed && !poly_in_progress:
+				selected_canvas._on_begin_stroke()
+				poly_in_progress = true
+			if poly_in_progress:
+				selected_canvas._on_draw_poly_stroke()
+			else:
+				selected_canvas._on_begin_stroke()
 			return true
 		elif event.button_index == MOUSE_BUTTON_LEFT && not event.pressed:
-			selected_canvas._on_end_stroke()
+			if !poly_in_progress:
+				selected_canvas._on_end_stroke()
 			return true
+		
 		
 		# erasing
 		elif event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
