@@ -53,6 +53,14 @@ var _erasing := false
 ## in the layer_resource array.
 var _stroke_lines: Array[AnnotateStrokeLine] = [ ]
 
+func get_canvas_area() -> Rect2:
+	var canvas_area := Rect2i()
+	
+	for stroke in layer_resource.strokes:
+		canvas_area = canvas_area.merge(stroke.boundary)
+		
+	return canvas_area
+
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
@@ -90,6 +98,9 @@ func _on_end_erase():
 func _on_stroke_resize(direction: float):
 	brush_size *= 1 + direction * SIZE_SCROLL_PERC
 	brush_size = min(100, max(brush_size, 1))
+
+func _on_capture_canvas(file: String, scale: float):
+	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
 func _process(delta):
 	if _active_stroke:

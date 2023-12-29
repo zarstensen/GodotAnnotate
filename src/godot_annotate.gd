@@ -15,6 +15,22 @@ func _exit_tree():
 func _forward_canvas_gui_input(event):
 	if not selected_canvas or selected_canvas.lock_canvas:
 		return false
+	
+	if event is InputEventKey:
+		
+		if event.keycode == KEY_S && event.pressed && event.alt_pressed && event.shift_pressed:
+			var save_location := FileDialog.new()
+			save_location.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+			save_location.mode_overrides_title = false
+			save_location.title = "Select where to save canvas image"
+			save_location.set_filters(PackedStringArray(["*.png, *.jpg, *.jpeg ; Images"]))
+			
+			save_location.file_selected.connect(func(file):
+				print(file)
+				selected_canvas._on_capture_canvas(file, 1)
+			)
+			
+			get_editor_interface().popup_dialog_centered(save_location)
 		
 	if event is InputEventMouseButton:
 		# drawing
