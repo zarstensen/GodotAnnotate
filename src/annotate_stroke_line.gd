@@ -15,6 +15,9 @@ var boundary: Rect2 = Rect2()
 func _init(size: float, color: Color):
 	width = size
 	default_color = color
+	# TODO: should probably make this customisable in some way.
+	# not sure if this should be custom for each stroke, or just the canvas in general.
+	round_precision = 32
 
 	begin_cap_mode = Line2D.LINE_CAP_ROUND
 	end_cap_mode = Line2D.LINE_CAP_ROUND
