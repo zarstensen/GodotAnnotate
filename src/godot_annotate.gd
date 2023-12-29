@@ -4,6 +4,8 @@ extends EditorPlugin
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
 
 static var selected_canvas: AnnotateCanvas
+static var canvas_image_dialog_scene := preload("../res/CanvasImageDialog.tscn")
+static var upscale_factor_dialog_scene := preload("../res/UpscaleFactorDialog.tscn")
 
 func _enter_tree():
 	add_custom_type("AnnotateCanvas", "Node2D", preload("annotate_canvas.gd"), preload("../annotate_layer.svg"))
@@ -15,6 +17,27 @@ func _exit_tree():
 func _forward_canvas_gui_input(event):
 	if not selected_canvas or selected_canvas.lock_canvas:
 		return false
+	
+	if event is InputEventKey:
+		
+		# canvas capture (shortcut: shift + alt + s)
+		if event.keycode == KEY_S && event.pressed && event.alt_pressed && event.shift_pressed:
+			var upscale_factor_dialog := upscale_factor_dialog_scene.instantiate()
+			upscale_factor_dialog.confirmed.connect(func():
+				
+				var canvas_image_dialog := canvas_image_dialog_scene.instantiate()
+				canvas_image_dialog.file_selected.connect(func(file):
+					
+					# upscale factor is present in the spinbox child of the upscale factor dialog.
+					selected_canvas._on_capture_canvas(file, upscale_factor_dialog.get_child(0).value)
+				
+				)
+				
+				get_editor_interface().popup_dialog_centered(canvas_image_dialog)
+			
+			)
+			
+			get_editor_interface().popup_dialog_centered(upscale_factor_dialog)
 		
 	if event is InputEventMouseButton:
 		# drawing

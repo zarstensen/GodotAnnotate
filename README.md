@@ -45,6 +45,8 @@ Use Right Mouse Button to erase annotate strokes on the currently selected 'Anno
 
 Use Shift + Mouse Scroll to quickly change the brush size.
 
+Use Shift + Alt + S to save the canvas to disk as an image.
+
 ## Links
 
 [Godot Assets](https://godotengine.org/asset-library/asset/2432)
