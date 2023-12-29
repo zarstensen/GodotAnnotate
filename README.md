@@ -41,6 +41,8 @@ To start annotating, add the 'AnnotateCanvas' node to a godot scene.
 
 Use Left Mouse Button to annotate on the currenty selected 'AnnotateCanvas' node.
 
+Use Alt + Left Mouse Button to annotate in polygon mode.
+
 Use Right Mouse Button to erase annotate strokes on the currently selected 'AnnotateCanvas' node.
 
 Use Shift + Mouse Scroll to quickly change the brush size.
