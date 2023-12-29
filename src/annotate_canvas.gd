@@ -54,9 +54,13 @@ var _erasing := false
 var _stroke_lines: Array[AnnotateStrokeLine] = [ ]
 
 func get_canvas_area() -> Rect2:
-	var canvas_area := Rect2i()
 	
-	for stroke in layer_resource.strokes:
+	if layer_resource.strokes.size() <= 0:
+		return Rect2()
+	
+	var canvas_area := layer_resource.strokes[0].boundary
+	
+	for stroke in layer_resource.strokes.slice(1):
 		canvas_area = canvas_area.merge(stroke.boundary)
 		
 	return canvas_area
