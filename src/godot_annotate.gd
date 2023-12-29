@@ -52,7 +52,7 @@ func _forward_canvas_gui_input(event):
 	if event is InputEventMouseButton:
 		# drawing
 		if event.button_index == MOUSE_BUTTON_LEFT && event.pressed:
-			if event.alt_pressed && !poly_in_progress:
+			if event.alt_pressed && not poly_in_progress:
 				selected_canvas._on_begin_stroke()
 				poly_in_progress = true
 			if poly_in_progress:
@@ -60,11 +60,10 @@ func _forward_canvas_gui_input(event):
 			else:
 				selected_canvas._on_begin_stroke()
 			return true
-		elif event.button_index == MOUSE_BUTTON_LEFT && not event.pressed:
+		elif event.button_index == MOUSE_BUTTON_LEFT && not event.pressed && not poly_in_progress:
 			if !poly_in_progress:
 				selected_canvas._on_end_stroke()
 			return true
-		
 		
 		# erasing
 		elif event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
