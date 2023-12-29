@@ -17,7 +17,7 @@ func _init(canvas: AnnotateCanvas, file: String, scale: float = 1.0):
 	
 	# viewports render anything from (0, 0) to (width, height),
 	# so we want to offset the canvas contents to make sure they fit inside this area.
-	canvas.position = canvas_area.position
+	canvas.position = -canvas_area.position * scale
 	canvas.scale *= scale
 	canvas_area.position = Vector2.ZERO
 	
