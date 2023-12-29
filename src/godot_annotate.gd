@@ -7,13 +7,13 @@ static var selected_canvas: AnnotateCanvas
 
 static var poly_in_progress := false
 
-static var canvas_image_dialog_scene := preload("../res/CanvasImageDialog.tscn")
-static var upscale_factor_dialog_scene := preload("../res/UpscaleFactorDialog.tscn")
+static var canvas_image_dialog_scene := preload("res://addons/GodotAnnotate/res/CanvasImageDialog.tscn")
+static var upscale_factor_dialog_scene := preload("res://addons/GodotAnnotate/res/UpscaleFactorDialog.tscn")
 
 static var editor_interface: EditorInterface
 
 func _enter_tree():
-	add_custom_type("AnnotateCanvas", "Node2D", preload("annotate_canvas.gd"), preload("../annotate_layer.svg"))
+	add_custom_type("AnnotateCanvas", "Node2D", preload("res://addons/GodotAnnotate/src/annotate_canvas.gd"), preload("res://addons/GodotAnnotate/annotate_layer.svg"))
 	editor_interface = get_editor_interface()
 
 func _exit_tree():
