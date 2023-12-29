@@ -20,13 +20,15 @@ func _forward_canvas_gui_input(event):
 	
 	if event is InputEventKey:
 		
+		# canvas capture (shortcut: shift + alt + s)
 		if event.keycode == KEY_S && event.pressed && event.alt_pressed && event.shift_pressed:
 			var upscale_factor_dialog := upscale_factor_dialog_scene.instantiate()
 			upscale_factor_dialog.confirmed.connect(func():
 				
 				var canvas_image_dialog := canvas_image_dialog_scene.instantiate()
 				canvas_image_dialog.file_selected.connect(func(file):
-				
+					
+					# upscale factor is present in the spinbox child of the upscale factor dialog.
 					selected_canvas._on_capture_canvas(file, upscale_factor_dialog.get_child(0).value)
 				
 				)
