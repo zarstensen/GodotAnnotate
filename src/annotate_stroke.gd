@@ -1,6 +1,8 @@
 class_name AnnotateStroke
 extends Resource
+##
 ## Resource representing a single stroke in a AnnotateCanvas node.
+##
 
 ## Diameter of the brush used to paint the stroke.
 @export

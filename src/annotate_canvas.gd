@@ -1,7 +1,9 @@
 @tool
 class_name AnnotateCanvas
 extends Node2D
+##
 ## Node allowing user to paint and view [AnnotateStroke]s on a [AnnotateLayer] in the 2D editor.
+##
 
 ## Percentage size increase to stroke size caused by shift + scroll.
 const SIZE_SCROLL_PERC: float = 0.1
