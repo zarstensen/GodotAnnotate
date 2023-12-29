@@ -10,13 +10,17 @@ static var poly_in_progress := false
 static var canvas_image_dialog_scene := preload("../res/CanvasImageDialog.tscn")
 static var upscale_factor_dialog_scene := preload("../res/UpscaleFactorDialog.tscn")
 
+static var editor_interface: EditorInterface
+
 func _enter_tree():
 	add_custom_type("AnnotateCanvas", "Node2D", preload("annotate_canvas.gd"), preload("../annotate_layer.svg"))
+	editor_interface = get_editor_interface()
 
 func _exit_tree():
 	remove_custom_type("AnnotateCanvas")
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.
+## TODO: clean this up a bit.
 func _forward_canvas_gui_input(event):
 	if not selected_canvas or selected_canvas.lock_canvas:
 		return false
