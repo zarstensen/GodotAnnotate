@@ -1,6 +1,8 @@
 class_name AnnotateStrokeLine
 extends Line2D
+##
 ## Node responsible for a visual representation of a AnnotateStroke resource.
+##
 
 ## Percentage of point position to increment point position by, if overlapping with another point.
 const OVERLAP_INCR_PERC = 0.0001

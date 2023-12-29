@@ -1,7 +1,9 @@
 @tool
 class_name GodotAnnotate
 extends EditorPlugin
+##
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
+##
 
 static var selected_canvas: AnnotateCanvas
 

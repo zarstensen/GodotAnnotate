@@ -9,9 +9,14 @@ This is a [Godot](https://godotengine.org/) plugin which allows one to make plan
 
 - [Features](#features)
   - [Annotate](#annotate)
+  - [Polygon Mode](#polygon-mode)
   - [Erase](#erase)
-  - [Run Mode Annotations](#run-mode-annotations)
+  - [Control Annotation Visibility](#control-annotation-visibility)
+  - [Save Canvas As Image](#save-canvas-as-image)
 - [Usage](#usage)
+  - [Controls](#controls)
+  - [Locking](#locking)
+- [Installing](#installing)
 - [Links](#links)
 - [License](#license)
 
@@ -23,31 +28,58 @@ Annotate with variable brush size and color directly in the 2D editor using the 
 
 ![Annotate Example](examples/Annotate.gif)
 
+### Polygon Mode
+
+Use polygon mode to draw straight lines between clicks.
+
+![Polygon Mode Example](examples/AnnotatePoly.gif)
+
 ### Erase
 
 Erase any previously drawn annotate strokes.
 
 ![Erase Example](examples/Erase.gif)
 
-### Run Mode Annotations
+### Control Annotation Visibility
 
 Only show annotations in the 2D editor (optionally show in run mode).
 
 ![Visibility Example](examples/Visibility.gif)
 
+### Save Canvas As Image
+
+Save the canvas to disk as an image file.
+
+![Save To Disk Example](examples/SaveToDisk.gif)
+
 ## Usage
 
 To start annotating, add the 'AnnotateCanvas' node to a godot scene.
 
-Use Left Mouse Button to annotate on the currenty selected 'AnnotateCanvas' node.
+### Controls
 
-Use Alt + Left Mouse Button to annotate in polygon mode.
+**Left Mouse Button**
+: Annotate on the currenty selected 'AnnotateCanvas' node.
 
-Use Right Mouse Button to erase annotate strokes on the currently selected 'AnnotateCanvas' node.
+**Alt + Left Mouse Button**
+: Annotate on the currently selected 'AnnotateCanvas' node using the polygon mode.
 
-Use Shift + Mouse Scroll to quickly change the brush size.
+**Right Mouse Button**
+: Erase annotate strokes on the currently selected 'AnnotateCanvas' node.
 
-Use Shift + Alt + S to save the canvas to disk as an image.
+**Shift + Mouse Scroll**
+: Change brush size.
+
+**Shift + Alt + S**
+: Save the selected 'AnnotateCanvas' to disk as an image.
+
+### Locking
+
+Locking an 'AnnotateCanvas' node does not prevent it from being drawn on, instead toggle the 'Advanced > Lock Canvas' property to prevent this.
+
+## Installing
+
+See [Installing Plugins](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/installing_plugins.html), for how to add this plugin to your Godot project.
 
 ## Links
 
