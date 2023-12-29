@@ -4,6 +4,8 @@ extends EditorPlugin
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
 
 static var selected_canvas: AnnotateCanvas
+static var canvas_image_dialog_scene := preload("../res/CanvasImageDialog.tscn")
+static var upscale_factor_dialog_scene := preload("../res/UpscaleFactorDialog.tscn")
 
 func _enter_tree():
 	add_custom_type("AnnotateCanvas", "Node2D", preload("annotate_canvas.gd"), preload("../annotate_layer.svg"))
@@ -19,18 +21,21 @@ func _forward_canvas_gui_input(event):
 	if event is InputEventKey:
 		
 		if event.keycode == KEY_S && event.pressed && event.alt_pressed && event.shift_pressed:
-			var save_location := FileDialog.new()
-			save_location.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-			save_location.mode_overrides_title = false
-			save_location.title = "Select where to save canvas image"
-			save_location.set_filters(PackedStringArray(["*.png, *.jpg, *.jpeg ; Images"]))
+			var upscale_factor_dialog := upscale_factor_dialog_scene.instantiate()
+			upscale_factor_dialog.confirmed.connect(func():
+				
+				var canvas_image_dialog := canvas_image_dialog_scene.instantiate()
+				canvas_image_dialog.file_selected.connect(func(file):
+				
+					selected_canvas._on_capture_canvas(file, upscale_factor_dialog.get_child(0).value)
+				
+				)
+				
+				get_editor_interface().popup_dialog_centered(canvas_image_dialog)
 			
-			save_location.file_selected.connect(func(file):
-				print(file)
-				selected_canvas._on_capture_canvas(file, 1)
 			)
 			
-			get_editor_interface().popup_dialog_centered(save_location)
+			get_editor_interface().popup_dialog_centered(upscale_factor_dialog)
 		
 	if event is InputEventMouseButton:
 		# drawing

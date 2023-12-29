@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://bkubc0dybo25h"]
+
+[node name="UpscaleFactorDialog" type="ConfirmationDialog"]
+title = "Upscale Factor"
+
+[node name="UpscaleFactorInput" type="SpinBox" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 192.0
+offset_bottom = 51.0
+step = 0.1
+value = 1.0
