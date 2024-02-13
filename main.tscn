@@ -1,0 +1,67 @@
+[gd_scene load_steps=10 format=3 uid="uid://dij6pnn4pwn0a"]
+
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_canvas.gd" id="1_wnscj"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_layer.gd" id="2_tpetj"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_stroke.gd" id="3_odsar"]
+
+[sub_resource type="Resource" id="Resource_ik6ug"]
+script = ExtResource("3_odsar")
+size = 50.0
+color = Color(0.552941, 0.647059, 0.952941, 1)
+boundary = Rect2(225.73, 26.8569, 312.963, 154.388)
+points = PackedVector2Array(275.73, 141.653, 288.077, 143.898, 300.424, 146.143, 318.384, 151.755, 332.976, 155.122, 349.813, 156.245, 367.772, 156.245, 380.119, 154, 396.956, 150.633, 410.426, 146.143, 425.018, 141.653, 439.61, 130.428, 453.079, 113.591, 464.304, 100.122, 473.284, 88.8972, 485.631, 75.4276, 494.61, 66.4479, 504.712, 56.3458, 513.693, 51.8569)
+
+[sub_resource type="Resource" id="Resource_qmk30"]
+script = ExtResource("3_odsar")
+size = 50.0
+color = Color(0.552941, 0.647059, 0.952941, 1)
+boundary = Rect2(122.464, 16.7538, 486.945, 218.369)
+points = PackedVector2Array(172.464, 69.8153, 188.178, 66.4479, 206.138, 63.0806, 235.322, 57.4683, 257.771, 54.1009, 276.853, 52.9784, 311.649, 49.611, 334.098, 49.611, 354.303, 48.4886, 390.221, 43.9987, 413.793, 43.9987, 432.875, 42.8763, 449.712, 41.7538, 463.181, 41.7538, 480.018, 41.7538, 490.12, 49.611, 494.61, 66.4479, 495.733, 79.9175, 497.978, 92.2646, 501.345, 106.857, 502.468, 123.694, 502.468, 138.286, 503.59, 151.755, 504.712, 166.347, 506.957, 184.306, 511.447, 196.654, 520.427, 205.633, 532.774, 210.123, 546.244, 210.123, 560.836, 209.001, 573.183, 206.756, 584.408, 205.634)
+
+[sub_resource type="Resource" id="Resource_8gdpc"]
+script = ExtResource("3_odsar")
+size = 50.0
+color = Color(0.552941, 0.647059, 0.952941, 1)
+boundary = Rect2(39.4016, 87.4699, 198.471, 223.981)
+points = PackedVector2Array(89.4016, 196.654, 96.1363, 209.001, 107.361, 215.735, 128.688, 226.96, 137.667, 235.94, 153.382, 250.532, 166.851, 266.246, 178.076, 276.348, 190.423, 281.961, 202.77, 286.451, 211.75, 275.226, 212.872, 259.511, 212.872, 246.042, 210.627, 233.695, 208.383, 209.001, 203.893, 194.409, 200.525, 178.694, 194.913, 162.98, 187.056, 146.143, 179.198, 132.673, 167.974, 118.081, 157.873, 112.47)
+
+[sub_resource type="Resource" id="Resource_wa1uj"]
+script = ExtResource("3_odsar")
+size = 50.0
+color = Color(0.552941, 0.647059, 0.952941, 1)
+boundary = Rect2(11.34, -9.06184, 299.493, 130.816)
+points = PackedVector2Array(61.34, 76.5501, 75.932, 78.795, 88.2791, 83.2849, 100.626, 87.7747, 115.218, 92.2646, 129.81, 96.7544, 146.647, 96.7544, 161.239, 95.632, 174.709, 93.387, 187.056, 86.6523, 197.158, 78.795, 206.138, 68.6929, 215.117, 58.5907, 225.219, 48.4886, 236.444, 41.7538, 251.036, 32.7741, 264.506, 24.9168, 276.853, 18.1821, 285.833, 15.9382)
+
+[sub_resource type="Resource" id="Resource_phr4e"]
+script = ExtResource("2_tpetj")
+strokes = Array[ExtResource("3_odsar")]([SubResource("Resource_ik6ug"), SubResource("Resource_qmk30"), SubResource("Resource_8gdpc"), SubResource("Resource_wa1uj")])
+
+[sub_resource type="Resource" id="Resource_sxlwq"]
+script = ExtResource("2_tpetj")
+strokes = Array[ExtResource("3_odsar")]([])
+
+[node name="Main" type="Node2D"]
+
+[node name="AnnotateCanvas" type="Node2D" parent="."]
+script = ExtResource("1_wnscj")
+brush_size = 100.0
+brush_color = Color(0.552941, 0.647059, 0.952941, 1)
+layer_resource = SubResource("Resource_phr4e")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Node2D" type="Node2D" parent="Control"]
+
+[node name="Canvas2" type="Node2D" parent="."]
+script = ExtResource("1_wnscj")
+brush_color = Color(0.552941, 0.647059, 0.952941, 1)
+lock_canvas = true
+layer_resource = SubResource("Resource_sxlwq")
+
+[node name="Line2D" type="Line2D" parent="Canvas2"]
+points = PackedVector2Array(800, 144, 904, 8, 608, -96, 856, 352, 968, 184)

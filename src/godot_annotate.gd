@@ -9,17 +9,41 @@ static var selected_canvas: AnnotateCanvas
 
 static var poly_in_progress := false
 
-static var canvas_image_dialog_scene := preload("res://addons/GodotAnnotate/res/CanvasImageDialog.tscn")
-static var upscale_factor_dialog_scene := preload("res://addons/GodotAnnotate/res/UpscaleFactorDialog.tscn")
-
-static var editor_interface: EditorInterface
+static var canvas_toolbar: Control
 
 func _enter_tree():
-	add_custom_type("AnnotateCanvas", "Node2D", preload("res://addons/GodotAnnotate/src/annotate_canvas.gd"), preload("res://addons/GodotAnnotate/annotate_layer.svg"))
-	editor_interface = get_editor_interface()
+	
+	# initialize variables
+	
+	canvas_toolbar = preload("res://addons/GodotAnnotate/res/annotate_toolbar.tscn").instantiate()
+	canvas_toolbar.visible = false
+	
+	poly_in_progress = false
+	
+	# setup signals
+	
+	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
+	
+	add_custom_type("AnnotateCanvas",
+			"Node2D",
+			preload("res://addons/GodotAnnotate/src/annotate_canvas.gd"),
+			preload("res://addons/GodotAnnotate/annotate_layer_icon.svg"))
+	
+	# setup toolbar
+	add_control_to_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU, canvas_toolbar)
 
 func _exit_tree():
+	remove_control_from_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU, canvas_toolbar)
+	canvas_toolbar.queue_free()
+	
 	remove_custom_type("AnnotateCanvas")
+	
+	EditorInterface.get_selection().selection_changed.disconnect(_on_selection_changed)
+	
+	# free variables
+
+	canvas_toolbar.queue_free()
+	
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.
 ## TODO: clean this up a bit.
@@ -28,26 +52,6 @@ func _forward_canvas_gui_input(event):
 		return false
 	
 	if event is InputEventKey:
-		
-		# canvas capture (shortcut: shift + alt + s)
-		if event.keycode == KEY_S && event.pressed && event.alt_pressed && event.shift_pressed:
-			var upscale_factor_dialog := upscale_factor_dialog_scene.instantiate()
-			upscale_factor_dialog.confirmed.connect(func():
-				
-				var canvas_image_dialog := canvas_image_dialog_scene.instantiate()
-				canvas_image_dialog.file_selected.connect(func(file):
-					
-					# upscale factor is present in the spinbox child of the upscale factor dialog.
-					selected_canvas._on_capture_canvas(file, upscale_factor_dialog.get_child(0).value)
-				
-				)
-				
-				get_editor_interface().popup_dialog_centered(canvas_image_dialog)
-			
-			)
-			
-			get_editor_interface().popup_dialog_centered(upscale_factor_dialog)
-		
 		# polygon drawing
 		if poly_in_progress:
 			if event.keycode == KEY_ALT && !event.pressed:
@@ -97,10 +101,15 @@ func _forward_canvas_gui_input(event):
 
 ## Keeps track of currently selected node, as special action is required when an [AnnotateCanvas] node is selected.
 func _handles(object):
-	if object is AnnotateCanvas:
-		selected_canvas = object
-		return true
-	
+	return object is AnnotateCanvas
+
+func _on_selection_changed():
+	canvas_toolbar.visible = false
 	selected_canvas = null
 	
-	return false
+	var nodes := EditorInterface.get_selection().get_selected_nodes()
+	
+	if len(nodes) == 1 and nodes[0] is AnnotateCanvas:
+		canvas_toolbar.visible = true
+		selected_canvas = nodes[0] as AnnotateCanvas
+		canvas_toolbar._on_new_canvas(selected_canvas)

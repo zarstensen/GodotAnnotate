@@ -38,6 +38,6 @@ func _process(_delta):
 	get_texture().get_image().save_png(_file_location)
 	
 	# make sure new image file is visible in the editor filesystem
-	GodotAnnotate.editor_interface.get_resource_filesystem().scan()
+	EditorInterface.get_resource_filesystem().scan()
 	
 	queue_free()
