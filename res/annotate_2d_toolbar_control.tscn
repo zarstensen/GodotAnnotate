@@ -1,0 +1,65 @@
+[gd_scene load_steps=10 format=3 uid="uid://dqw1ri5u5knlv"]
+
+[ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/annotate_toolbar_icon.svg" id="1_nghdh"]
+[ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/curve_icon.svg" id="2_uaw3r"]
+[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/rectangle_icon.svg" id="3_1d111"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/res/AnnotateMode.gd" id="3_nh0xi"]
+[ext_resource type="Texture2D" uid="uid://c565rg2exj4pp" path="res://addons/GodotAnnotate/rectangle_filled_icon.svg" id="4_iyn01"]
+[ext_resource type="Texture2D" uid="uid://cbj3cyfosuwow" path="res://addons/GodotAnnotate/ellipse_icon.svg" id="5_4rkpm"]
+[ext_resource type="Texture2D" uid="uid://cxpp6xfbualpa" path="res://addons/GodotAnnotate/ellipse_filled_icon.svg" id="6_dgvtx"]
+[ext_resource type="Texture2D" uid="uid://5bid7rxgffn7" path="res://addons/GodotAnnotate/polygon_icon.svg" id="7_hqqwu"]
+[ext_resource type="Texture2D" uid="uid://b2vcqfhfarltg" path="res://addons/GodotAnnotate/polygon_filled_icon.svg" id="8_or8ej"]
+
+[node name="Annotate2DToolbarControl" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="ToggleAnnotateButton" type="Button" parent="."]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+icon = ExtResource("1_nghdh")
+
+[node name="CanvasToImage" type="Button" parent="."]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+text = "CTI"
+
+[node name="AnnotateMode" type="OptionButton" parent="."]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+flat = true
+item_count = 7
+selected = 0
+fit_to_longest_item = false
+allow_reselect = true
+popup/item_0/text = "Curve"
+popup/item_0/icon = ExtResource("2_uaw3r")
+popup/item_0/id = 0
+popup/item_1/text = "Rectangle"
+popup/item_1/icon = ExtResource("3_1d111")
+popup/item_1/id = 3
+popup/item_2/text = "Rectangle Filled"
+popup/item_2/icon = ExtResource("4_iyn01")
+popup/item_2/id = 4
+popup/item_3/text = "Ellipse"
+popup/item_3/icon = ExtResource("5_4rkpm")
+popup/item_3/id = 4
+popup/item_4/text = "Ellipse Filled"
+popup/item_4/icon = ExtResource("6_dgvtx")
+popup/item_4/id = 5
+popup/item_5/text = "Polygon"
+popup/item_5/icon = ExtResource("7_hqqwu")
+popup/item_5/id = 1
+popup/item_6/text = "Polygon Filled"
+popup/item_6/icon = ExtResource("8_or8ej")
+popup/item_6/id = 6
+script = ExtResource("3_nh0xi")
+
+[connection signal="item_selected" from="AnnotateMode" to="AnnotateMode" method="_on_item_selected"]
