@@ -18,6 +18,9 @@ static var canvas_menu_control: Control
 static var editor_interface: EditorInterface
 
 func _enter_tree():
+	
+	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
+	
 	add_custom_type("AnnotateCanvas",
 			"Node2D",
 			preload("res://addons/GodotAnnotate/src/annotate_canvas.gd"),
@@ -41,6 +44,8 @@ func _exit_tree():
 	canvas_menu_control.queue_free()
 	
 	remove_custom_type("AnnotateCanvas")
+	
+	EditorInterface.get_selection().selection_changed.disconnect(_on_selection_changed)
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.
 ## TODO: clean this up a bit.
@@ -118,14 +123,14 @@ func _forward_canvas_gui_input(event):
 
 ## Keeps track of currently selected node, as special action is required when an [AnnotateCanvas] node is selected.
 func _handles(object):
-	
+	return object is AnnotateCanvas
+
+func _on_selection_changed():
 	canvas_menu_control.visible = false
-	
-	if object is AnnotateCanvas:
-		selected_canvas = object
-		canvas_menu_control.visible = true
-		return true
-	
 	selected_canvas = null
 	
-	return false
+	var nodes := EditorInterface.get_selection().get_selected_nodes()
+	
+	if len(nodes) == 1 and nodes[0] is AnnotateCanvas:
+		canvas_menu_control.visible = true
+		selected_canvas = nodes[0] as AnnotateCanvas

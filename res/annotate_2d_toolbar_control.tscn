@@ -1,6 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=11 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/annotate_toolbar_icon.svg" id="1_nghdh"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/res/toggle_annotate_button.gd" id="2_omfh6"]
 [ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/curve_icon.svg" id="2_uaw3r"]
 [ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/rectangle_icon.svg" id="3_1d111"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/res/AnnotateMode.gd" id="3_nh0xi"]
@@ -25,6 +26,7 @@ layout_mode = 2
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 icon = ExtResource("1_nghdh")
+script = ExtResource("2_omfh6")
 
 [node name="CanvasToImage" type="Button" parent="."]
 layout_mode = 2
@@ -62,4 +64,5 @@ popup/item_6/icon = ExtResource("8_or8ej")
 popup/item_6/id = 6
 script = ExtResource("3_nh0xi")
 
+[connection signal="toggled" from="ToggleAnnotateButton" to="ToggleAnnotateButton" method="_on_toggled"]
 [connection signal="item_selected" from="AnnotateMode" to="AnnotateMode" method="_on_item_selected"]
