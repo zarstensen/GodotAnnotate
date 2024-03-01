@@ -47,10 +47,6 @@ var lock_canvas := false
 @export_range(0, 2, 0.05)
 var min_point_distance = 0.25
 
-## Current [AnnotateLayer] resource which is painted on when user annotates.
-@export
-var layer_resource: AnnotateLayer = AnnotateLayer.new()
-
 ## Annotate mode currently being used on the canvas.
 var _annotate_mode: AnnotateMode = GodotAnnotate.annotate_modes[0]
 ## Stroke currently being painted by the user.
