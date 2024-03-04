@@ -5,6 +5,7 @@ extends Node2D
 
 ## Imports
 const Stroke := preload("res://addons/GodotAnnotate/src/stroke.gd")
+const AnnotateCanvasCaptureViewport = preload("res://addons/GodotAnnotate/src/annotate_canvas_capture_viewport.gd")
 
 ##
 ## Node allowing user to paint and view [AnnotateStroke]s on a [AnnotateLayer] in the 2D editor.
@@ -228,6 +229,8 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			return true
 	
+	# Check if the current annotate mode wants to begin a new stroke,
+	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
 	if annotate_mode.should_begin_stroke(event):
 		_active_stroke = annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, self)
 		add_child(_active_stroke)
