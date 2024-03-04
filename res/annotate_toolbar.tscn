@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=5 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/res/annotate_toolbar.gd" id="1_7pm6l"]
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/annotate_toolbar_icon.svg" id="2_tklab"]
-[ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg" id="3_rvrdv"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_i472w"]
 device = -1
@@ -41,13 +40,9 @@ text = "CTI"
 layout_mode = 2
 theme_type_variation = &"FlatButton"
 flat = true
-item_count = 1
 selected = 0
 fit_to_longest_item = false
 allow_reselect = true
-popup/item_0/text = "Freehand"
-popup/item_0/icon = ExtResource("3_rvrdv")
-popup/item_0/id = 0
 
 [connection signal="toggled" from="ToggleAnnotateButton" to="." method="_on_toggle_annotate_button_toggled"]
 [connection signal="pressed" from="CanvasToImage" to="." method="_on_canvas_to_image_pressed"]

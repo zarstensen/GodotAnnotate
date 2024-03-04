@@ -17,6 +17,8 @@ func _ready() -> void:
 			
 	# setup annotate mode dropdown
 	
+	$AnnotateMode.clear()
+
 	for annotate_mode in GodotAnnotate.annotate_modes:
 		$AnnotateMode.add_icon_item(load(annotate_mode.get_icon_path()), annotate_mode.get_mode_name())
 	
