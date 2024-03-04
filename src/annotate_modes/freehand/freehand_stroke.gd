@@ -1,3 +1,4 @@
+@tool
 extends Line2D
 ##
 ## Freehand stroke returned by the FreehandMode annotate mode.
@@ -13,7 +14,7 @@ var boundary: Rect2
 
 ## Construct a stroke line with the given stroke size and color.
 ## Its capping and joint mode are all set to round.
-func _init(size: float, color: Color):
+func stroke_init(size: float, color: Color):
 	width = size
 	default_color = color
 	# TODO: should probably make this customisable in some way.

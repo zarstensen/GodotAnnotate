@@ -1,3 +1,5 @@
+@tool
+class_name GDA_AnnotateMode
 extends Resource
 
 const Stroke := preload("res://addons/GodotAnnotate/src/stroke.gd")

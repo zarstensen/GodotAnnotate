@@ -5,9 +5,6 @@ extends EditorPlugin
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
 ##
 
-const AnnotateMode = preload("res://addons/GodotAnnotate/src/annotate_mode.gd")
-
-
 static var selected_canvas: AnnotateCanvas
 
 static var poly_in_progress := false
@@ -19,7 +16,10 @@ static var annotate_mode_scripts: Array[String] = [
 	"res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd",
 ]
 
-static var annotate_modes: Array[AnnotateMode] = []
+static var annotate_modes: Array[GDA_AnnotateMode] = []
+
+## UndoRedoManager for the GodotAnnotate plugin.
+static var undo_redo: EditorUndoRedoManager
 
 func _enter_tree():
 	
@@ -28,12 +28,14 @@ func _enter_tree():
 	canvas_toolbar = preload("res://addons/GodotAnnotate/res/annotate_toolbar.tscn").instantiate()
 	canvas_toolbar.visible = false
 	
+	undo_redo = get_undo_redo()
+
 	poly_in_progress = false
 	
 	# load annotate modes
 	
 	for script_path in annotate_mode_scripts:
-		annotate_modes.append(load(script_path).new() as AnnotateMode)
+		annotate_modes.append(load(script_path).new() as GDA_AnnotateMode)
 	
 	# setup signals
 	
@@ -52,8 +54,7 @@ func _exit_tree():
 
 	canvas_toolbar.queue_free()
 	
-	for annotate_mode in annotate_modes:
-		annotate_mode.queue_free()
+	annotate_modes = [ ]
 	
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.

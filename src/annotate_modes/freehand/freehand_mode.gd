@@ -1,4 +1,5 @@
-extends "res://addons/GodotAnnotate/src/annotate_mode.gd"
+@tool
+extends GDA_AnnotateMode
 ###
 ### AnnotateMode implementation for the Freehand mode.
 ###
@@ -15,7 +16,8 @@ func draw_cursor(canvas: CanvasItem, pos: Vector2, brush_diameter: float, brush_
 	canvas.draw_circle(pos, brush_diameter, brush_color)
 
 func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> Node2D:
-	var stroke = FreehandStroke.new(size, color)
+	var stroke = FreehandStroke.new()
+	stroke.stroke_init(size, color)
 	stroke.add_point(canvas.get_local_mouse_position())
 	return stroke
 

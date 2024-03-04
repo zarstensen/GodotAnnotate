@@ -25,7 +25,6 @@ func _ready() -> void:
 # Called when a new annotate canvas node is selected.
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	canvas = new_canvas
-	
 	$ToggleAnnotateButton.set_pressed_no_signal(not canvas.lock_canvas)
 	
 	# TODO: annotate mode
