@@ -2,13 +2,15 @@
 @icon("res://addons/GodotAnnotate/annotate_layer_icon.svg")
 class_name AnnotateCanvas
 extends Node2D
+
+## Imports
+const Stroke := preload("res://addons/GodotAnnotate/src/stroke.gd")
+const AnnotateCanvasCaptureViewport = preload("res://addons/GodotAnnotate/src/annotate_canvas_capture_viewport.gd")
+
 ##
 ## Node allowing user to paint and view [AnnotateStroke]s on a [AnnotateLayer] in the 2D editor.
 ##
 
-## Imports
-const AnnotateMode := preload("res://addons/GodotAnnotate/src/annotate_mode.gd")
-const Stroke := preload("res://addons/GodotAnnotate/src/stroke.gd")
 
 ## Percentage size increase to stroke size caused by shift + scroll.
 const SIZE_SCROLL_PERC: float = 0.1
@@ -47,8 +49,9 @@ var lock_canvas := false
 @export_range(0, 2, 0.05)
 var min_point_distance = 0.25
 
+@export
 ## Annotate mode currently being used on the canvas.
-var _annotate_mode: AnnotateMode = GodotAnnotate.annotate_modes[0]
+var annotate_mode: GDA_AnnotateMode = GodotAnnotate.annotate_modes[0]
 ## Stroke currently being painted by the user.
 var _active_stroke: Node2D
 ## [code] true [/code] if user is currently trying to erase strokes.
@@ -78,7 +81,7 @@ func get_canvas_area() -> Rect2:
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
-	
+
 	# restore lines from previously saved state.
 	
 	for stroke in _strokes:
@@ -91,26 +94,65 @@ func resize_stroke(direction: float):
 func _on_capture_canvas(file: String, scale: float):
 	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
+
+func redo_stroke(stroke_scene):
+	add_child(stroke_scene.instantiate())
+	_strokes.append(stroke_scene)
+
+
+func undo_stroke(stroke_index):
+	get_child(stroke_index).queue_free()
+	_strokes.remove_at(stroke_index)
+
+## Erase all strokes at the passed indexes.
+func do_erase(erase_stroke_indexes: Array[int]):
+	for erase_count in range(erase_stroke_indexes.size()):
+		# subtract the target index by the amount of strokes deleted,
+		# since these strokes no longer exist in the array.
+		
+		var remove_index := erase_stroke_indexes[erase_count] - erase_count
+
+		get_child(erase_stroke_indexes[erase_count]).queue_free()
+		_strokes.remove_at(remove_index)
+
+## Readd all the passed strokes at the index of their key value.
+func undo_erase(erased_strokes: Dictionary):
+	var indexes := erased_strokes.keys()
+
+	indexes.sort()
+
+	for insert_index in indexes:
+
+		var stroke_scene = erased_strokes[insert_index] as PackedScene
+
+		_strokes.insert(insert_index, stroke_scene)
+		
+		var stroke = stroke_scene.instantiate()
+		add_child(stroke)
+		move_child(stroke, insert_index)
+
 func _process(delta):
 	if _active_stroke:
-		_annotate_mode.on_annotate_process(delta, _active_stroke, self)
+		annotate_mode.on_annotate_process(delta, _active_stroke, self)
 		
 	if _erasing:
 		var erase_stroke_indexes: Array[int] = []
+		var erased_strokes: Dictionary = {}
 		
 		for i in range(get_child_count()):
 			if get_child(i).collides_with_circle(get_local_mouse_position(), brush_size / 100 * max_brush_size):
 				erase_stroke_indexes.append(i)
-		
-		for erase_count in range(erase_stroke_indexes.size()):
-			# subtract the target index by the amount of strokes deleted,
-			# since these strokes no longer exist in the array.
-			
-			var remove_index := erase_stroke_indexes[erase_count] - erase_count
-			
-			get_child(remove_index).queue_free()
-			_strokes.remove_at(remove_index)
-		
+				erased_strokes[i] = _strokes[i]
+
+		# Only create an undoable erase action, if something is actually erased.
+		if len(erase_stroke_indexes) > 0:
+			var ur := GodotAnnotate.undo_redo
+
+			ur.create_action("GodotAnnotateEraseStroke")
+			ur.add_do_method(self, "do_erase", erase_stroke_indexes)
+			ur.add_undo_method(self, "undo_erase", erased_strokes)
+			ur.commit_action()
+
 	queue_redraw()
 
 func _draw():
@@ -123,34 +165,46 @@ func _draw():
 				0, TAU, 32, Color.INDIAN_RED, 3, true)
 	
 	elif GodotAnnotate.selected_canvas == self:
-		_annotate_mode.draw_cursor(self,
-				get_local_mouse_position(),
+		annotate_mode.draw_cursor(get_local_mouse_position(),
 				brush_size / 100 * max_brush_size,
-				brush_color)
+				brush_color,
+				self)
 	
 	#if GodotAnnotate.poly_in_progress:
 		#draw_dashed_line(_active_stroke.points[-1], get_local_mouse_position(), brush_color, brush_size * 0.125, brush_size * 0.25)
 	#elif GodotAnnotate.selected_canvas == self:
 		#draw_circle(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, brush_color)
 
+
 func on_editor_input(event: InputEvent) -> bool:
 
 	if _active_stroke:
 		
-		if _annotate_mode.should_end_stroke(event):
+		if annotate_mode.should_end_stroke(event):
 			
-			_annotate_mode.on_end_stroke(get_local_mouse_position(), _active_stroke, self)
+			annotate_mode.on_end_stroke(get_local_mouse_position(), _active_stroke, self)
 			
 			var scene = PackedScene.new()
 			scene.pack(_active_stroke)
 			
 			_strokes.append(scene)
 			
-			_active_stroke = null
 			
+			# add stroke creation to undo / redo history.
+
+			var ur := GodotAnnotate.undo_redo
+
+			ur.create_action("GodotAnnotateNewStroke")
+			ur.add_do_method(self, "redo_stroke", scene)
+			ur.add_undo_method(self, "undo_stroke", len(_strokes) - 1)
+			# Stroke was already added at this point, so we do not want to execute redo_stroke.
+			ur.commit_action(false)
+
+			_active_stroke = null
+
 			return true
 			
-		return _annotate_mode.on_annotate_input(event)
+		return annotate_mode.on_annotate_input(event)
 	
 	elif event is InputEventMouseButton:
 		# erasing
@@ -175,9 +229,12 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			return true
 	
-	if _annotate_mode.should_begin_stroke(event):
-		_active_stroke = _annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, self)
+	# Check if the current annotate mode wants to begin a new stroke,
+	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
+	if annotate_mode.should_begin_stroke(event):
+		_active_stroke = annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, self)
 		add_child(_active_stroke)
+		
 		return true
 	
 	return false

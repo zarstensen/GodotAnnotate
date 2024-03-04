@@ -1,4 +1,3 @@
-class_name AnnotateCanvasCaptureViewport
 extends SubViewport
 ##
 ## Class responsible for saving an image version of a AnnotateCanvas node to disk.
