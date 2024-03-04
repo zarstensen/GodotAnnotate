@@ -25,7 +25,7 @@ func _enter_tree():
 	
 	# initialize variables
 	
-	canvas_toolbar = preload("res://addons/GodotAnnotate/res/annotate_toolbar.tscn").instantiate()
+	canvas_toolbar = preload("res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.tscn").instantiate()
 	canvas_toolbar.visible = false
 	
 	undo_redo = get_undo_redo()

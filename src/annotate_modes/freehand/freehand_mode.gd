@@ -2,6 +2,7 @@
 extends GDA_AnnotateMode
 ###
 ### AnnotateMode implementation for the Freehand mode.
+### Draws a stroke which follows a dragging mouse.
 ###
 
 const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd")
@@ -12,7 +13,7 @@ func get_icon_path() -> String:
 func get_mode_name() -> String:
 	return "Freehand"
 
-func draw_cursor(canvas: CanvasItem, pos: Vector2, brush_diameter: float, brush_color: Color) -> void:
+func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
 	canvas.draw_circle(pos, brush_diameter, brush_color)
 
 func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> Node2D:
@@ -28,7 +29,7 @@ func on_end_stroke(pos: Vector2, stroke: Node2D, canvas: AnnotateCanvas) -> void
 func on_annotate_process(delta: float, stroke: Node2D, canvas: AnnotateCanvas) -> void:
 	var freehand_stroke = stroke as FreehandStroke
 	freehand_stroke.try_annotate_point(canvas.get_local_mouse_position(), 0.25, false)
-	
+
 func should_begin_stroke(event: InputEvent) -> bool:
 	if not event is InputEventMouseButton:
 		return false
