@@ -12,8 +12,11 @@ func _ready() -> void:
 			)
 
 	canvas_image_dialog.file_selected.connect(func(path: String) -> void:
-			canvas._on_capture_canvas(path, upscale_factor_dialog.get_node("UpscaleFactorInput").value)
+			canvas.capture_canvas(path, upscale_factor_dialog.get_node("UpscaleFactorInput").value)
 			)
+
+	upscale_factor_dialog.set_unparent_when_invisible(true)
+	canvas_image_dialog.set_unparent_when_invisible(true)
 			
 	# setup annotate mode dropdown
 	
@@ -23,6 +26,13 @@ func _ready() -> void:
 		$AnnotateMode.add_icon_item(load(annotate_mode.get_icon_path()), annotate_mode.get_mode_name())
 	
 	$AnnotateMode.text = ""
+
+func _notification(what: int) -> void:
+	# popup scenes are not removed when this node is freed, since unparent when invisible is set to true for them,
+	# so we need to do this manually upon toolbar node deletion.
+	if(what == NOTIFICATION_PREDELETE):
+		upscale_factor_dialog.queue_free()
+		canvas_image_dialog.queue_free()
 
 # Called when a new annotate canvas node is selected.
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:

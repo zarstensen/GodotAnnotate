@@ -1,74 +1,23 @@
-[gd_scene load_steps=10 format=3 uid="uid://dij6pnn4pwn0a"]
+[gd_scene load_steps=6 format=3 uid="uid://dij6pnn4pwn0a"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_canvas.gd" id="1_iypqd"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd" id="2_krvbk"]
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd" id="3_hajy1"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd" id="3_54e8w"]
 
-[sub_resource type="Resource" id="Resource_7l0ks"]
+[sub_resource type="Resource" id="Resource_3p0nr"]
 script = ExtResource("2_krvbk")
+min_point_distance = 0.25
 
-[sub_resource type="PackedScene" id="PackedScene_iod2i"]
+[sub_resource type="PackedScene" id="PackedScene_xwnju"]
 _bundled = {
 "conn_count": 0,
 "conns": PackedInt32Array(),
 "editable_instances": [],
-"names": PackedStringArray("@Line2D@18047", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
+"names": PackedStringArray("@Line2D@19463", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
 "node_count": 1,
 "node_paths": [],
 "nodes": PackedInt32Array(-1, -1, 10, 0, -1, 9, 1, 0, 2, 1, 3, 2, 4, 3, 5, 3, 6, 3, 7, 4, 8, 5, 9, 6, 0),
-"variants": [PackedVector2Array(151.301, 220.474, 152.245, 233.689, 156.021, 246.903, 161.684, 262.005, 167.347, 273.331, 173.954, 284.658, 185.281, 301.648, 194.719, 312.03, 205.102, 321.469, 217.372, 330.908, 230.587, 338.459, 244.745, 346.01, 259.847, 353.561, 278.724, 361.112, 300.433, 366.775, 325.918, 372.438, 345.739, 375.27, 364.617, 378.101, 378.775, 379.045, 395.765, 379.989, 425.025, 380.933, 440.127, 380.933, 459.004, 380.933, 474.106, 379.045, 504.31, 374.326, 516.581, 370.55, 531.683, 366.775, 549.616, 361.112, 570.381, 353.561, 582.652, 347.897, 597.754, 339.403, 604.362, 334.684), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_hajy1"), Rect2(0, 0, 629.362, 405.933)],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_eupbh"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("@Line2D@18048", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
-"node_count": 1,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 10, 0, -1, 9, 1, 0, 2, 1, 3, 2, 4, 3, 5, 3, 6, 3, 7, 4, 8, 5, 9, 6, 0),
-"variants": [PackedVector2Array(250.408, 146.852, 250.409, 146.853), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_hajy1"), Rect2(0, 0, 275.409, 171.853)],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_jk3qc"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("@Line2D@18049", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
-"node_count": 1,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 10, 0, -1, 9, 1, 0, 2, 1, 3, 2, 4, 3, 5, 3, 6, 3, 7, 4, 8, 5, 9, 6, 0),
-"variants": [PackedVector2Array(491.096, 193.102, 491.097, 193.103), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_hajy1"), Rect2(0, 0, 516.097, 218.103)],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_ba135"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("@Line2D@18050", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
-"node_count": 1,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 10, 0, -1, 9, 1, 0, 2, 1, 3, 2, 4, 3, 5, 3, 6, 3, 7, 4, 8, 5, 9, 6, 0),
-"variants": [PackedVector2Array(227.755, 45.8576, 244.745, 52.4647, 263.622, 56.2402, 281.556, 59.0718, 298.546, 61.9035, 323.086, 65.679, 343.852, 69.4545, 369.336, 73.2299, 404.259, 78.8932, 499.591, 93.9952, 517.524, 95.8829, 545.841, 99.6584, 568.494, 102.49, 592.091, 104.378, 623.238, 106.266, 707.243, 110.985, 725.177, 111.929, 728.009, 111.93), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_hajy1"), Rect2(0, 0, 753.009, 136.93)],
-"version": 3
-}
-
-[sub_resource type="PackedScene" id="PackedScene_xkuu1"]
-_bundled = {
-"conn_count": 0,
-"conns": PackedInt32Array(),
-"editable_instances": [],
-"names": PackedStringArray("@Line2D@18051", "points", "width", "default_color", "joint_mode", "begin_cap_mode", "end_cap_mode", "round_precision", "script", "boundary", "Line2D"),
-"node_count": 1,
-"node_paths": [],
-"nodes": PackedInt32Array(-1, -1, 10, 0, -1, 9, 1, 0, 2, 1, 3, 2, 4, 3, 5, 3, 6, 3, 7, 4, 8, 5, 9, 6, 0),
-"variants": [PackedVector2Array(387.27, 41.1382, 390.101, 26.0363, 393.877, 11.8781, 397.652, -6.99936, 401.428, -21.1575, 405.203, -35.3156, 419.361, -42.8666, 436.351, -40.035, 459.004, -38.1472, 486.377, -37.2033, 509.973, -38.1472, 524.132, -39.0911, 539.233, -40.035, 566.606, -41.9227, 587.371, -42.8666, 603.417, -43.8105, 608.136, -31.5401, 602.473, -18.3259, 595.866, -3.22386, 588.315, 13.7659, 581.708, 28.8679, 576.045, 42.0821, 569.437, 54.3525, 567.551, 65.68), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_hajy1"), Rect2(0, -68.8105, 633.136, 159.49)],
+"variants": [PackedVector2Array(282.598, 147.731, 314.417, 144.195, 333.509, 144.195, 354.722, 144.902, 373.107, 147.731, 388.664, 151.974, 406.341, 159.752, 421.19, 169.651, 431.797, 180.258, 440.282, 191.572, 447.353, 206.421, 453.01, 219.856, 457.253, 234.705, 460.788, 251.676, 462.91, 267.232, 464.324, 280.667, 464.324, 294.102, 465.031, 306.83, 465.738, 321.679, 466.445, 342.892, 467.152, 364.813, 465.738, 379.662, 458.667, 393.097, 440.989, 400.168, 417.655, 400.875, 397.856, 398.754, 379.471, 395.218, 357.551, 390.269, 341.995, 386.733, 328.559, 383.905, 313.003, 381.076, 298.861, 378.248, 285.426, 375.419, 265.627, 369.762, 245.828, 359.156, 229.565, 342.892), 50.0, Color(0.552941, 0.647059, 0.952941, 1), 2, 32, ExtResource("3_54e8w"), Rect2(204.565, 97.7309, 287.588, 328.144)],
 "version": 3
 }
 
@@ -76,5 +25,5 @@ _bundled = {
 
 [node name="AnnotateCanvas" type="Node2D" parent="."]
 script = ExtResource("1_iypqd")
-annotate_mode = SubResource("Resource_7l0ks")
-_strokes = Array[PackedScene]([SubResource("PackedScene_iod2i"), SubResource("PackedScene_eupbh"), SubResource("PackedScene_jk3qc"), SubResource("PackedScene_ba135"), SubResource("PackedScene_xkuu1")])
+annotate_mode = SubResource("Resource_3p0nr")
+_strokes = Array[PackedScene]([SubResource("PackedScene_xwnju")])

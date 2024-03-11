@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cm7840dccia6w"
-path="res://.godot/imported/annotate_toolbar_icon.svg-228c589609ceae4c22f52b4d68eafd85.ctex"
+uid="uid://cfys5xqwj1gcd"
+path="res://.godot/imported/capture_canvas_toolbar_icon.svg-e9a3fbec2d8e3cb523321fae4eccb565.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/annotate_toolbar_icon.svg"
-dest_files=["res://.godot/imported/annotate_toolbar_icon.svg-228c589609ceae4c22f52b4d68eafd85.ctex"]
+source_file="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg"
+dest_files=["res://.godot/imported/capture_canvas_toolbar_icon.svg-e9a3fbec2d8e3cb523321fae4eccb565.ctex"]
 
 [params]
 
