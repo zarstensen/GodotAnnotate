@@ -52,4 +52,4 @@ func _on_toggle_annotate_button_toggled(toggled_on: bool) -> void:
 
 func _on_annotate_mode_item_selected(index: int) -> void:
 	$AnnotateMode.text = ""
-	canvas._annotate_mode = GodotAnnotate.annotate_modes[index]
+	canvas.annotate_mode = GodotAnnotate.annotate_modes[index]

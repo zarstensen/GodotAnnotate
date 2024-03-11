@@ -95,7 +95,7 @@ func _draw():
 
 	if _erasing:
 		draw_arc(get_local_mouse_position(),
-				brush_size / 100 * max_brush_size,
+				brush_size / 100 * max_brush_size / 2,
 				0, TAU, 32, Color.INDIAN_RED, 3, true)
 	
 	elif GodotAnnotate.selected_canvas == self:
@@ -161,7 +161,7 @@ func on_editor_input(event: InputEvent) -> bool:
 	# Check if the current annotate mode wants to begin a new stroke,
 	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
 	if annotate_mode.should_begin_stroke(event):
-		_active_stroke = annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, self)
+		_active_stroke = annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size / 100 * max_brush_size, brush_color, self)
 		add_child(_active_stroke)
 		
 		return true

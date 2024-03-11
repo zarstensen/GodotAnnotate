@@ -6,8 +6,6 @@ extends Resource
 ### All methods defined should be seen as virtual methods, which have no effect if not implemented.
 ###
 
-const Stroke := preload("res://addons/GodotAnnotate/src/stroke.gd")
-
 ## Returns the icon to be used to represent the AnnotateMode.
 func get_icon_path() -> String:
 	return ""

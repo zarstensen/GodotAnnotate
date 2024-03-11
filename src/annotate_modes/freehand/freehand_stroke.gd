@@ -14,8 +14,8 @@ var boundary: Rect2
 
 ## Construct a stroke line with the given stroke size and color.
 ## Its capping and joint mode are all set to round.
-func stroke_init(size: float, color: Color):
-	width = size
+func stroke_init(radius: float, color: Color):
+	width = radius
 	default_color = color
 	# TODO: should probably make this customisable in some way.
 	# not sure if this should be custom for each stroke, or just the canvas in general.
@@ -29,7 +29,7 @@ func stroke_init(size: float, color: Color):
 ## If the point is less than [param perc_min_point_dist], it will not be added,
 ## unless [param force] is set to true.
 func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool):
-	var size_vec = Vector2(width, width)
+	var size_vec = Vector2.ONE * width
 	
 	if points.size() <= 0:
 		boundary = Rect2(point - size_vec, size_vec)
@@ -60,19 +60,19 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 
 ## Checks if the given stroke line collides with a circle centered at [param brush center]
 ## which has a diamater of [param brush_width]
-func collides_with_circle(brush_center: Vector2, brush_width: float) -> bool:
-	var nearest_x := max(boundary.position.x, min(brush_center.x, boundary.end.x))
-	var nearest_y := max(boundary.position.y, min(brush_center.y, boundary.end.y))
+func collides_with_circle(center: Vector2, diameter: float) -> bool:
+	var nearest_x := max(boundary.position.x, min(center.x, boundary.end.x))
+	var nearest_y := max(boundary.position.y, min(center.y, boundary.end.y))
 	# check if erase circle overlaps with stroke boundary
 	var nearest_boundary_point := Vector2(nearest_x, nearest_y)
-	
-	if nearest_boundary_point.distance_squared_to(brush_center) > brush_width ** 2:
+
+	if nearest_boundary_point.distance_squared_to(center) > (diameter / 2) ** 2:
 		return false
 
 	# check if erase circle overlaps with any points in stroke line,
 	# only if above is true to reduce number of distance checks.
 	for stroke_points in points:
-		if stroke_points.distance_squared_to(brush_center) < (width / 2 + brush_width) ** 2:
+		if stroke_points.distance_squared_to(center) < (width / 2 + diameter / 2) ** 2:
 			return true
 
 	return false

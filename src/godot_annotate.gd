@@ -14,6 +14,7 @@ static var canvas_toolbar: Control
 ## List of scripts to load into the annotate_modes list.
 static var annotate_mode_scripts: Array[String] = [
 	"res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd",
+	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_mode.gd",
 ]
 
 static var annotate_modes: Array[GDA_AnnotateMode] = []
