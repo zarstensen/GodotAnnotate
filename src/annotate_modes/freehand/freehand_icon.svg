@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="16"
+   viewBox="0 0 16 16"
+   width="16"
+   version="1.1"
+   id="svg587"
+   sodipodi:docname="curve_icon.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs591" />
+  <sodipodi:namedview
+     id="namedview589"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="32.093751"
+     inkscape:cx="1.7760467"
+     inkscape:cy="5.8422588"
+     inkscape:window-width="1920"
+     inkscape:window-height="991"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg587" />
+  <path
+     d="m 12.53286,13.6283 c 0,0 -4.8783407,0.590642 -4.4759978,-1.276082 C 8.4592051,10.485493 12.730762,7.43919 10.377694,7.3701018 8.0246268,7.301014 2.3253083,8.6043173 3.6706812,5.382315 4.2854706,3.9099685 7.2674133,2.2820583 7.2674133,2.2820583"
+     fill="none"
+     stroke="#8da5f3"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2.56412"
+     id="path710"
+     sodipodi:nodetypes="czzsc" />
+</svg>

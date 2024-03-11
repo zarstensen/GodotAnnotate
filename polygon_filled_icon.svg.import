@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0c04klyd6mgf"
-path="res://.godot/imported/annotate_layer.svg-6785b3ede543715b4d920be19a30a9b4.ctex"
+uid="uid://b2vcqfhfarltg"
+path="res://.godot/imported/polygon_filled_icon.svg-1c468d61cc04524870af509441ba3b58.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/annotate_layer.svg"
-dest_files=["res://.godot/imported/annotate_layer.svg-6785b3ede543715b4d920be19a30a9b4.ctex"]
+source_file="res://addons/GodotAnnotate/polygon_filled_icon.svg"
+dest_files=["res://.godot/imported/polygon_filled_icon.svg-1c468d61cc04524870af509441ba3b58.ctex"]
 
 [params]
 

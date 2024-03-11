@@ -1,0 +1,78 @@
+[gd_scene load_steps=11 format=3 uid="uid://dqw1ri5u5knlv"]
+
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.gd" id="1_a6mhs"]
+[ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar_icon.svg" id="2_f7hln"]
+[ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg" id="3_eol15"]
+[ext_resource type="Texture2D" uid="uid://cfys5xqwj1gcd" path="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg" id="3_h3lcp"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_mmu8r"]
+device = -1
+keycode = 65
+unicode = 97
+
+[sub_resource type="Shortcut" id="Shortcut_iqfxe"]
+events = [SubResource("InputEventKey_mmu8r")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_i472w"]
+device = -1
+alt_pressed = true
+shift_pressed = true
+keycode = 83
+unicode = 115
+
+[sub_resource type="Shortcut" id="Shortcut_ug4eo"]
+events = [SubResource("InputEventKey_i472w")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_m3ndm"]
+device = -1
+shift_pressed = true
+keycode = 65
+unicode = 65
+
+[sub_resource type="Shortcut" id="Shortcut_b3sh8"]
+events = [SubResource("InputEventKey_m3ndm")]
+
+[node name="AnnotateToolbar" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_a6mhs")
+metadata/_edit_use_anchors_ = true
+
+[node name="ToggleAnnotateButton" type="Button" parent="."]
+layout_mode = 2
+tooltip_text = "Toggle Annotate Mode"
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+shortcut = SubResource("Shortcut_iqfxe")
+icon = ExtResource("2_f7hln")
+
+[node name="CanvasToImage" type="Button" parent="."]
+layout_mode = 2
+tooltip_text = "Capture Canvas"
+theme_type_variation = &"FlatButton"
+shortcut = SubResource("Shortcut_ug4eo")
+icon = ExtResource("3_h3lcp")
+
+[node name="AnnotateMode" type="OptionButton" parent="."]
+layout_mode = 2
+tooltip_text = "Annotate Mode List"
+theme_type_variation = &"FlatButton"
+shortcut = SubResource("Shortcut_b3sh8")
+flat = true
+item_count = 1
+selected = 0
+fit_to_longest_item = false
+allow_reselect = true
+popup/item_0/text = "Freehand"
+popup/item_0/icon = ExtResource("3_eol15")
+popup/item_0/id = 0
+
+[connection signal="toggled" from="ToggleAnnotateButton" to="." method="_on_toggle_annotate_button_toggled"]
+[connection signal="pressed" from="CanvasToImage" to="." method="_on_canvas_to_image_pressed"]
+[connection signal="item_selected" from="AnnotateMode" to="." method="_on_annotate_mode_item_selected"]
+[connection signal="item_selected" from="AnnotateMode" to="AnnotateMode" method="_on_item_selected"]

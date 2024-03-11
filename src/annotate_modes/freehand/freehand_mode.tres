@@ -1,0 +1,6 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://b0cjjjmijlcur"]
+
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd" id="1_oisum"]
+
+[resource]
+script = ExtResource("1_oisum")

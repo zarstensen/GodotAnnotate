@@ -1,9 +1,13 @@
 @tool
+@icon("res://addons/GodotAnnotate/annotate_layer_icon.svg")
 class_name AnnotateCanvas
 extends Node2D
 ##
-## Node allowing user to paint and view [AnnotateStroke]s on a [AnnotateLayer] in the 2D editor.
+## Node allowing user to paint and view [AnnotateStroke]s in the 2D editor.
 ##
+
+## Imports
+const AnnotateCanvasCaptureViewport = preload("res://addons/GodotAnnotate/src/annotate_canvas_capture_viewport.gd")
 
 ## Percentage size increase to stroke size caused by shift + scroll.
 const SIZE_SCROLL_PERC: float = 0.1
@@ -37,111 +41,226 @@ var show_when_running := false
 @export
 var lock_canvas := false
 
-## Percentage of brush radius must be between a new point inserted with [method insert_point],
-## for it to be added to the [member points] array.
-@export_range(0, 2, 0.05)
-var min_point_distance = 0.25
-
-## Current [AnnotateLayer] resource which is painted on when user annotates.
 @export
-var layer_resource: AnnotateLayer = AnnotateLayer.new()
-
+## Annotate mode currently being used on the canvas.
+var annotate_mode: GDA_AnnotateMode = GodotAnnotate.annotate_modes[0]
 ## Stroke currently being painted by the user.
-var _active_stroke: AnnotateStrokeLine
+var _active_stroke: Node2D
 ## [code] true [/code] if user is currently trying to erase strokes.
 var _erasing := false
 
-## Array of [AnnotateStrokeLine]s, which all visually represents all of the [AnnotateStroke] resources
-## in the layer_resource array.
-var _stroke_lines: Array[AnnotateStrokeLine] = [ ]
+@export
+## Array of Strokes currently stored in the canvas.
+var _strokes: Array[PackedScene] = [ ]
 
-func get_canvas_area() -> Rect2:
-	
-	if layer_resource.strokes.size() <= 0:
-		return Rect2()
-	
-	var canvas_area := layer_resource.strokes[0].boundary
-	
-	for stroke in layer_resource.strokes.slice(1):
-		canvas_area = canvas_area.merge(stroke.boundary)
-		
-	return canvas_area
+## Set of instantiated stroke Node2Ds from the _strokes array.
+var _stroke_nodes: Dictionary = { }
 
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
-	
+
 	# restore lines from previously saved state.
-	
-	for stroke in layer_resource.strokes:
-		var line := AnnotateStrokeLine.from_stroke(stroke)
-		add_child(line)
-		_stroke_lines.append(line)
-
-func _on_begin_stroke():
-	_active_stroke = AnnotateStrokeLine.new(brush_size / 100 * max_brush_size, brush_color)
-	add_child(_active_stroke)
-	_stroke_lines.append(_active_stroke)
-	# instantly insert a point, to avoid the user having to drag the cursor,
-	# in order to insert a point.
-	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
-
-func _on_end_stroke():
-	if !GodotAnnotate.poly_in_progress:
-		# force insert final point, as the stroke should end where the user stopped the stroke,
-		# even if the final point is within AnnotateStroke.MIN_POINT_DISTANCE.
-		_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, true)
-		
-	layer_resource.strokes.append(_active_stroke.to_stroke())
-	_active_stroke = null
-	
-func _on_begin_erase():
-	_erasing = true
-
-func _on_end_erase():
-	_erasing = false
-
-func _on_draw_poly_stroke():
-	_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, false)
-
-func _on_stroke_resize(direction: float):
-	brush_size *= 1 + direction * SIZE_SCROLL_PERC
-	brush_size = min(100, max(brush_size, 1))
-
-func _on_capture_canvas(file: String, scale: float):
-	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
+	_instantiate_strokes(_strokes)
 
 func _process(delta):
-	if _active_stroke && !GodotAnnotate.poly_in_progress:
-		_active_stroke.try_annotate_point(get_local_mouse_position(), min_point_distance, false)
+	if _active_stroke:
+		annotate_mode.on_annotate_process(delta, _active_stroke, self)
 		
 	if _erasing:
 		var erase_stroke_indexes: Array[int] = []
+		var erased_strokes: Dictionary = {}
 		
-		for i in range(_stroke_lines.size()):
-			if _stroke_lines[i].collides_with(get_local_mouse_position(), brush_size / 100 * max_brush_size):
+		for i in range(get_child_count()):
+			if get_child(i).collides_with_circle(get_local_mouse_position(), brush_size / 100 * max_brush_size):
 				erase_stroke_indexes.append(i)
-		
-		for erase_count in range(erase_stroke_indexes.size()):
-			# subtract the target index by the amount of strokes deleted,
-			# since these strokes no longer exist in the array.
-			
-			var remove_index := erase_stroke_indexes[erase_count] - erase_count
-			
-			layer_resource.strokes.remove_at(remove_index)
-			_stroke_lines[remove_index].queue_free()
-			_stroke_lines.remove_at(remove_index)
-		
+				erased_strokes[i] = _strokes[i]
+
+		# Only create an undoable erase action, if something is actually erased.
+		if len(erase_stroke_indexes) > 0:
+			var ur := GodotAnnotate.undo_redo
+
+			ur.create_action("GodotAnnotateEraseStroke")
+			ur.add_do_method(self, "_do_erase", erase_stroke_indexes)
+			ur.add_undo_method(self, "_undo_erase", erased_strokes)
+			ur.commit_action()
+
 	queue_redraw()
 
+
 func _draw():
+	# handles drawing of the cursor preview for the current stroke mode.
 	if lock_canvas:
 		return
-	
-	if GodotAnnotate.poly_in_progress:
-		draw_dashed_line(_active_stroke.points[-1], get_local_mouse_position(), brush_color, brush_size * 0.125, brush_size * 0.25)
-	
+
 	if _erasing:
-		draw_arc(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, 0, TAU, 32, Color.INDIAN_RED, 3, true)
+		draw_arc(get_local_mouse_position(),
+				brush_size / 100 * max_brush_size,
+				0, TAU, 32, Color.INDIAN_RED, 3, true)
+	
 	elif GodotAnnotate.selected_canvas == self:
-		draw_circle(get_local_mouse_position(), brush_size / 100 * max_brush_size / 2, brush_color)
+		annotate_mode.draw_cursor(get_local_mouse_position(),
+				brush_size / 100 * max_brush_size,
+				brush_color,
+				self)
+
+
+func on_editor_input(event: InputEvent) -> bool:
+
+	if _active_stroke:
+		
+		if annotate_mode.should_end_stroke(event):
+			
+			annotate_mode.on_end_stroke(get_local_mouse_position(), _active_stroke, self)
+			
+			var scene = PackedScene.new()
+			scene.pack(_active_stroke)
+			
+			_strokes.append(scene)
+			
+			
+			# add stroke creation to undo / redo history.
+
+			var ur := GodotAnnotate.undo_redo
+
+			ur.create_action("GodotAnnotateNewStroke")
+			ur.add_do_method(self, "_redo_stroke", scene)
+			ur.add_undo_method(self, "_undo_stroke", len(_strokes) - 1)
+			# Stroke was already added at this point, so we do not want to execute redo_stroke.
+			ur.commit_action(false)
+
+			_active_stroke = null
+
+			return true
+			
+		return annotate_mode.on_annotate_input(event)
+	
+	elif event is InputEventMouseButton:
+		# erasing
+		if event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+			_erasing = true
+			return true
+		elif event.button_index == MOUSE_BUTTON_RIGHT && not event.pressed:
+			_erasing = false
+			return true
+		
+		# stroke size (shift + scroll)
+		# cannot use ctrl or alt, since they control view position and zoom,
+		# and cannot be prevented from being forwarded by returning true.
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && Input.is_key_pressed(KEY_SHIFT):
+			if event.pressed:
+				resize_stroke(-1)
+			
+			return true
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP && Input.is_key_pressed(KEY_SHIFT):
+			if event.pressed:
+				resize_stroke(1)
+			
+			return true
+	
+	# Check if the current annotate mode wants to begin a new stroke,
+	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
+	if annotate_mode.should_begin_stroke(event):
+		_active_stroke = annotate_mode.on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, self)
+		add_child(_active_stroke)
+		
+		return true
+	
+	return false
+
+## Converts the current canvas into an image file and saves it to disk
+func capture_canvas(file: String, scale: float) -> void:
+	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
+
+func resize_stroke(direction: float):
+	brush_size *= 1 + direction * SIZE_SCROLL_PERC
+	brush_size = min(100, max(brush_size, 1))
+
+## Return the smallest Rect2, which contains all the strokes currently stored in the canvas
+func get_canvas_area() -> Rect2:
+	var boundaries: Array[Rect2] = []
+	
+	boundaries.assign(get_children()
+		.filter(func(s): return s in _stroke_nodes)
+		.map(func(s): return s.boundary))
+
+	return _merge_rects(boundaries)
+
+## Get an array of all strokes currently saved in the canvas.
+func get_strokes() -> Array[PackedScene]:
+	return _strokes
+
+## Adds the passed strokes to the canvas.
+func import_strokes(new_strokes: Array[PackedScene]):
+	_strokes += new_strokes
+
+	_instantiate_strokes(new_strokes)
+
+func _instantiate_strokes(strokes: Array[PackedScene]) -> void:
+	for stroke in strokes:
+		var stroke_node := stroke.instantiate()
+		add_child(stroke_node)
+		_stroke_nodes[stroke_node] = null
+
+# stroke_nodes must only contains nodes which have been added via. _instantiate_strokes.
+func _remove_stroke_nodes(stroke_nodes: Array[Node2D]) -> void:
+	for stroke_node in stroke_nodes:
+		_stroke_nodes.erase(stroke_node)
+		stroke_node.queue_free()
+
+func _undo_stroke(stroke_index: int):
+	_remove_stroke_nodes([ get_child(stroke_index) as Node2D ])
+	_strokes.remove_at(stroke_index)
+
+func _redo_stroke(stroke_scene: PackedScene):
+	_instantiate_strokes([ stroke_scene ])
+	_strokes.append(stroke_scene)
+
+## Erase all strokes at the passed indexes.
+func _do_erase(erase_stroke_indexes: Array[int]):
+
+	var erase_nodes: Array[Node2D] = [ ]
+
+	for erase_count in range(erase_stroke_indexes.size()):
+		
+		erase_nodes.append(get_child(erase_stroke_indexes[erase_count]))
+
+		# subtract the target index by the amount of strokes deleted,
+		# since these strokes no longer exist in the array.
+		
+		var remove_index := erase_stroke_indexes[erase_count] - erase_count
+		_strokes.remove_at(remove_index)
+
+	_remove_stroke_nodes(erase_nodes)
+
+## Read all the passed strokes at the index of their key value.
+func _undo_erase(erased_strokes: Dictionary):
+
+	var indexes := erased_strokes.keys()
+	indexes.sort()
+
+	for insert_index in indexes:
+
+		var stroke_scene = erased_strokes[insert_index] as PackedScene
+
+		_strokes.insert(insert_index, stroke_scene)
+		
+		var stroke = stroke_scene.instantiate()
+		add_child(stroke)
+		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
+		move_child(stroke, insert_index)
+		_stroke_nodes[stroke] = null
+
+
+## Return the smallest possible Rect2 Which contains all the passed Rect2's.
+func _merge_rects(rects: Array[Rect2]) -> Rect2:
+	
+	if len(rects) <= 0:
+		return Rect2()
+	
+	var final_rect = rects[0]
+
+	for rect in rects.slice(1):
+		final_rect = final_rect.merge(rect)
+		
+	return final_rect
