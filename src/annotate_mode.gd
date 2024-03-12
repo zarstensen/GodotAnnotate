@@ -21,16 +21,16 @@ func draw_cursor(pos: Vector2, brush_size: float, brush_color: Color, canvas: Ca
 ## Begin a stroke with the given size and color, at the given position.
 ## Should return the new stroke.
 ## it will be added to the AnnotateCanvas node and will be visible to the user during annotation.
-func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> Node2D:
-	return Node2D.new()
+func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
+	return GDA_Stroke.new()
 
 ## End a stroke with the final point being drawn at the given parameters.
-func on_end_stroke(pos: Vector2, stroke: Node2D, canvas: AnnotateCanvas) -> void:
+func on_end_stroke(pos: Vector2, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	pass
 
 ## Called repeadetly during stroke annotation, similar to _process.
 ## (most likely called on every _process of the parent AnnotateCanvas, but this is not guaranteed)
-func on_annotate_process(delta: float, stroke: Node2D, canvas: AnnotateCanvas) -> void:
+func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	pass
 
 ## Called any time the AnnotateMode needs to handle an InputEvent during a stroke annotation.

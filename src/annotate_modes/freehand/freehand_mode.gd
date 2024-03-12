@@ -6,6 +6,7 @@ extends GDA_AnnotateMode
 ###
 
 const ClickToDrag := preload("res://addons/GodotAnnotate/src/annotate_modes/click_to_drag_mode.gd")
+const FreehandStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.tscn")
 const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd")
 
 ## Percentage of brush radius must be between a new point inserted with [method insert_point],
@@ -22,17 +23,17 @@ func get_mode_name() -> String:
 func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
 	canvas.draw_circle(pos, brush_diameter / 2, brush_color)
 
-func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> Node2D:
-	var stroke = FreehandStroke.new()
+func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
+	var stroke: FreehandStroke = FreehandStrokeScene.instantiate()
 	stroke.stroke_init(size, color)
 	stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, true)
 	return stroke
 
-func on_end_stroke(pos: Vector2, stroke: Node2D, canvas: AnnotateCanvas) -> void:
+func on_end_stroke(pos: Vector2, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	var freehand_stroke = stroke as FreehandStroke
 	freehand_stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, true)
 
-func on_annotate_process(delta: float, stroke: Node2D, canvas: AnnotateCanvas) -> void:
+func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	var freehand_stroke = stroke as FreehandStroke
 	freehand_stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, false)
 

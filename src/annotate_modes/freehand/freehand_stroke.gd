@@ -1,5 +1,5 @@
 @tool
-extends Line2D
+extends GDA_Stroke
 ##
 ## Freehand stroke returned by the FreehandMode annotate mode.
 ##
@@ -9,31 +9,24 @@ const OVERLAP_INCR_PERC = 0.0001
 ## Minimum increment of point, if point overlaps with another point.
 const MIN_FLOAT_TRES_VAL = 0.001
 
-@export
-var boundary: Rect2
-
 ## Construct a stroke line with the given stroke size and color.
 ## Its capping and joint mode are all set to round.
 func stroke_init(radius: float, color: Color):
-	width = radius
-	default_color = color
-	# TODO: should probably make this customisable in some way.
-	# not sure if this should be custom for each stroke, or just the canvas in general.
-	round_precision = 32
-
-	begin_cap_mode = Line2D.LINE_CAP_ROUND
-	end_cap_mode = Line2D.LINE_CAP_ROUND
-	joint_mode = Line2D.LINE_JOINT_ROUND
+	%StrokeLine.width = radius
+	$StrokeLine.default_color = color
 
 ## Attempts to insert the given point at the end of the stroke line.
 ## If the point is less than [param perc_min_point_dist], it will not be added,
 ## unless [param force] is set to true.
 func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool):
-	var size_vec = Vector2.ONE * width
-	
+	var size_vec = Vector2.ONE * %StrokeLine.width
+
+	var points = %StrokeLine.points
+
 	if points.size() <= 0:
-		boundary = Rect2(point - size_vec, size_vec)
-	elif points[points.size() - 1].distance_to(point) < perc_min_point_dist * width:
+		position = point - size_vec / 2
+		size = size_vec
+	elif points[points.size() - 1].distance_to(point) < perc_min_point_dist * %StrokeLine.width:
 		
 		if force:
 			# if two points overlap exactly, then their end caps are not drawn.
@@ -52,27 +45,25 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 			# ignore points which are too close to each other, to reduce memory usage.
 			return
 
+	# 
+
+	# var stroke_global_pos: Vector2 = %StrokeLine.global_position
+
 	for dir in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
-		boundary = boundary.expand(point + size_vec * dir / 2)
+		var new_boundary := get_rect().expand(point + size_vec * dir / 2)
+		position = new_boundary.position
+		size = new_boundary.size
 	
-	add_point(point)
+	%StrokeLine.global_position = Vector2.ZERO
+
+	%StrokeLine.add_point(point)
+
 	return point
 
-## Checks if the given stroke line collides with a circle centered at [param brush center]
-## which has a diamater of [param brush_width]
-func collides_with_circle(center: Vector2, diameter: float) -> bool:
-	var nearest_x := max(boundary.position.x, min(center.x, boundary.end.x))
-	var nearest_y := max(boundary.position.y, min(center.y, boundary.end.y))
-	# check if erase circle overlaps with stroke boundary
-	var nearest_boundary_point := Vector2(nearest_x, nearest_y)
-
-	if nearest_boundary_point.distance_squared_to(center) > (diameter / 2) ** 2:
-		return false
-
-	# check if erase circle overlaps with any points in stroke line,
-	# only if above is true to reduce number of distance checks.
-	for stroke_points in points:
-		if stroke_points.distance_squared_to(center) < (width / 2 + diameter / 2) ** 2:
+func _collides_with_circle_impl(center: Vector2, diameter: float) -> bool:
+	# check if erase circle overlaps with any points in stroke line
+	for stroke_points in %StrokeLine.points:
+		if stroke_points.distance_squared_to(center) < (%StrokeLine.width / 2 + diameter / 2) ** 2:
 			return true
 
 	return false
