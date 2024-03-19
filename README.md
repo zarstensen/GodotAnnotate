@@ -1,11 +1,11 @@
 <div align="center">
   <h1 align="center">Godot Annotate</h1>
-  <img src=annotate_layer.svg alt="Icon" width="200" height="200"/>
+  <img src=annotate_layer_icon.svg alt="Icon" width="200" height="200"/>
 </div>
 
 [![Godot Assets](https://img.shields.io/badge/Godot_Asset_Library-blue)](https://godotengine.org/asset-library/asset/2432)
 
-This is a [Godot](https://godotengine.org/) plugin which allows one to make planning  annotations and sketches directly in the 2D editor, without affecting runtime visuals, using a custom 'AnnotateCanvas' node.
+This is a [Godot](https://godotengine.org/) plugin which allows one to make planning  annotations and sketches directly in the 2D editor, without affecting runtime visuals, using a custom ![Node Icon](annotate_layer_icon.svg) 'AnnotateCanvas'  node.
 
 - [Features](#features)
   - [Annotate](#annotate)
