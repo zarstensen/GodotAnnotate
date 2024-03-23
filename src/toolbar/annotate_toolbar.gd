@@ -38,8 +38,8 @@ func _notification(what: int) -> void:
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	canvas = new_canvas
 	$ToggleAnnotateButton.set_pressed_no_signal(not canvas.lock_canvas)
-	
-	# TODO: annotate mode
+	$AnnotateMode.selected = canvas.annotate_mode_index
+	$AnnotateMode.text = ""
 
 
 func _on_canvas_to_image_pressed() -> void:
@@ -52,4 +52,4 @@ func _on_toggle_annotate_button_toggled(toggled_on: bool) -> void:
 
 func _on_annotate_mode_item_selected(index: int) -> void:
 	$AnnotateMode.text = ""
-	canvas.annotate_mode = GodotAnnotate.annotate_modes[index]
+	canvas.annotate_mode_index = index

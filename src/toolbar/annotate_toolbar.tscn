@@ -1,9 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=13 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.gd" id="1_a6mhs"]
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar_icon.svg" id="2_f7hln"]
 [ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg" id="3_eol15"]
 [ext_resource type="Texture2D" uid="uid://cfys5xqwj1gcd" path="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg" id="3_h3lcp"]
+[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/no_fill/rectangle_no_fill_icon.svg" id="5_2vv6t"]
+[ext_resource type="Texture2D" uid="uid://c565rg2exj4pp" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/fill/rectangle_fill_icon.svg" id="6_bauny"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_mmu8r"]
 device = -1
@@ -64,13 +66,19 @@ tooltip_text = "Annotate Mode List"
 theme_type_variation = &"FlatButton"
 shortcut = SubResource("Shortcut_b3sh8")
 flat = true
-item_count = 1
+item_count = 3
 selected = 0
 fit_to_longest_item = false
 allow_reselect = true
 popup/item_0/text = "Freehand"
 popup/item_0/icon = ExtResource("3_eol15")
 popup/item_0/id = 0
+popup/item_1/text = "Rectangle"
+popup/item_1/icon = ExtResource("5_2vv6t")
+popup/item_1/id = 1
+popup/item_2/text = "Rectangle Filled"
+popup/item_2/icon = ExtResource("6_bauny")
+popup/item_2/id = 2
 
 [connection signal="toggled" from="ToggleAnnotateButton" to="." method="_on_toggle_annotate_button_toggled"]
 [connection signal="pressed" from="CanvasToImage" to="." method="_on_canvas_to_image_pressed"]

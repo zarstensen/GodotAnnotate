@@ -25,17 +25,16 @@ func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas
 
 func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
 	var stroke: FreehandStroke = FreehandStrokeScene.instantiate()
-	stroke.stroke_init(size, color)
-	stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, true)
+	stroke.stroke_init(size, color, canvas.get_global_mouse_position())
 	return stroke
 
 func on_end_stroke(pos: Vector2, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	var freehand_stroke = stroke as FreehandStroke
-	freehand_stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, true)
+	freehand_stroke.try_annotate_point(stroke.get_global_mouse_position(), min_point_distance, true)
 
 func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	var freehand_stroke = stroke as FreehandStroke
-	freehand_stroke.try_annotate_point(canvas.get_local_mouse_position(), min_point_distance, false)
+	freehand_stroke.try_annotate_point(stroke.get_global_mouse_position(), min_point_distance, false)
 
 func should_begin_stroke(event: InputEvent) -> bool:
 	return ClickToDrag.should_begin_stroke(event)

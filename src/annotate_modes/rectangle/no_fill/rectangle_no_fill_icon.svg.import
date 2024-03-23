@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bpttrl01isjnx"
-path="res://.godot/imported/rectangle_icon.svg-a0a88a3d9a51ab8cf3aacaddb1449022.ctex"
+path="res://.godot/imported/rectangle_no_fill_icon.svg-32c0f6dffaa733a135912d16d6cd974e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_icon.svg"
-dest_files=["res://.godot/imported/rectangle_icon.svg-a0a88a3d9a51ab8cf3aacaddb1449022.ctex"]
+source_file="res://addons/GodotAnnotate/src/annotate_modes/rectangle/no_fill/rectangle_no_fill_icon.svg"
+dest_files=["res://.godot/imported/rectangle_no_fill_icon.svg-32c0f6dffaa733a135912d16d6cd974e.ctex"]
 
 [params]
 

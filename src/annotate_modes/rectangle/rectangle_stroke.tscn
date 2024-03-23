@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://dmpeslbwu742p"]
+
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gd" id="1_33h1a"]
+[ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gdshader" id="1_prwjk"]
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_wq6en"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wddia"]
+resource_local_to_scene = true
+shader = ExtResource("1_prwjk")
+shader_parameter/border_width = 0.0
+shader_parameter/fill = false
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2gckd"]
+resource_local_to_scene = true
+size = Vector2(0, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wgw0w"]
+resource_local_to_scene = true
+size = Vector2(0, 0)
+
+[node name="Stroke" instance=ExtResource("1_wq6en")]
+script = ExtResource("1_33h1a")
+fill = false
+
+[node name="StrokeRect" type="ColorRect" parent="." index="0"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_wddia")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="RectShape" type="CollisionShape2D" parent="CollisionArea" index="0"]
+unique_name_in_owner = true
+shape = SubResource("RectangleShape2D_2gckd")
+
+[node name="BoundaryArea" parent="." index="2"]
+visible = false
+
+[node name="BoundaryShape" parent="BoundaryArea" index="0"]
+shape = SubResource("RectangleShape2D_wgw0w")

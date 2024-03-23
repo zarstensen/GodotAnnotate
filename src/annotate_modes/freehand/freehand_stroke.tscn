@@ -1,23 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://cl62a1cmcreo"]
+[gd_scene load_steps=4 format=3 uid="uid://bjja2rjx6aot1"]
 
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_c0xsr"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd" id="1_sgqdh"]
 
-[node name="FreehandStroke" type="Control"]
-layout_mode = 3
-anchors_preset = 0
-script = ExtResource("1_sgqdh")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wgbx6"]
+resource_local_to_scene = true
+size = Vector2(0, 0)
 
-[node name="StrokeLine" type="Line2D" parent="."]
+[node name="Stroke" instance=ExtResource("1_c0xsr")]
+script = ExtResource("1_sgqdh")
+min_distance_hitbox = 2.0
+
+[node name="StrokeLine" type="Line2D" parent="." index="0"]
 unique_name_in_owner = true
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 round_precision = 32
 
-[node name="ReferenceRect" type="ReferenceRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="BoundaryArea" parent="." index="2"]
+visible = false
+
+[node name="BoundaryShape" parent="BoundaryArea" index="0"]
+shape = SubResource("RectangleShape2D_wgbx6")
