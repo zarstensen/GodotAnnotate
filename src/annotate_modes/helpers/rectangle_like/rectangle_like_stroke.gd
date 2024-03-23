@@ -1,14 +1,12 @@
 @tool
 extends GDA_Stroke
 ##
-## Stroke implemtation for a rectangle, which can either be filled or hollow.
+## Stroke implemtation for a shape inside a rectangle, which can either be filled or hollow.
 ## stroke_size controls the border width if hollow.
 ##
 ## This stroke is implemented as a ColorRect2D,
-## which has a shader applied that optionally renders it as a hollow rectangle with a border,
-## if fill = true.
+## which should have a shader applied that renders it as the desired shape.
 ##
-
 
 @export
 var fill: bool:
