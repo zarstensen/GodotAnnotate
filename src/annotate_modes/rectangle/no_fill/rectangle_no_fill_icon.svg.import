@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c565rg2exj4pp"
-path="res://.godot/imported/rectangle_filled_icon.svg-82c2d9ab642b789a77a8810423b45460.ctex"
+uid="uid://bpttrl01isjnx"
+path="res://.godot/imported/rectangle_no_fill_icon.svg-32c0f6dffaa733a135912d16d6cd974e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/rectangle_filled_icon.svg"
-dest_files=["res://.godot/imported/rectangle_filled_icon.svg-82c2d9ab642b789a77a8810423b45460.ctex"]
+source_file="res://addons/GodotAnnotate/src/annotate_modes/rectangle/no_fill/rectangle_no_fill_icon.svg"
+dest_files=["res://.godot/imported/rectangle_no_fill_icon.svg-32c0f6dffaa733a135912d16d6cd974e.ctex"]
 
 [params]
 
