@@ -11,7 +11,7 @@ func get_mode_name() -> String:
     return "Rectangle"
 
 func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
-    var stroke: RectangleStroke = RectangleStrokeScene.instantiate()
+    var stroke: RectangleLikeStroke = RectangleStrokeScene.instantiate()
     stroke.stroke_init(size, color, pos)
     stroke.fill = false
     return stroke

@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3 uid="uid://c4g4m2f4r24k6"]
+
+[ext_resource type="PackedScene" uid="uid://b8awmm5apy4sv" path="res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.tscn" id="1_yl6o2"]
+[ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_stroke.gdshader" id="2_68ev7"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_stroke.gd" id="2_r7ajr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kvlga"]
+resource_local_to_scene = true
+shader = ExtResource("2_68ev7")
+shader_parameter/border_width = 10.0
+shader_parameter/fill = 0.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_culaa"]
+resource_local_to_scene = true
+radius = 0.0
+height = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y1csc"]
+resource_local_to_scene = true
+size = Vector2(0, 0)
+
+[node name="Stroke" instance=ExtResource("1_yl6o2")]
+script = ExtResource("2_r7ajr")
+
+[node name="StrokeRect" parent="." index="0"]
+material = SubResource("ShaderMaterial_kvlga")
+
+[node name="CapsuleShape" type="CollisionShape2D" parent="CollisionArea" index="0"]
+unique_name_in_owner = true
+shape = SubResource("CapsuleShape2D_culaa")
+
+[node name="BoundaryShape" parent="BoundaryArea" index="0"]
+shape = SubResource("RectangleShape2D_y1csc")

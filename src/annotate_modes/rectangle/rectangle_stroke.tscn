@@ -1,14 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://dmpeslbwu742p"]
+[gd_scene load_steps=7 format=3 uid="uid://dqq1tdonh1wul"]
 
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gd" id="1_33h1a"]
 [ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gdshader" id="1_prwjk"]
 [ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_wq6en"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gd" id="2_wewa4"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wddia"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xqpha"]
 resource_local_to_scene = true
 shader = ExtResource("1_prwjk")
-shader_parameter/border_width = 0.0
-shader_parameter/fill = false
+shader_parameter/border_width = 46.595
+shader_parameter/fill = 0.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2gckd"]
 resource_local_to_scene = true
@@ -19,12 +19,12 @@ resource_local_to_scene = true
 size = Vector2(0, 0)
 
 [node name="Stroke" instance=ExtResource("1_wq6en")]
-script = ExtResource("1_33h1a")
+script = ExtResource("2_wewa4")
 fill = false
 
 [node name="StrokeRect" type="ColorRect" parent="." index="0"]
 unique_name_in_owner = true
-material = SubResource("ShaderMaterial_wddia")
+material = SubResource("ShaderMaterial_xqpha")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

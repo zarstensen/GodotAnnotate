@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbj3cyfosuwow"
-path="res://.godot/imported/ellipse_icon.svg-b73107bd51440df75356a0bb27ac4a99.ctex"
+uid="uid://cxpp6xfbualpa"
+path="res://.godot/imported/capsule_no_fill_icon.svg-7773db7da66499ba932fb01e97e275dc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/ellipse_icon.svg"
-dest_files=["res://.godot/imported/ellipse_icon.svg-b73107bd51440df75356a0bb27ac4a99.ctex"]
+source_file="res://addons/GodotAnnotate/src/annotate_modes/capsule/no_fill/capsule_no_fill_icon.svg"
+dest_files=["res://.godot/imported/capsule_no_fill_icon.svg-7773db7da66499ba932fb01e97e275dc.ctex"]
 
 [params]
 

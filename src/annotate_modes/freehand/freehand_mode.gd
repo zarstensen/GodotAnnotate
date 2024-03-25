@@ -5,7 +5,7 @@ extends GDA_AnnotateMode
 ### Draws a stroke which follows a dragging mouse.
 ###
 
-const ClickToDrag := preload("res://addons/GodotAnnotate/src/annotate_modes/click_to_drag_mode.gd")
+const ClickToDrag := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/click_to_drag_mode.gd")
 const FreehandStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.tscn")
 const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd")
 
