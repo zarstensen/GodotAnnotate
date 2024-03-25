@@ -1,11 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8awmm5apy4sv"]
+[gd_scene load_steps=4 format=3 uid="uid://b8awmm5apy4sv"]
 
 [ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_mt0x2"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.gd" id="2_gxb3w"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2gckd"]
-resource_local_to_scene = true
-size = Vector2(0, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wgw0w"]
 resource_local_to_scene = true
@@ -24,10 +20,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
-
-[node name="RectShape" type="CollisionShape2D" parent="CollisionArea" index="0"]
-unique_name_in_owner = true
-shape = SubResource("RectangleShape2D_2gckd")
 
 [node name="BoundaryArea" parent="." index="2"]
 visible = false

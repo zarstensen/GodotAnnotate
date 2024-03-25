@@ -2,13 +2,13 @@
 
 [ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gdshader" id="1_prwjk"]
 [ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_wq6en"]
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.gd" id="2_i5qc5"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gd" id="2_wewa4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xqpha"]
 resource_local_to_scene = true
 shader = ExtResource("1_prwjk")
-shader_parameter/border_width = 100.0
-shader_parameter/fill = true
+shader_parameter/border_width = 46.595
+shader_parameter/fill = 0.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2gckd"]
 resource_local_to_scene = true
@@ -19,7 +19,7 @@ resource_local_to_scene = true
 size = Vector2(0, 0)
 
 [node name="Stroke" instance=ExtResource("1_wq6en")]
-script = ExtResource("2_i5qc5")
+script = ExtResource("2_wewa4")
 fill = false
 
 [node name="StrokeRect" type="ColorRect" parent="." index="0"]

@@ -12,7 +12,7 @@ extends GDA_Stroke
 var fill: bool:
     set(v):
         if is_node_ready():
-            %StrokeRect.material.set_shader_parameter("fill", v)
+            %StrokeRect.material.set_shader_parameter("fill", v as float)
 
         fill = v
     get:
@@ -46,10 +46,6 @@ func _stroke_created(first_point: Vector2) -> void:
     # fill might not have had access to %StrokeRect yet,
     # so reset it here, so the shader fill parameter can also be updated.
     self.fill = fill
-
-func _stroke_resized() -> void:
-    %RectShape.position = size / 2
-    %RectShape.shape.size = size
 
 func _set_stroke_size(size: float) -> void:
     # border size is controlled in a shader.
