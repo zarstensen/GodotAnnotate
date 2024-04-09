@@ -5,6 +5,8 @@ extends EditorPlugin
 ## Handles initialization, deinitialization and event forwarding to [AnnotateCanvas] nodes.
 ##
 
+const CONFIG_FILE: String = "res://addons/GodotAnnotate/config.ini"
+
 static var selected_canvas: AnnotateCanvas
 
 static var canvas_toolbar: Control
@@ -12,10 +14,8 @@ static var canvas_toolbar: Control
 ## List of scripts to load into the annotate_modes list.
 static var annotate_mode_scripts: Array[String] = [
 	"res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/no_fill/rectangle_no_fill_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/fill/rectangle_fill_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/capsule/no_fill/capsule_no_fill_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/capsule/fill/capsule_fill_mode.gd",
+	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_mode.gd",
+	"res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_mode.gd",
 ]
 
 static var annotate_modes: Array[GDA_AnnotateMode] = []
@@ -23,7 +23,21 @@ static var annotate_modes: Array[GDA_AnnotateMode] = []
 ## UndoRedoManager for the GodotAnnotate plugin.
 static var undo_redo: EditorUndoRedoManager
 
+static var config: ConfigFile
+
+
 func _enter_tree():
+	# Load plugin configuration file
+
+	config = ConfigFile.new()
+
+	var err := config.load(CONFIG_FILE)
+
+	# If something goes wrong, (including not finding the file on disk),
+	# then simply create a new config file.
+	if err != OK:
+		config.save(CONFIG_FILE)
+
 	# initialize variables	
 	canvas_toolbar = preload("res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.tscn").instantiate()
 	canvas_toolbar.visible = false
@@ -53,9 +67,11 @@ func _exit_tree():
 	canvas_toolbar.queue_free()
 	
 	annotate_modes = [ ]
+
+	config.save(CONFIG_FILE)
 	
 
-## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node.
+## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node and the AnnotateToolbar node if the canvas node does not consume the input.
 func _forward_canvas_gui_input(event: InputEvent):
 	if event is InputEventKey:
 		var ke: InputEventKey = event
@@ -65,10 +81,10 @@ func _forward_canvas_gui_input(event: InputEvent):
 			pass
 		pass
 
-	if not selected_canvas or selected_canvas.lock_canvas:
+	if not selected_canvas:
 		return false
 	
-	return selected_canvas.on_editor_input(event)
+	return selected_canvas.on_editor_input(event) or canvas_toolbar.on_editor_event(event)
 
 # returns true on all GodotAnnotate, so editor inputs can be handled by the plugin.
 func _handles(object):

@@ -1,11 +1,15 @@
-[gd_scene load_steps=13 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=17 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.gd" id="1_a6mhs"]
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar_icon.svg" id="2_f7hln"]
 [ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg" id="3_eol15"]
 [ext_resource type="Texture2D" uid="uid://cfys5xqwj1gcd" path="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg" id="3_h3lcp"]
-[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/no_fill/rectangle_no_fill_icon.svg" id="5_2vv6t"]
-[ext_resource type="Texture2D" uid="uid://c565rg2exj4pp" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/fill/rectangle_fill_icon.svg" id="6_bauny"]
+[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_icon.svg" id="4_lm3uk"]
+[ext_resource type="Texture2D" uid="uid://cxpp6xfbualpa" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_icon.svg" id="5_e4j21"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_mode_option.gd" id="8_osfq7"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/canvas_to_image_button.gd" id="10_qqlcj"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/new_brush_size_panel.gd" id="12_detrw"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/brush_size_slider.gd" id="12_it564"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_mmu8r"]
 device = -1
@@ -14,6 +18,15 @@ unicode = 97
 
 [sub_resource type="Shortcut" id="Shortcut_iqfxe"]
 events = [SubResource("InputEventKey_mmu8r")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_m3ndm"]
+device = -1
+shift_pressed = true
+keycode = 65
+unicode = 65
+
+[sub_resource type="Shortcut" id="Shortcut_b3sh8"]
+events = [SubResource("InputEventKey_m3ndm")]
 
 [sub_resource type="InputEventKey" id="InputEventKey_i472w"]
 device = -1
@@ -24,15 +37,6 @@ unicode = 115
 
 [sub_resource type="Shortcut" id="Shortcut_ug4eo"]
 events = [SubResource("InputEventKey_i472w")]
-
-[sub_resource type="InputEventKey" id="InputEventKey_m3ndm"]
-device = -1
-shift_pressed = true
-keycode = 65
-unicode = 65
-
-[sub_resource type="Shortcut" id="Shortcut_b3sh8"]
-events = [SubResource("InputEventKey_m3ndm")]
 
 [node name="AnnotateToolbar" type="HBoxContainer"]
 anchors_preset = 15
@@ -53,14 +57,7 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_iqfxe")
 icon = ExtResource("2_f7hln")
 
-[node name="CanvasToImage" type="Button" parent="."]
-layout_mode = 2
-tooltip_text = "Capture Canvas"
-theme_type_variation = &"FlatButton"
-shortcut = SubResource("Shortcut_ug4eo")
-icon = ExtResource("3_h3lcp")
-
-[node name="AnnotateMode" type="OptionButton" parent="."]
+[node name="AnnotateModeOption" type="OptionButton" parent="."]
 layout_mode = 2
 tooltip_text = "Annotate Mode List"
 theme_type_variation = &"FlatButton"
@@ -74,13 +71,111 @@ popup/item_0/text = "Freehand"
 popup/item_0/icon = ExtResource("3_eol15")
 popup/item_0/id = 0
 popup/item_1/text = "Rectangle"
-popup/item_1/icon = ExtResource("5_2vv6t")
+popup/item_1/icon = ExtResource("4_lm3uk")
 popup/item_1/id = 1
-popup/item_2/text = "Rectangle Filled"
-popup/item_2/icon = ExtResource("6_bauny")
+popup/item_2/text = "Capsule"
+popup/item_2/icon = ExtResource("5_e4j21")
 popup/item_2/id = 2
+script = ExtResource("8_osfq7")
+
+[node name="CanvasToImageButton" type="Button" parent="."]
+layout_mode = 2
+tooltip_text = "Capture Canvas"
+theme_type_variation = &"FlatButton"
+shortcut = SubResource("Shortcut_ug4eo")
+icon = ExtResource("3_h3lcp")
+script = ExtResource("10_qqlcj")
+
+[node name="CanvasImageDialog" type="FileDialog" parent="CanvasToImageButton"]
+title = "Select Where To Save Canvas Image"
+size = Vector2i(392, 159)
+filters = PackedStringArray("*.png, *.jpg, *.jpeg ; Images")
+
+[node name="UpscaleFactorDialog" type="ConfirmationDialog" parent="CanvasToImageButton"]
+title = "Canvas Upscale Factor"
+size = Vector2i(200, 88)
+min_size = Vector2i(100, 70)
+
+[node name="UpscaleFactorInput" type="SpinBox" parent="CanvasToImageButton/UpscaleFactorDialog"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 8.0
+offset_top = -36.0
+offset_right = 192.0
+offset_bottom = -5.0
+grow_vertical = 2
+step = 0.1
+value = 1.0
+alignment = 1
+
+[node name="BrushColorPickerButton" type="ColorPickerButton" parent="."]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+tooltip_text = "Brush Color"
+flat = true
+color = Color(1, 1, 1, 1)
+
+[node name="BrushSizeSlider" type="HSlider" parent="."]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_vertical = 1
+tooltip_text = "Brush Size (% of Max Brush Size)"
+min_value = 1.0
+value = 1.0
+rounded = true
+script = ExtResource("12_it564")
+
+[node name="ContextMenu" type="PopupMenu" parent="BrushSizeSlider"]
+size = Vector2i(174, 35)
+item_count = 1
+item_0/text = "Set Max Brush Size"
+item_0/id = 0
+
+[node name="NewBrushSizePanel" type="PopupPanel" parent="BrushSizeSlider"]
+size = Vector2i(180, 66)
+min_size = Vector2i(180, 66)
+script = ExtResource("12_detrw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BrushSizeSlider/NewBrushSizePanel"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 176.0
+offset_bottom = 62.0
+
+[node name="InputLabel" type="Label" parent="BrushSizeSlider/NewBrushSizePanel/VBoxContainer"]
+layout_mode = 2
+text = "New Max Size"
+
+[node name="MaxBrushSizeInput" type="SpinBox" parent="BrushSizeSlider/NewBrushSizePanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.0
+allow_greater = true
+update_on_text_changed = true
+suffix = "px"
+select_all_on_focus = true
+
+[node name="VariablesSeparator" type="VSeparator" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StrokeVariablesContainer" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
 
 [connection signal="toggled" from="ToggleAnnotateButton" to="." method="_on_toggle_annotate_button_toggled"]
-[connection signal="pressed" from="CanvasToImage" to="." method="_on_canvas_to_image_pressed"]
-[connection signal="item_selected" from="AnnotateMode" to="." method="_on_annotate_mode_item_selected"]
-[connection signal="item_selected" from="AnnotateMode" to="AnnotateMode" method="_on_item_selected"]
+[connection signal="draw" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_draw"]
+[connection signal="item_selected" from="AnnotateModeOption" to="." method="_on_annotate_mode_item_selected"]
+[connection signal="item_selected" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_item_selected"]
+[connection signal="visibility_changed" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_visibility_changed"]
+[connection signal="canvas_to_image_confirmed" from="CanvasToImageButton" to="." method="_on_canvas_to_image_confirmed"]
+[connection signal="pressed" from="CanvasToImageButton" to="CanvasToImageButton" method="_on_pressed"]
+[connection signal="file_selected" from="CanvasToImageButton/CanvasImageDialog" to="CanvasToImageButton" method="_on_canvas_image_dialog_file_selected"]
+[connection signal="confirmed" from="CanvasToImageButton/UpscaleFactorDialog" to="CanvasToImageButton" method="_on_upscale_factor_dialog_confirmed"]
+[connection signal="color_changed" from="BrushColorPickerButton" to="." method="_on_brush_color_picker_button_color_changed"]
+[connection signal="gui_input" from="BrushSizeSlider" to="BrushSizeSlider" method="_on_gui_input"]
+[connection signal="value_changed" from="BrushSizeSlider" to="." method="_on_brush_size_slider_value_changed"]
+[connection signal="id_pressed" from="BrushSizeSlider/ContextMenu" to="BrushSizeSlider" method="_on_context_menu_id_pressed"]
+[connection signal="new_size_confirmed" from="BrushSizeSlider/NewBrushSizePanel" to="BrushSizeSlider" method="_on_new_max_size_confirmed"]
+[connection signal="window_input" from="BrushSizeSlider/NewBrushSizePanel" to="BrushSizeSlider/NewBrushSizePanel" method="_on_window_input"]

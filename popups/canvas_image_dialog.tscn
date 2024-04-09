@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://bueej38g03yw2"]
-
-[node name="CanvasImageDialog" type="FileDialog"]
-title = "Select Where To Save Canvas Image"
-filters = PackedStringArray("*.png, *.jpg, *.jpeg ; Images")
