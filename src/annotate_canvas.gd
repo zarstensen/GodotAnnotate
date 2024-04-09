@@ -44,8 +44,7 @@ var _erasing := false
 var _eraser: Eraser
 
 ## Array of Strokes currently stored in the canvas.
-@export
-var _strokes: Array[PackedScene] = [ ]
+var strokes: Array[PackedScene] = [ ]
 
 ## Dictionary between annotate modes, and an array of GDA_AnnotateMode.StrokeVariables
 ## Is updated on every call to ready.
@@ -57,7 +56,7 @@ func _ready():
 		queue_free()
 
 	# restore lines from previously saved state.
-	_instantiate_strokes(_strokes)
+	_instantiate_strokes(strokes)
 
 	# update stroke_variables list.
 
@@ -100,7 +99,7 @@ func _process(delta):
 			var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
 			if stroke != null and stroke.collides_with_circle(_eraser.shape, eraser_transform):
 				erase_stroke_indexes.append(i)
-				erased_strokes[i] = _strokes[i]
+				erased_strokes[i] = strokes[i]
 
 		# Only create an undoable erase action, if something is actually erased.
 		if len(erase_stroke_indexes) > 0:
@@ -124,6 +123,12 @@ func _draw():
 				brush_size,
 				brush_color,
 				self)
+
+func _validate_property(property: Dictionary):
+	# annotate_mode_index and strokes should ONLY be modified through this script.
+	if property.name == "annotate_mode_index" \
+		or property.name == "strokes":
+			property.usage = PROPERTY_USAGE_NO_EDITOR
 
 
 func on_editor_input(event: InputEvent) -> bool:
@@ -161,7 +166,7 @@ func on_editor_input(event: InputEvent) -> bool:
 			var scene = PackedScene.new()
 			scene.pack(_active_stroke)
 			
-			_strokes.append(scene)
+			strokes.append(scene)
 			
 			# add stroke creation to undo / redo history.
 
@@ -169,7 +174,7 @@ func on_editor_input(event: InputEvent) -> bool:
 
 			ur.create_action("GodotAnnotateNewStroke")
 			ur.add_do_method(self, "_redo_stroke", scene)
-			ur.add_undo_method(self, "_undo_stroke", len(_strokes) - 1)
+			ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
 			# Stroke was already added at this point, so we do not want to execute redo_stroke.
 			ur.commit_action(false)
 
@@ -212,12 +217,12 @@ func get_annotate_mode() -> GDA_AnnotateMode:
 	return GodotAnnotate.get_annotate_mode(annotate_mode_index)
 
 func get_stroke_nodes() -> Array[GDA_Stroke]:
-	var strokes: Array[GDA_Stroke] = []
+	var strokes_arr: Array[GDA_Stroke] = []
 
-	strokes.assign(get_children()
+	strokes_arr.assign(get_children()
 		.filter(func(s): return s is GDA_Stroke))
 
-	return strokes
+	return strokes_arr
 
 ## Return the smallest Rect2, which contains all the strokes currently stored in the canvas
 func get_canvas_area() -> Rect2:
@@ -230,11 +235,11 @@ func get_canvas_area() -> Rect2:
 
 ## Get an array of all strokes currently saved in the canvas.
 func get_strokes() -> Array[PackedScene]:
-	return _strokes
+	return strokes
 
 ## Adds the passed strokes to the canvas.
 func import_strokes(new_strokes: Array[PackedScene]):
-	_strokes += new_strokes
+	strokes += new_strokes
 
 	_instantiate_strokes(new_strokes)
 
@@ -250,11 +255,11 @@ func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
 
 func _undo_stroke(stroke_index: int):
 	_remove_stroke_nodes([ get_child(stroke_index) as GDA_Stroke ])
-	_strokes.remove_at(stroke_index)
+	strokes.remove_at(stroke_index)
 
 func _redo_stroke(stroke_scene: PackedScene):
 	_instantiate_strokes([ stroke_scene ])
-	_strokes.append(stroke_scene)
+	strokes.append(stroke_scene)
 
 ## Erase all strokes at the passed indexes.
 func _do_erase(erase_stroke_indexes: Array[int]):
@@ -269,7 +274,7 @@ func _do_erase(erase_stroke_indexes: Array[int]):
 		# since these strokes no longer exist in the array.
 		
 		var remove_index := erase_stroke_indexes[erase_count] - erase_count
-		_strokes.remove_at(remove_index)
+		strokes.remove_at(remove_index)
 
 	_remove_stroke_nodes(erase_nodes)
 
@@ -283,7 +288,7 @@ func _undo_erase(erased_strokes: Dictionary):
 
 		var stroke_scene = erased_strokes[insert_index] as PackedScene
 
-		_strokes.insert(insert_index, stroke_scene)
+		strokes.insert(insert_index, stroke_scene)
 		
 		var stroke = stroke_scene.instantiate()
 		add_child(stroke)
