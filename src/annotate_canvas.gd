@@ -11,26 +11,17 @@ const AnnotateCanvasCaptureViewport := preload("res://addons/GodotAnnotate/src/a
 const EraserScene := preload("res://addons/GodotAnnotate/src/eraser/eraser.tscn")
 const Eraser := preload("res://addons/GodotAnnotate/src/eraser/eraser.gd")
 
-## Percentage size increase to stroke size caused by shift + scroll.
-const SIZE_SCROLL_PERC: float = 0.1
 
 @export_group("Brush")
 
-## How large the brush size will be when [member brush_size] = 100.
-@export_range(0, 9999, 1.0, "or_greater")
-var max_brush_size: float = 50
-
-## Current size of the brush used to paint strokes.
-## Represents a percentage of [member max_brush_size], which is used for constructing [AnnotateStroke]s.
-## [br]
-## [br]
-## Shortcut: shift + scroll 
+## Current size of the brush (size in pixels) used to paint strokes.
+## Shortcut: shift + scroll via. annotate toolbar
 @export_range(1, 100, 0.1)
-var brush_size: float = 50
+var brush_size: float = GodotAnnotate.config.get_value("canvas", "default_brush_size", 50)
 
 
 @export
-var brush_color: Color = Color(141 / 255.0, 165 / 255.0, 243 / 255.0)
+var brush_color: Color = GodotAnnotate.config.get_value("canvas", "default_brush_color", Color(141 / 255.0, 165 / 255.0, 243 / 255.0))
 
 @export_group("Advanced")
 
@@ -52,9 +43,13 @@ var _active_stroke: GDA_Stroke
 var _erasing := false
 var _eraser: Eraser
 
-@export
 ## Array of Strokes currently stored in the canvas.
 var strokes: Array[PackedScene] = [ ]
+
+## Dictionary between annotate modes, and an array of GDA_AnnotateMode.StrokeVariables
+## Is updated on every call to ready.
+@export
+var stroke_variables := {}
 
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
@@ -62,6 +57,29 @@ func _ready():
 
 	# restore lines from previously saved state.
 	_instantiate_strokes(strokes)
+
+	# update stroke_variables list.
+
+	for annotate_mode: GDA_AnnotateMode in GodotAnnotate.annotate_modes:
+
+		var mode_name = annotate_mode.get_mode_name()
+
+		if not stroke_variables.has(mode_name):
+			stroke_variables[mode_name] = {}
+
+		# remove variables no longer present in the annotate mode.
+
+		var annotate_mode_stroke_variables = annotate_mode.get_stroke_variables()
+
+		for canvas_variable_name in stroke_variables[mode_name]:
+			if not annotate_mode_stroke_variables.has(canvas_variable_name):
+				stroke_variables[mode_name].erase(canvas_variable_name)
+
+		# add any missing variables, setting them to their default value.
+
+		for stroke_variable in annotate_mode_stroke_variables:
+			if not stroke_variables.has(stroke_variable):
+				stroke_variables[mode_name][stroke_variable] = annotate_mode_stroke_variables[stroke_variable]
 
 func _process(delta):
 
@@ -102,7 +120,7 @@ func _draw():
 	
 	elif GodotAnnotate.selected_canvas == self:
 		get_annotate_mode().draw_cursor(get_local_mouse_position(),
-				brush_size / 100 * max_brush_size,
+				brush_size,
 				brush_color,
 				self)
 
@@ -114,6 +132,27 @@ func _validate_property(property: Dictionary):
 
 
 func on_editor_input(event: InputEvent) -> bool:
+
+	if lock_canvas:
+		var mouse_event := event as InputEventMouseButton 
+		
+		if mouse_event != null:
+			var select_shape := CircleShape2D.new()
+			select_shape.radius = 10 / get_viewport().global_canvas_transform.get_scale().x
+
+			var select_transform := Transform2D(0, get_global_mouse_position())
+
+			for i in range(get_child_count()):
+				var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
+
+				if stroke != null and stroke.collides_with_circle(select_shape, select_transform):
+					EditorInterface.get_selection().clear()
+					EditorInterface.get_selection().add_node(stroke)
+
+			# select_strokes()
+			return true
+
+		return false
 
 	if _active_stroke:
 		
@@ -149,7 +188,7 @@ func on_editor_input(event: InputEvent) -> bool:
 		# erasing
 		if event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
 			_eraser = EraserScene.instantiate()
-			_eraser.stroke_size = brush_size / 100 * max_brush_size
+			_eraser.stroke_size = brush_size
 			add_child(_eraser)
 			return true
 		elif event.button_index == MOUSE_BUTTON_RIGHT && not event.pressed:
@@ -157,24 +196,11 @@ func on_editor_input(event: InputEvent) -> bool:
 			_eraser = null
 			return true
 		
-		# stroke size (shift + scroll)
-		# cannot use ctrl or alt, since they control view position and zoom,
-		# and cannot be prevented from being forwarded by returning true.
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN && Input.is_key_pressed(KEY_SHIFT):
-			if event.pressed:
-				resize_stroke(-1)
-			
-			return true
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP && Input.is_key_pressed(KEY_SHIFT):
-			if event.pressed:
-				resize_stroke(1)
-			
-			return true
 	
 	# Check if the current annotate mode wants to begin a new stroke,
 	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
 	if get_annotate_mode().should_begin_stroke(event):
-		_active_stroke = get_annotate_mode().on_begin_stroke(get_local_mouse_position(), brush_size / 100 * max_brush_size, brush_color, self)
+		_active_stroke = get_annotate_mode().on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, stroke_variables[get_annotate_mode().get_mode_name()], self)
 		add_child(_active_stroke)
 		
 		return true
@@ -186,12 +212,6 @@ func on_editor_input(event: InputEvent) -> bool:
 func capture_canvas(file: String, scale: float) -> void:
 	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
-func resize_stroke(direction: float):
-	brush_size *= 1 + direction * SIZE_SCROLL_PERC
-	brush_size = min(100, max(brush_size, 1))
-
-	if _eraser != null:
-		_eraser.stroke_size = brush_size / 100 * max_brush_size
 
 func get_annotate_mode() -> GDA_AnnotateMode:
 	return GodotAnnotate.get_annotate_mode(annotate_mode_index)
@@ -209,7 +229,7 @@ func get_canvas_area() -> Rect2:
 	var boundaries: Array[Rect2] = []
 	
 	boundaries.assign(get_stroke_nodes()
-		.map(func(s): return s.boundary))
+		.map(func(s): return s.get_global_rect()))
 
 	return _merge_rects(boundaries)
 

@@ -1,3 +1,6 @@
+# Addon specific ignores
+config.ini
+
 # Godot 4+ specific ignores
 .godot/
 

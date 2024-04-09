@@ -14,6 +14,13 @@ func get_icon_path() -> String:
 func get_mode_name() -> String:
 	return ""
 
+## Each annotate mode has the posibility to expose variables the user can use to configure the stroke being created.
+## For now each variable is a simple true false value.
+## The annotate mode informs the addon of the variables by returning them in this dictionary.
+## A key in this dictionary is the name of the variable, and the value is the default value of the variable.
+func get_stroke_variables() -> Dictionary:
+	return { }
+
 ## Draw a cursor on a canvas item, at the given position, with the given brush size and color.
 func draw_cursor(pos: Vector2, brush_size: float, brush_color: Color, canvas: CanvasItem) -> void:
 	pass
@@ -21,7 +28,8 @@ func draw_cursor(pos: Vector2, brush_size: float, brush_color: Color, canvas: Ca
 ## Begin a stroke with the given size and color, at the given position.
 ## Should return the new stroke.
 ## it will be added to the AnnotateCanvas node and will be visible to the user during annotation.
-func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
+## the variables dictionary have all the keys which have been returned from get_stroke_variables, as well as their actual values.
+func on_begin_stroke(pos: Vector2, size: float, color: Color, variables: Dictionary, canvas: AnnotateCanvas) -> GDA_Stroke:
 	return GDA_Stroke.new()
 
 ## End a stroke with the final point being drawn at the given parameters.
