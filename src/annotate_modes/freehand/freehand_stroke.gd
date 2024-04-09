@@ -4,6 +4,8 @@ extends GDA_Stroke
 ## Freehand stroke returned by the FreehandMode annotate mode.
 ##
 
+const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
+
 ## Percentage of point position to increment point position by, if overlapping with another point.
 const OVERLAP_INCR_PERC = 0.0001
 ## Minimum increment of point, if point overlaps with another point.
@@ -37,14 +39,12 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 		else:
 			# ignore points which are too close to each other, to reduce memory usage.
 			return
-
-	var size_vec = Vector2.ONE * stroke_size
-
-	for dir in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
-		var new_boundary := get_global_rect().expand(point + size_vec * dir / 2)
-		global_position = new_boundary.position
-		size = new_boundary.size
 	
+	var new_boundary := AnnotateModeHelper.expand_boundary_sized_point(get_global_rect(), point, stroke_size)
+
+	global_position = new_boundary.position
+	size = new_boundary.size
+
 	# since global_position has been modified,
 	# we need to re place the line origin back to world origin,
 	# in order to not offset the already drawn points.

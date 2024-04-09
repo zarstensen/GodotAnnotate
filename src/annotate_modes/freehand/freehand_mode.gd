@@ -5,7 +5,7 @@ extends GDA_AnnotateMode
 ### Draws a stroke which follows a dragging mouse.
 ###
 
-const ClickToDrag := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/click_to_drag_mode.gd")
+const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
 const FreehandStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.tscn")
 const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd")
 
@@ -37,8 +37,8 @@ func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanva
 	freehand_stroke.try_annotate_point(stroke.get_global_mouse_position(), min_point_distance, false)
 
 func should_begin_stroke(event: InputEvent) -> bool:
-	return ClickToDrag.should_begin_stroke(event)
+	return AnnotateModeHelper.mouse_drag_should_begin_stroke(event)
 
 func should_end_stroke(event: InputEvent) -> bool:
-	return ClickToDrag.should_end_stroke(event)
+	return AnnotateModeHelper.mouse_drag_should_end_stroke(event)
 

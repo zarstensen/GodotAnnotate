@@ -7,7 +7,7 @@ extends GDA_AnnotateMode
 ###
 
 
-const ClickToDrag := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/click_to_drag_mode.gd")
+const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
 const RectangleLikeStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.gd")
 
 func on_end_stroke(pos: Vector2, stroke: CanvasItem, canvas: AnnotateCanvas) -> void:
@@ -18,7 +18,7 @@ func on_annotate_process(delta: float, stroke: CanvasItem, canvas: AnnotateCanva
     on_end_stroke(canvas.get_local_mouse_position(), stroke, canvas)
 
 func should_begin_stroke(event: InputEvent) -> bool:
-    return ClickToDrag.should_begin_stroke(event)
+    return AnnotateModeHelper.mouse_drag_should_begin_stroke(event)
 
 func should_end_stroke(event: InputEvent) -> bool:
-    return ClickToDrag.should_end_stroke(event)
+    return AnnotateModeHelper.mouse_drag_should_end_stroke(event)
