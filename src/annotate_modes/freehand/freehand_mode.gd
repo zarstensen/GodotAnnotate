@@ -23,7 +23,7 @@ func get_mode_name() -> String:
 func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
 	canvas.draw_circle(pos, brush_diameter / 2, brush_color)
 
-func on_begin_stroke(pos: Vector2, size: float, color: Color, canvas: AnnotateCanvas) -> GDA_Stroke:
+func on_begin_stroke(pos: Vector2, size: float, color: Color, _variables: Dictionary, canvas: AnnotateCanvas) -> GDA_Stroke:
 	var stroke: FreehandStroke = FreehandStrokeScene.instantiate()
 	stroke.stroke_init(size, color, canvas.get_global_mouse_position())
 	return stroke
