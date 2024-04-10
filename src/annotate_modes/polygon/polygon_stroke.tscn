@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmktnlb6ova6t"]
+
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_jpqsp"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.gd" id="2_rc0qe"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qp6ug"]
+resource_local_to_scene = true
+size = Vector2(0, 0)
+
+[node name="Stroke" instance=ExtResource("1_jpqsp")]
+script = ExtResource("2_rc0qe")
+fill = false
+closed = true
+
+[node name="Border" type="Line2D" parent="." index="0"]
+unique_name_in_owner = true
+closed = true
+width = 4.38
+begin_cap_mode = 2
+end_cap_mode = 2
+sharp_limit = 530.18
+
+[node name="Fill" type="Polygon2D" parent="." index="1"]
+unique_name_in_owner = true
+
+[node name="PolygonShape" type="CollisionPolygon2D" parent="CollisionArea" index="0"]
+unique_name_in_owner = true
+
+[node name="BoundaryShape" parent="BoundaryArea" index="0"]
+shape = SubResource("RectangleShape2D_qp6ug")

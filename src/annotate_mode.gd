@@ -43,7 +43,7 @@ func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanva
 
 ## Called any time the AnnotateMode needs to handle an InputEvent during a stroke annotation.
 ## Return whether the event should be blocked from reaching any other input handlers.
-func on_annotate_input(event: InputEvent) -> bool:
+func on_annotate_input(event: InputEvent, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> bool:
 	return false
 
 ## Called when an AnnotateCanvas wants to check if an AnnotateMode wants to begin annotating.

@@ -11,10 +11,13 @@ extends GDA_Stroke
 @export
 var fill: bool:
     set(v):
-        if is_node_ready():
-            %StrokeRect.material.set_shader_parameter("fill", v as float)
-
         fill = v
+
+        if not is_node_ready():
+            await ready
+
+        %StrokeRect.material.set_shader_parameter("fill", v as float)
+
     get:
         return fill
 

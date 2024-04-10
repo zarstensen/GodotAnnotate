@@ -13,8 +13,10 @@ var stroke_size: float:
 	set(v):
 		stroke_size = v
 
-		if is_node_ready():
-			_set_stroke_size(stroke_size)
+		if not is_node_ready():
+			await ready
+
+		_set_stroke_size(stroke_size)
 	
 	get:
 		return stroke_size
@@ -25,8 +27,10 @@ var stroke_color: Color:
 	set(v):
 		stroke_color = v
 
-		if is_node_ready():
-			_set_stroke_color(stroke_color)
+		if not is_node_ready():
+			await ready
+
+		_set_stroke_color(stroke_color)
 	
 	get:
 		return stroke_color

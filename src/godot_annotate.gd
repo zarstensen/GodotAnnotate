@@ -16,6 +16,7 @@ static var annotate_mode_scripts: Array[String] = [
 	"res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd",
 	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_mode.gd",
 	"res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_mode.gd",
+	"res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_mode.gd",
 ]
 
 static var annotate_modes: Array[GDA_AnnotateMode] = []

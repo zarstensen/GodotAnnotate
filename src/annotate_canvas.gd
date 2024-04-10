@@ -130,7 +130,6 @@ func _validate_property(property: Dictionary):
 		or property.name == "strokes":
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
-
 func on_editor_input(event: InputEvent) -> bool:
 
 	if lock_canvas:
@@ -182,16 +181,16 @@ func on_editor_input(event: InputEvent) -> bool:
 
 			return true
 			
-		return get_annotate_mode().on_annotate_input(event)
+		return get_annotate_mode().on_annotate_input(event, _active_stroke, self)
 	
-	elif event is InputEventMouseButton:
+	elif event is InputEventMouseButton and _active_stroke == null:
 		# erasing
-		if event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			_eraser = EraserScene.instantiate()
 			_eraser.stroke_size = brush_size
 			add_child(_eraser)
 			return true
-		elif event.button_index == MOUSE_BUTTON_RIGHT && not event.pressed:
+		elif event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed and _eraser != null:
 			_eraser.queue_free()
 			_eraser = null
 			return true
