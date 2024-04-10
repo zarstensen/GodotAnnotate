@@ -13,7 +13,7 @@ func _ready() -> void:
 
 	for annotate_mode in GodotAnnotate.annotate_modes:
 		$AnnotateModeOption.add_icon_item(load(annotate_mode.get_icon_path()), annotate_mode.get_mode_name())
-
+		
 # Called when a new annotate canvas node is selected.
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	canvas = new_canvas
@@ -22,7 +22,7 @@ func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	$AnnotateModeOption.selected = canvas.annotate_mode_index
 
 	$BrushSizeSlider.value = canvas.brush_size
-	$BrushColorPickerButton.color = canvas.brush_color
+	%BrushColorPickerButton.color = canvas.brush_color
 
 	update_variables()
 

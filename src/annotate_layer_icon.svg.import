@@ -3,15 +3,16 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf3qkmk5benw7"
-path="res://.godot/imported/annotate_layer_icon.svg-435c3c261c8c0d5bb2e9b1f97ea08697.ctex"
+path="res://.godot/imported/annotate_layer_icon.svg-d949f4a28de0f7dd57be9f351d775926.ctex"
 metadata={
+"has_editor_variant": true,
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/annotate_layer_icon.svg"
-dest_files=["res://.godot/imported/annotate_layer_icon.svg-435c3c261c8c0d5bb2e9b1f97ea08697.ctex"]
+source_file="res://addons/GodotAnnotate/src/annotate_layer_icon.svg"
+dest_files=["res://.godot/imported/annotate_layer_icon.svg-d949f4a28de0f7dd57be9f351d775926.ctex"]
 
 [params]
 
@@ -33,5 +34,5 @@ process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
 svg/scale=1.0
-editor/scale_with_editor_scale=false
+editor/scale_with_editor_scale=true
 editor/convert_colors_with_editor_theme=false
