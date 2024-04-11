@@ -54,49 +54,17 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 
 	return point
 
-## Regenerates all the CollisionShape2D nodes required for representing the strokes hitbox.
-func gen_hitbox() -> void:
-
+func _stroke_resized() -> void:
+	
 	# clear previous hitbox.
 
 	for child in %CollisionArea.get_children():
 		child.queue_free()
-
-	# Hitbox is made up by sections of capsules, which approximates the shape of the freehand stroke.
-
-	var prev_point_i: int = 0
-
-	for point_i in range(len(%StrokeLine.points)):
-
-		var point: Vector2 = %StrokeLine.points[point_i]
-		var prev_point: Vector2 = %StrokeLine.points[prev_point_i]
-
-		var distance_sq := prev_point.distance_squared_to(point)
-
-		# Only generate new capsule segment, if distance between the two points is large enough, or this is the last point.
-
-		if (point_i == len(%StrokeLine.points) - 1 && prev_point_i != point_i) || distance_sq >= (min_distance_hitbox * stroke_size) ** 2:
-			var distance := sqrt(distance_sq)
-
-			var collider := CollisionShape2D.new()
-
-			collider.shape = CapsuleShape2D.new()
-
-			# Place capsule so the capsule caps center match up with the point centers,
-			# and the rotation matches the rotation between the two points.
-
-			collider.shape.radius = stroke_size / 2
-			collider.shape.height = distance + stroke_size
-
-			collider.global_position = (prev_point + point) / 2 + %StrokeLine.position
-			collider.rotation = prev_point.angle_to_point(point) + PI / 2
-
-			prev_point_i = point_i
-
-			%CollisionArea.add_child(collider)
-
-func _stroke_resized() -> void:
-	gen_hitbox()
+	
+	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
+	
+	for capsule in capsules:
+		%CollisionArea.add_child(capsule)
 
 func _stroke_created(first_point: Vector2) -> void:
 	var size_vec = Vector2.ONE * stroke_size

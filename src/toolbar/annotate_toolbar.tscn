@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=19 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.gd" id="1_a6mhs"]
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar_icon.svg" id="2_f7hln"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cfys5xqwj1gcd" path="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg" id="3_h3lcp"]
 [ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_icon.svg" id="4_lm3uk"]
 [ext_resource type="Texture2D" uid="uid://cxpp6xfbualpa" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_icon.svg" id="5_e4j21"]
+[ext_resource type="Texture2D" uid="uid://5bid7rxgffn7" path="res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg" id="6_wmqt8"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_mode_option.gd" id="8_osfq7"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/color_picker_container.gd" id="9_p7mxn"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/canvas_to_image_button.gd" id="10_qqlcj"]
@@ -61,7 +62,7 @@ tooltip_text = "Annotate Mode List"
 theme_type_variation = &"FlatButton"
 shortcut = SubResource("Shortcut_b3sh8")
 flat = true
-item_count = 3
+item_count = 4
 selected = 0
 fit_to_longest_item = false
 allow_reselect = true
@@ -74,6 +75,9 @@ popup/item_1/id = 1
 popup/item_2/text = "Capsule"
 popup/item_2/icon = ExtResource("5_e4j21")
 popup/item_2/id = 2
+popup/item_3/text = "Polygon"
+popup/item_3/icon = ExtResource("6_wmqt8")
+popup/item_3/id = 3
 script = ExtResource("8_osfq7")
 
 [node name="CanvasToImageButton" type="Button" parent="."]

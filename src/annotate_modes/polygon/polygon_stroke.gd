@@ -44,7 +44,29 @@ func _set_stroke_color(color: Color) -> void:
 	%Fill.color = color
 
 func _stroke_created(first_point: Vector2) -> void:
+	global_position = first_point - Vector2.ONE * stroke_size / 2
+	size = Vector2.ONE * stroke_size
+	
 	annotate_point(first_point)
+
+func _stroke_resized():
+	# clear previous hitbox.
+
+	for child in %CollisionArea.get_children():
+		child.queue_free()
+
+	# Generate border hitbox.
+	
+	var border_capsules = AnnotateModeHelper.gen_line2d_hitbox(%Border)
+	
+	for capsule in border_capsules:
+		%ColissionArea.add_child(capsule)
+	
+	
+	if not fill:
+		return
+		
+	# generate fill hitbox.
 
 func annotate_point(new_point: Vector2):
 	%Border.add_point(new_point)

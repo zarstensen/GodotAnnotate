@@ -5,60 +5,60 @@ const PolygonStroke = preload("res://addons/GodotAnnotate/src/annotate_modes/pol
 const PolygonStrokeScene = preload("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.tscn")
 
 func get_icon_path() -> String:
-    return "res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg"
+	return "res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg"
 
 func get_mode_name() -> String:
-    return "Polygon"
+	return "Polygon"
 
 func get_stroke_variables() -> Dictionary:
-    return {
-        "Fill": false,
-        "Closed": false
-    }
+	return {
+		"Fill": false,
+		"Closed": false
+	}
 
 func should_begin_stroke(event: InputEvent) -> bool:
-    var mouse_button_event := event as InputEventMouseButton
+	var mouse_button_event := event as InputEventMouseButton
 
-    if mouse_button_event != null and mouse_button_event.button_index == MOUSE_BUTTON_LEFT and mouse_button_event.pressed:
-        return true
+	if mouse_button_event != null and mouse_button_event.button_index == MOUSE_BUTTON_LEFT and mouse_button_event.pressed:
+		return true
 
-    return false
+	return false
 
 
 func should_end_stroke(event: InputEvent) -> bool:
-    var mouse_button_event := event as InputEventMouseButton
+	var mouse_button_event := event as InputEventMouseButton
 
-    if mouse_button_event != null and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT and mouse_button_event.pressed:
-        return true
+	if mouse_button_event != null and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT and mouse_button_event.pressed:
+		return true
 
-    var key_button_event := event as InputEventKey
+	var key_button_event := event as InputEventKey
 
-    if key_button_event != null and key_button_event.key_label == KEY_ENTER and key_button_event.pressed:
-        return true
+	if key_button_event != null and key_button_event.key_label == KEY_ENTER and key_button_event.pressed:
+		return true
 
-    return false
+	return false
 
 func on_annotate_input(event: InputEvent, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> bool:
-    var mouse_button_event := event as InputEventMouseButton
+	var mouse_button_event := event as InputEventMouseButton
 
-    if mouse_button_event == null or mouse_button_event.button_index != MOUSE_BUTTON_LEFT or not mouse_button_event.pressed:
-        return false
+	if mouse_button_event == null or mouse_button_event.button_index != MOUSE_BUTTON_LEFT or not mouse_button_event.pressed:
+		return false
 
-    var poly_stroke := stroke as PolygonStroke
+	var poly_stroke := stroke as PolygonStroke
 
-    poly_stroke.annotate_point(canvas.get_global_mouse_position())
+	poly_stroke.annotate_point(canvas.get_global_mouse_position())
 
-    return true
+	return true
 
 func on_begin_stroke(pos: Vector2, size: float, color: Color, variables: Dictionary, canvas: AnnotateCanvas) -> GDA_Stroke:
-    
-    var stroke: PolygonStroke = PolygonStrokeScene.instantiate()
-    
-    stroke.stroke_init(size, color, pos)
-    stroke.fill = variables["Fill"]
-    stroke.closed = variables["Closed"]
+	
+	var stroke: PolygonStroke = PolygonStrokeScene.instantiate()
+	
+	stroke.stroke_init(size, color, pos)
+	stroke.fill = variables["Fill"]
+	stroke.closed = variables["Closed"]
 
-    return stroke
+	return stroke
 
 func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
-    canvas.draw_circle(pos, brush_diameter / 2, brush_color)
+	canvas.draw_circle(pos, brush_diameter / 2, brush_color)
