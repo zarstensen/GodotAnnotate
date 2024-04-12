@@ -37,21 +37,25 @@ static func gen_line2d_hitbox(line: Line2D, min_capsule_distance: float = 0.0) -
 
 	var prev_point_i: int = 0
 
-	var point_count = len(line.points)
+	var point_count := len(line.points)
+	var point_iter_count := point_count
+	
+	if point_count < 2:
+		return []
 	
 	if line.closed:
-		point_count += 1
+		point_iter_count += 1
 
-	for point_i in range(point_count):
+	for point_i in range(point_iter_count):
 
-		var point: Vector2 = line.points[point_i]
+		var point: Vector2 = line.points[point_i % point_count]
 		var prev_point: Vector2 = line.points[prev_point_i]
 
 		var distance_sq := prev_point.distance_squared_to(point)
 
 		# Only generate new capsule segment, if distance between the two points is large enough, or this is the last point.
 
-		if (point_i == point_count - 1 && prev_point_i != point_i) || distance_sq >= (min_capsule_distance * line.width) ** 2:
+		if (point_i == point_iter_count - 1 && prev_point_i != point_i) || distance_sq >= (min_capsule_distance * line.width) ** 2:
 			var distance := sqrt(distance_sq)
 
 			var collider := CollisionShape2D.new()

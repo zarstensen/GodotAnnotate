@@ -47,6 +47,9 @@ func _stroke_created(first_point: Vector2) -> void:
 	global_position = first_point - Vector2.ONE * stroke_size / 2
 	size = Vector2.ONE * stroke_size
 	
+	%Border.global_position = Vector2.ZERO
+	%Fill.global_position = Vector2.ZERO
+	
 	annotate_point(first_point)
 
 func _stroke_resized():
@@ -57,17 +60,28 @@ func _stroke_resized():
 
 	# Generate border hitbox.
 	
-	var border_capsules = AnnotateModeHelper.gen_line2d_hitbox(%Border)
+	var border_capsules := AnnotateModeHelper.gen_line2d_hitbox(%Border)
 	
 	for capsule in border_capsules:
-		%ColissionArea.add_child(capsule)
+		%CollisionArea.add_child(capsule)
 	
 	
 	if not fill:
 		return
 		
 	# generate fill hitbox.
-
+	
+	var fill_polygons := Geometry2D.decompose_polygon_in_convex(%Fill.polygon)
+	
+	for polygon in fill_polygons:
+		var collision_shape := CollisionShape2D.new()
+		var polygon_shape := ConvexPolygonShape2D.new()
+		polygon_shape.set_point_cloud(polygon)
+		
+		collision_shape.shape = polygon_shape
+		
+		%CollisionArea.add_child(collision_shape)
+		
 func annotate_point(new_point: Vector2):
 	%Border.add_point(new_point)
 	var new_polygon: PackedVector2Array = %Fill.polygon
