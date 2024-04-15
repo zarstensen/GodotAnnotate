@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5bid7rxgffn7"
-path="res://.godot/imported/polygon_icon.svg-89561e1dd67cd03f901441ce4d2543f8.ctex"
+uid="uid://cf3qkmk5benw7"
+path="res://.godot/imported/annotate_layer_icon.svg-d949f4a28de0f7dd57be9f351d775926.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/polygon_icon.svg"
-dest_files=["res://.godot/imported/polygon_icon.svg-89561e1dd67cd03f901441ce4d2543f8.ctex"]
+source_file="res://addons/GodotAnnotate/src/annotate_layer_icon.svg"
+dest_files=["res://.godot/imported/annotate_layer_icon.svg-d949f4a28de0f7dd57be9f351d775926.ctex"]
 
 [params]
 

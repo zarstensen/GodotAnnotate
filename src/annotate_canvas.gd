@@ -130,7 +130,6 @@ func _validate_property(property: Dictionary):
 		or property.name == "strokes":
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
-
 func on_editor_input(event: InputEvent) -> bool:
 
 	if lock_canvas:
@@ -160,38 +159,42 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			# finalize stroke annotating
 			get_annotate_mode().on_end_stroke(get_local_mouse_position(), _active_stroke, self)
-			_active_stroke.stroke_finished()
 			
-			# save stroke as packed scene.
-			var scene = PackedScene.new()
-			scene.pack(_active_stroke)
+			var success := _active_stroke.stroke_finished()
 			
-			strokes.append(scene)
-			
-			# add stroke creation to undo / redo history.
+			if success:
+				# save stroke as packed scene.
+				var scene = PackedScene.new()
+				scene.pack(_active_stroke)
+				
+				strokes.append(scene)
+				
+				# add stroke creation to undo / redo history.
 
-			var ur := GodotAnnotate.undo_redo
+				var ur := GodotAnnotate.undo_redo
 
-			ur.create_action("GodotAnnotateNewStroke")
-			ur.add_do_method(self, "_redo_stroke", scene)
-			ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
-			# Stroke was already added at this point, so we do not want to execute redo_stroke.
-			ur.commit_action(false)
+				ur.create_action("GodotAnnotateNewStroke")
+				ur.add_do_method(self, "_redo_stroke", scene)
+				ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
+				# Stroke was already added at this point, so we do not want to execute redo_stroke.
+				ur.commit_action(false)
+			else:
+				_active_stroke.queue_free()
 
 			_active_stroke = null
 
 			return true
 			
-		return get_annotate_mode().on_annotate_input(event)
+		return get_annotate_mode().on_annotate_input(event, _active_stroke, self)
 	
-	elif event is InputEventMouseButton:
+	elif event is InputEventMouseButton and _active_stroke == null:
 		# erasing
-		if event.button_index == MOUSE_BUTTON_RIGHT && event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			_eraser = EraserScene.instantiate()
 			_eraser.stroke_size = brush_size
 			add_child(_eraser)
 			return true
-		elif event.button_index == MOUSE_BUTTON_RIGHT && not event.pressed:
+		elif event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed and _eraser != null:
 			_eraser.queue_free()
 			_eraser = null
 			return true
