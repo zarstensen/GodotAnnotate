@@ -12,7 +12,7 @@ const RectangleLikeStroke := preload("res://addons/GodotAnnotate/src/annotate_mo
 
 func on_end_stroke(pos: Vector2, stroke: CanvasItem, canvas: AnnotateCanvas) -> void:
     var rect_stroke = stroke as RectangleLikeStroke
-    rect_stroke.set_end_point(canvas.get_local_mouse_position())
+    rect_stroke.set_end_point(pos)
 
 func on_annotate_process(delta: float, stroke: CanvasItem, canvas: AnnotateCanvas) -> void:
     on_end_stroke(canvas.get_local_mouse_position(), stroke, canvas)
