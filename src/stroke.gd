@@ -83,7 +83,7 @@ func stroke_finished() -> bool:
 	_stroke_resized.call_deferred()
 	return _stroke_finished()
 
-# Check if the stroke collides with a given circle.
+## Check if the stroke collides with a given circle.
 func collides_with_circle(circle: CircleShape2D, transform: Transform2D) -> bool:
 	# first check if erase cursor is inside the strokes boundary box,
 	# before using the more refined CollisionArea Area2D,

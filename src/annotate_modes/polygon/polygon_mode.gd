@@ -1,8 +1,12 @@
 @tool
 extends GDA_AnnotateMode
+##
+## Annotate Mode implementation for the polygon stroke.
+## The stroke is annotated by clicking multiple times on the canvas, and is finished by right-clicking or hitting the enter key.
+##
 
-const PolygonStroke = preload("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.gd")
-const PolygonStrokeScene = preload("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.tscn")
+const PolygonStroke = preload ("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.gd")
+const PolygonStrokeScene = preload ("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.tscn")
 
 func get_icon_path() -> String:
 	return "res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg"
@@ -16,6 +20,9 @@ func get_stroke_variables() -> Dictionary:
 		"Closed": false
 	}
 
+func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
+	canvas.draw_circle(pos, brush_diameter / 2, brush_color)
+
 func should_begin_stroke(event: InputEvent) -> bool:
 	var mouse_button_event := event as InputEventMouseButton
 
@@ -23,7 +30,6 @@ func should_begin_stroke(event: InputEvent) -> bool:
 		return true
 
 	return false
-
 
 func should_end_stroke(event: InputEvent) -> bool:
 	var mouse_button_event := event as InputEventMouseButton
@@ -67,6 +73,3 @@ func on_begin_stroke(pos: Vector2, size: float, color: Color, variables: Diction
 	stroke.closed = variables["Closed"]
 
 	return stroke
-
-func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
-	canvas.draw_circle(pos, brush_diameter / 2, brush_color)

@@ -35,6 +35,19 @@ var closed: bool:
 	get:
 		return closed
 
+## Insert a point in the polygon stroke at the given position.
+func annotate_point(new_point: Vector2):
+	# we don't insert the point at the end, since the last point is the preview point.
+	_annotate_point_impl(new_point, %Border.get_point_count() - 1)
+
+## Update the global position of the cursor.
+## This updates where the preview point of the polygon stroke is placed.
+func set_cursor_pos(new_pos: Vector2):
+	print(%Fill.polygon)
+	%Border.set_point_position(%Border.get_point_count() -1, new_pos)
+	var polygon: PackedVector2Array = %Fill.polygon
+	polygon[len(polygon) - 1] = new_pos
+	%Fill.polygon = polygon
 
 func _set_stroke_size(size: float) -> void:
 	%Border.width = size
@@ -50,6 +63,12 @@ func _stroke_created(first_point: Vector2) -> void:
 	%Border.global_position = Vector2.ZERO
 	%Fill.global_position = Vector2.ZERO
 	
+	# Two points are created here.
+	# The first one is the starting point of the polygon,
+	# and the second point is relocated using the set_cursor_pos method,
+	# so the user can preview the polygon, before annotating the next point.
+	# This point is removed when the stroke is finished.
+
 	_annotate_point_impl(first_point, 0)
 	_annotate_point_impl(first_point, 1)
 
@@ -79,12 +98,12 @@ func _stroke_resized():
 	
 	for polygon in fill_polygons:
 		var collision_shape := CollisionShape2D.new()
+		%CollisionArea.add_child(collision_shape)
+
 		var polygon_shape := ConvexPolygonShape2D.new()
 		polygon_shape.set_point_cloud(polygon)
 		
 		collision_shape.shape = polygon_shape
-		
-		%CollisionArea.add_child(collision_shape)
 		collision_shape.global_position = Vector2.ZERO
 
 func _stroke_finished() -> bool:
@@ -96,20 +115,12 @@ func _stroke_finished() -> bool:
 	polygon.remove_at(len(polygon) - 1)
 	%Fill.polygon = polygon
 
+	# polygon stroke is not valid if only one vertex was placed.
 	return len(%Border.points) > 1
-
-func annotate_point(new_point: Vector2):
-	_annotate_point_impl(new_point, %Border.get_point_count() - 1)
-
-func set_cursor_pos(new_pos: Vector2):
-	print(%Fill.polygon)
-	%Border.set_point_position(%Border.get_point_count() -1, new_pos)
-	var polygon: PackedVector2Array = %Fill.polygon
-	polygon[len(polygon) - 1] = new_pos
-	%Fill.polygon = polygon
 
 func _annotate_point_impl(new_point: Vector2, index: int):
 	%Border.add_point(new_point, index)
+
 	var new_polygon: PackedVector2Array = %Fill.polygon
 	new_polygon.insert(index, new_point)
 	%Fill.polygon = new_polygon
