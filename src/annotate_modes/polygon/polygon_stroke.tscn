@@ -27,8 +27,8 @@ unique_name_in_owner = true
 visible = false
 color = Color(0, 0, 0, 1)
 
-[node name="CollisionArea" parent="." index="2"]
-visible = true
+[node name="BoundaryArea" parent="." index="3"]
+visible = false
 
 [node name="BoundaryShape" parent="BoundaryArea" index="0"]
 shape = SubResource("RectangleShape2D_qp6ug")

@@ -159,23 +159,27 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			# finalize stroke annotating
 			get_annotate_mode().on_end_stroke(get_local_mouse_position(), _active_stroke, self)
-			_active_stroke.stroke_finished()
 			
-			# save stroke as packed scene.
-			var scene = PackedScene.new()
-			scene.pack(_active_stroke)
+			var success := _active_stroke.stroke_finished()
 			
-			strokes.append(scene)
-			
-			# add stroke creation to undo / redo history.
+			if success:
+				# save stroke as packed scene.
+				var scene = PackedScene.new()
+				scene.pack(_active_stroke)
+				
+				strokes.append(scene)
+				
+				# add stroke creation to undo / redo history.
 
-			var ur := GodotAnnotate.undo_redo
+				var ur := GodotAnnotate.undo_redo
 
-			ur.create_action("GodotAnnotateNewStroke")
-			ur.add_do_method(self, "_redo_stroke", scene)
-			ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
-			# Stroke was already added at this point, so we do not want to execute redo_stroke.
-			ur.commit_action(false)
+				ur.create_action("GodotAnnotateNewStroke")
+				ur.add_do_method(self, "_redo_stroke", scene)
+				ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
+				# Stroke was already added at this point, so we do not want to execute redo_stroke.
+				ur.commit_action(false)
+			else:
+				_active_stroke.queue_free()
 
 			_active_stroke = null
 

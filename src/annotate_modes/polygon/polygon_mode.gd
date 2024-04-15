@@ -50,11 +50,19 @@ func on_annotate_input(event: InputEvent, stroke: GDA_Stroke, canvas: AnnotateCa
 
 	return true
 
+func on_annotate_process(_delta: float, stroke: GDA_Stroke, canvas: AnnotateCanvas):
+	var poly_stroke := stroke as PolygonStroke
+
+	if poly_stroke == null:
+		return
+
+	poly_stroke.set_cursor_pos(canvas.get_global_mouse_position())
+
 func on_begin_stroke(pos: Vector2, size: float, color: Color, variables: Dictionary, canvas: AnnotateCanvas) -> GDA_Stroke:
 	
 	var stroke: PolygonStroke = PolygonStrokeScene.instantiate()
 	
-	stroke.stroke_init(size, color, pos)
+	stroke.stroke_init(size, color, canvas.get_global_mouse_position())
 	stroke.fill = variables["Fill"]
 	stroke.closed = variables["Closed"]
 

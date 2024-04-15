@@ -50,13 +50,17 @@ func _stroke_created(first_point: Vector2) -> void:
 	%Border.global_position = Vector2.ZERO
 	%Fill.global_position = Vector2.ZERO
 	
-	annotate_point(first_point)
+	_annotate_point_impl(first_point, 0)
+	_annotate_point_impl(first_point, 1)
 
 func _stroke_resized():
 	# clear previous hitbox.
 
 	for child in %CollisionArea.get_children():
 		child.queue_free()
+
+	if len(%Border.points) < 2:
+		return
 
 	# Generate border hitbox.
 	
@@ -81,11 +85,33 @@ func _stroke_resized():
 		collision_shape.shape = polygon_shape
 		
 		%CollisionArea.add_child(collision_shape)
-		
+		collision_shape.global_position = Vector2.ZERO
+
+func _stroke_finished() -> bool:
+
+	# Remove extra preview points.
+	%Border.remove_point(%Border.get_point_count() - 1)
+
+	var polygon: PackedVector2Array = %Fill.polygon
+	polygon.remove_at(len(polygon) - 1)
+	%Fill.polygon = polygon
+
+	return len(%Border.points) > 1
+
 func annotate_point(new_point: Vector2):
-	%Border.add_point(new_point)
+	_annotate_point_impl(new_point, %Border.get_point_count() - 1)
+
+func set_cursor_pos(new_pos: Vector2):
+	print(%Fill.polygon)
+	%Border.set_point_position(%Border.get_point_count() -1, new_pos)
+	var polygon: PackedVector2Array = %Fill.polygon
+	polygon[len(polygon) - 1] = new_pos
+	%Fill.polygon = polygon
+
+func _annotate_point_impl(new_point: Vector2, index: int):
+	%Border.add_point(new_point, index)
 	var new_polygon: PackedVector2Array = %Fill.polygon
-	new_polygon.append(new_point)
+	new_polygon.insert(index, new_point)
 	%Fill.polygon = new_polygon
 
 	var new_boundary := AnnotateModeHelper.expand_boundary_sized_point(get_global_rect(), new_point, stroke_size)
@@ -96,5 +122,3 @@ func annotate_point(new_point: Vector2):
 	%Border.global_position = Vector2.ZERO
 	%Fill.global_position = Vector2.ZERO
 
-func set_last_point_pos(new_pos: Vector2):
-	pass

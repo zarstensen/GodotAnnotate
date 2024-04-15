@@ -58,6 +58,12 @@ func _set_stroke_color(size: Color) -> void:
 func _stroke_resized() -> void:
 	pass
 
+## Virtual method called when the stroke is finished being annotated.
+## Returns whether the stroke was completed succesfully or not.
+## If false is returned, the stroke is deleted as soon as possible.
+func _stroke_finished() -> bool:
+	return true
+
 ## Initialize a stroke with the given stroke size, color and starting position.
 ## Should only be called when the stroke is first created, and not when instantiated from a PackedScene saved to a canvas.
 func stroke_init(stroke_size: float, stroke_color: Color, first_point: Vector2) -> void:
@@ -72,9 +78,10 @@ func stroke_init(stroke_size: float, stroke_color: Color, first_point: Vector2) 
 ## Finish annotating the stroke.
 ## After this has been called, the stroke should only be modified by changing the
 ## stroke_size, stroke_color or the size / position of the Stroke control node.
-func stroke_finished() -> void:
+func stroke_finished() -> bool:
 	_is_stroke_finished = true
-	_stroke_resized()
+	_stroke_resized.call_deferred()
+	return _stroke_finished()
 
 # Check if the stroke collides with a given circle.
 func collides_with_circle(circle: CircleShape2D, transform: Transform2D) -> bool:
