@@ -78,7 +78,7 @@ func _ready():
 		# add any missing variables, setting them to their default value.
 
 		for stroke_variable in annotate_mode_stroke_variables:
-			if not stroke_variables.has(stroke_variable):
+			if not stroke_variables[mode_name].has(stroke_variable):
 				stroke_variables[mode_name][stroke_variable] = annotate_mode_stroke_variables[stroke_variable]
 
 func _process(delta):

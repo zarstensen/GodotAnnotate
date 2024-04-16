@@ -43,7 +43,6 @@ func annotate_point(new_point: Vector2):
 ## Update the global position of the cursor.
 ## This updates where the preview point of the polygon stroke is placed.
 func set_cursor_pos(new_pos: Vector2):
-	print(%Fill.polygon)
 	%Border.set_point_position(%Border.get_point_count() -1, new_pos)
 	var polygon: PackedVector2Array = %Fill.polygon
 	polygon[len(polygon) - 1] = new_pos
