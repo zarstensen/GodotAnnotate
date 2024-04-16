@@ -24,7 +24,7 @@ func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	$BrushSizeSlider.value = canvas.brush_size
 	%BrushColorPickerButton.color = canvas.brush_color
 
-	update_variables()
+	_update_variables()
 
 func _on_canvas_to_image_confirmed(path: String, scale: float) -> void:
 	canvas.capture_canvas(path, scale)
@@ -34,7 +34,7 @@ func _on_toggle_annotate_button_toggled(toggled_on: bool) -> void:
 
 func _on_annotate_mode_item_selected(index: int) -> void:
 	canvas.annotate_mode_index = index
-	update_variables()
+	_update_variables()
 
 func _on_brush_size_slider_value_changed(value:float) -> void:
 	canvas.brush_size = value
@@ -74,7 +74,7 @@ func on_editor_event(event: InputEvent) -> bool:
 
 	return false
 
-func update_variables():
+func _update_variables():
 	# remove all previous variable buttons.
 	for c in %StrokeVariablesContainer.get_children():
 		c.queue_free()

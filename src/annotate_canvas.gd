@@ -89,7 +89,6 @@ func _process(delta):
 	if _eraser != null:
 		_eraser.position = get_local_mouse_position()
 
-	if _eraser != null:
 		var erase_stroke_indexes: Array[int] = []
 		var erased_strokes: Dictionary = {}
 		
@@ -109,8 +108,9 @@ func _process(delta):
 			ur.add_do_method(self, "_do_erase", erase_stroke_indexes)
 			ur.add_undo_method(self, "_undo_erase", erased_strokes)
 			ur.commit_action()
-
-	queue_redraw()
+	
+	if Engine.is_editor_hint():
+		queue_redraw()
 
 
 func _draw():
@@ -131,6 +131,8 @@ func _validate_property(property: Dictionary):
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
 func on_editor_input(event: InputEvent) -> bool:
+
+	# TODO: if this gets any larger, it should be split up into multiple functions.
 
 	if lock_canvas:
 		var mouse_event := event as InputEventMouseButton 
@@ -215,23 +217,15 @@ func on_editor_input(event: InputEvent) -> bool:
 func capture_canvas(file: String, scale: float) -> void:
 	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
-
+## Retrieve annotate mode which is currently active on the canvas.
 func get_annotate_mode() -> GDA_AnnotateMode:
 	return GodotAnnotate.get_annotate_mode(annotate_mode_index)
-
-func get_stroke_nodes() -> Array[GDA_Stroke]:
-	var strokes_arr: Array[GDA_Stroke] = []
-
-	strokes_arr.assign(get_children()
-		.filter(func(s): return s is GDA_Stroke))
-
-	return strokes_arr
 
 ## Return the smallest Rect2, which contains all the strokes currently stored in the canvas
 func get_canvas_area() -> Rect2:
 	var boundaries: Array[Rect2] = []
 	
-	boundaries.assign(get_stroke_nodes()
+	boundaries.assign(_get_stroke_nodes()
 		.map(func(s): return s.get_global_rect()))
 
 	return _merge_rects(boundaries)
@@ -246,21 +240,14 @@ func import_strokes(new_strokes: Array[PackedScene]):
 
 	_instantiate_strokes(new_strokes)
 
-func _instantiate_strokes(strokes: Array[PackedScene]) -> void:
-	for stroke in strokes:
-		var stroke_node := stroke.instantiate()
-		add_child(stroke_node)
-
-# stroke_nodes must only contains nodes which have been added via. _instantiate_strokes.
-func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
-	for stroke_node in stroke_nodes:
-		stroke_node.queue_free()
+# Undo Redo callbacks
 
 func _undo_stroke(stroke_index: int):
 	_remove_stroke_nodes([ get_child(stroke_index) as GDA_Stroke ])
 	strokes.remove_at(stroke_index)
 
 func _redo_stroke(stroke_scene: PackedScene):
+	add_child(stroke_scene.instantiate())
 	_instantiate_strokes([ stroke_scene ])
 	strokes.append(stroke_scene)
 
@@ -281,7 +268,7 @@ func _do_erase(erase_stroke_indexes: Array[int]):
 
 	_remove_stroke_nodes(erase_nodes)
 
-## Read all the passed strokes at the index of their key value.
+## Re-add all the passed strokes at the index of their key value.
 func _undo_erase(erased_strokes: Dictionary):
 
 	var indexes := erased_strokes.keys()
@@ -298,6 +285,16 @@ func _undo_erase(erased_strokes: Dictionary):
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		move_child(stroke, insert_index)
 
+func _instantiate_strokes(strokes: Array[PackedScene]) -> void:
+	for stroke in strokes:
+		var stroke_node := stroke.instantiate()
+		add_child(stroke_node)
+
+# stroke_nodes must only contains nodes which have been added via. _instantiate_strokes.
+func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
+	for stroke_node in stroke_nodes:
+		stroke_node.queue_free()
+
 ## Return the smallest possible Rect2 Which contains all the passed Rect2's.
 func _merge_rects(rects: Array[Rect2]) -> Rect2:
 	
@@ -310,3 +307,12 @@ func _merge_rects(rects: Array[Rect2]) -> Rect2:
 		final_rect = final_rect.merge(rect)
 		
 	return final_rect
+
+## Retreive all children of current canvas, which are GDA_Strokes.
+func _get_stroke_nodes() -> Array[GDA_Stroke]:
+	var strokes_arr: Array[GDA_Stroke] = []
+
+	strokes_arr.assign(get_children()
+		.filter(func(s): return s is GDA_Stroke))
+
+	return strokes_arr

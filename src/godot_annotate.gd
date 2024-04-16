@@ -19,6 +19,7 @@ static var annotate_mode_scripts: Array[String] = [
 	"res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_mode.gd",
 ]
 
+## List of loaded GDA_ANnotateModes from annotate_mode_scripts array.
 static var annotate_modes: Array[GDA_AnnotateMode] = []
 
 ## UndoRedoManager for the GodotAnnotate plugin.
@@ -66,11 +67,11 @@ func _exit_tree():
 	# free variables
 
 	canvas_toolbar.queue_free()
-	
+
 	annotate_modes = [ ]
 
 	config.save(CONFIG_FILE)
-	
+
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node and the AnnotateToolbar node if the canvas node does not consume the input.
 func _forward_canvas_gui_input(event: InputEvent):
@@ -87,9 +88,11 @@ func _forward_canvas_gui_input(event: InputEvent):
 	
 	return selected_canvas.on_editor_input(event) or canvas_toolbar.on_editor_event(event)
 
+
 # returns true on all GodotAnnotate, so editor inputs can be handled by the plugin.
 func _handles(object):
 	return object is AnnotateCanvas
+
 
 ## Keeps track of currently selected node, as special action is required when an [AnnotateCanvas] node is selected.
 func _on_selection_changed():
@@ -102,6 +105,7 @@ func _on_selection_changed():
 		canvas_toolbar.visible = true
 		selected_canvas = nodes[0] as AnnotateCanvas
 		canvas_toolbar._on_new_canvas(selected_canvas)
+
 
 static func get_annotate_mode(mode_index: int) -> GDA_AnnotateMode:
 	return annotate_modes[mode_index]

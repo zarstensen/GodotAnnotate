@@ -40,30 +40,6 @@ var _is_stroke_finished := true
 func _ready() -> void:
 	_stroke_resized()
 
-## Virtual method calledwhenever the stroke is created for the first time, at the given point.
-func _stroke_created(first_point: Vector2) -> void:
-	pass
-
-## Virtual method called whenever stroke_size is set,
-## Should be overriden if specific actions needs to be taken to update the color of the implementing stroke.
-func _set_stroke_size(size: float) -> void:
-	pass
-
-## Virtual method called whenever stroke_color is set,
-func _set_stroke_color(size: Color) -> void:
-	pass
-
-## Virtual method called whenever the Stroke control node is resized.
-## This is also called whenever the stroke is loaded from disk, or it has finished being annotated.
-func _stroke_resized() -> void:
-	pass
-
-## Virtual method called when the stroke is finished being annotated.
-## Returns whether the stroke was completed succesfully or not.
-## If false is returned, the stroke is deleted as soon as possible.
-func _stroke_finished() -> bool:
-	return true
-
 ## Initialize a stroke with the given stroke size, color and starting position.
 ## Should only be called when the stroke is first created, and not when instantiated from a PackedScene saved to a canvas.
 func stroke_init(stroke_size: float, stroke_color: Color, first_point: Vector2) -> void:
@@ -102,6 +78,29 @@ func collides_with_circle(circle: CircleShape2D, transform: Transform2D) -> bool
 	
 	return false
 
+## Virtual method calledwhenever the stroke is created for the first time, at the given point.
+func _stroke_created(first_point: Vector2) -> void:
+	pass
+
+## Virtual method called whenever stroke_size is set,
+## Should be overriden if specific actions needs to be taken to update the color of the implementing stroke.
+func _set_stroke_size(size: float) -> void:
+	pass
+
+## Virtual method called whenever stroke_color is set,
+func _set_stroke_color(size: Color) -> void:
+	pass
+
+## Virtual method called whenever the Stroke control node is resized.
+## This is also called whenever the stroke is loaded from disk, or it has finished being annotated.
+func _stroke_resized() -> void:
+	pass
+
+## Virtual method called when the stroke is finished being annotated.
+## Returns whether the stroke was completed succesfully or not.
+## If false is returned, the stroke is deleted as soon as possible.
+func _stroke_finished() -> bool:
+	return true
 
 # signal callback for Stroke.resized signal.
 func _on_resized() -> void:
