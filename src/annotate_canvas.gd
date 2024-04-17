@@ -209,7 +209,7 @@ func on_editor_input(event: InputEvent) -> bool:
 	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
 	if get_annotate_mode().should_begin_stroke(event):
 		_active_stroke = get_annotate_mode().on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, stroke_variables[get_annotate_mode().get_mode_name()], self)
-		add_child(_active_stroke)
+		_add_stroke_nodes([ _active_stroke ])
 		
 		return true
 	
@@ -290,7 +290,14 @@ func _undo_erase(erased_strokes: Dictionary):
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		move_child(stroke, insert_index)
 
-func _add_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
+# adds the given list of GDA_Stroke nodes to the canvas,
+# making sure they all exist at the start of the canvas child array,
+# with no other node types mixed with them.
+func _add_stroke_nodes(nodes: Array) -> void:
+	var stroke_nodes: Array[GDA_Stroke]
+	
+	stroke_nodes.assign(nodes)
+
 	for stroke_node in stroke_nodes:
 		add_child(stroke_node)
 		move_child(stroke_node, _stroke_instance_count)
