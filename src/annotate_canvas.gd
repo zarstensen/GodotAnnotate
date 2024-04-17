@@ -51,12 +51,15 @@ var strokes: Array[PackedScene] = [ ]
 @export
 var stroke_variables := {}
 
+## Number of strokes currently instantiated in the canvas.
+var _stroke_instance_count := 0
+
 func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
 
 	# restore lines from previously saved state.
-	_instantiate_strokes(strokes)
+	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return s.instantiate() as GDA_Stroke) as Array[GDA_Stroke])
 
 	# update stroke_variables list.
 
@@ -238,7 +241,7 @@ func get_strokes() -> Array[PackedScene]:
 func import_strokes(new_strokes: Array[PackedScene]):
 	strokes += new_strokes
 
-	_instantiate_strokes(new_strokes)
+	_add_stroke_nodes(new_strokes.map(func(s): return s.instantiate()))
 
 # Undo Redo callbacks
 
@@ -246,10 +249,11 @@ func _undo_stroke(stroke_index: int):
 	_remove_stroke_nodes([ get_child(stroke_index) as GDA_Stroke ])
 	strokes.remove_at(stroke_index)
 
+
 func _redo_stroke(stroke_scene: PackedScene):
-	add_child(stroke_scene.instantiate())
-	_instantiate_strokes([ stroke_scene ])
 	strokes.append(stroke_scene)
+	_add_stroke_nodes([ stroke_scene.instantiate() ])
+
 
 ## Erase all strokes at the passed indexes.
 func _do_erase(erase_stroke_indexes: Array[int]):
@@ -268,6 +272,7 @@ func _do_erase(erase_stroke_indexes: Array[int]):
 
 	_remove_stroke_nodes(erase_nodes)
 
+
 ## Re-add all the passed strokes at the index of their key value.
 func _undo_erase(erased_strokes: Dictionary):
 
@@ -285,15 +290,19 @@ func _undo_erase(erased_strokes: Dictionary):
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		move_child(stroke, insert_index)
 
-func _instantiate_strokes(strokes: Array[PackedScene]) -> void:
-	for stroke in strokes:
-		var stroke_node := stroke.instantiate()
+func _add_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
+	for stroke_node in stroke_nodes:
 		add_child(stroke_node)
+		move_child(stroke_node, _stroke_instance_count)
+		_stroke_instance_count += 1
 
-# stroke_nodes must only contains nodes which have been added via. _instantiate_strokes.
+# stroke_nodes must only contains nodes which have been added via. _add_stroke_nodes.
 func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
 	for stroke_node in stroke_nodes:
 		stroke_node.queue_free()
+
+	_stroke_instance_count -= len(stroke_nodes)
+
 
 ## Return the smallest possible Rect2 Which contains all the passed Rect2's.
 func _merge_rects(rects: Array[Rect2]) -> Rect2:
@@ -307,6 +316,7 @@ func _merge_rects(rects: Array[Rect2]) -> Rect2:
 		final_rect = final_rect.merge(rect)
 		
 	return final_rect
+
 
 ## Retreive all children of current canvas, which are GDA_Strokes.
 func _get_stroke_nodes() -> Array[GDA_Stroke]:
