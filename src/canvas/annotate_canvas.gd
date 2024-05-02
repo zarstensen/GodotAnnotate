@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/GodotAnnotate/annotate_layer_icon.svg")
+@icon("res://addons/GodotAnnotate/src/annotate_layer_icon.svg")
 class_name AnnotateCanvas
 extends Node2D
 ##
@@ -7,7 +7,7 @@ extends Node2D
 ##
 
 ## Imports
-const AnnotateCanvasCaptureViewport := preload("res://addons/GodotAnnotate/src/annotate_canvas_capture_viewport.gd")
+const AnnotateCanvasCaptureViewport := preload("res://addons/GodotAnnotate/src/canvas/annotate_canvas_capture_viewport.gd")
 const EraserScene := preload("res://addons/GodotAnnotate/src/eraser/eraser.tscn")
 const Eraser := preload("res://addons/GodotAnnotate/src/eraser/eraser.gd")
 

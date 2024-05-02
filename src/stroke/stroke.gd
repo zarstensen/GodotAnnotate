@@ -5,8 +5,6 @@ extends Control
 ## Control node acting as the parent node to a godot annotate stroke.
 ##
 
-const Canvas = preload("res://addons/GodotAnnotate/src/annotate_canvas.gd")
-
 ## Size of the stroke lines (if relevant)
 @export
 var stroke_size: float:
