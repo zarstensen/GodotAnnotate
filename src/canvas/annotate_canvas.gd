@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/GodotAnnotate/src/annotate_layer_icon.svg")
+@icon("res://addons/GodotAnnotate/src/canvas/annotate_canvas_icon.svg")
 class_name AnnotateCanvas
 extends Node2D
 ##
