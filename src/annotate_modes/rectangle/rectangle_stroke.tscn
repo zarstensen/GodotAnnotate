@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://dqq1tdonh1wul"]
 
 [ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gdshader" id="1_prwjk"]
-[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_wq6en"]
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke/stroke.tscn" id="1_wq6en"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.gd" id="2_wewa4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xqpha"]

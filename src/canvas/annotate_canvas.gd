@@ -11,6 +11,7 @@ const AnnotateCanvasCaptureViewport := preload("res://addons/GodotAnnotate/src/c
 const EraserScene := preload("res://addons/GodotAnnotate/src/eraser/eraser.tscn")
 const Eraser := preload("res://addons/GodotAnnotate/src/eraser/eraser.gd")
 
+signal canvas_changed(canvas: AnnotateCanvas)
 
 @export_group("Brush")
 
@@ -228,7 +229,7 @@ func get_annotate_mode() -> GDA_AnnotateMode:
 func get_canvas_area() -> Rect2:
 	var boundaries: Array[Rect2] = []
 	
-	boundaries.assign(_get_stroke_nodes()
+	boundaries.assign(get_stroke_nodes()
 		.map(func(s): return s.get_global_rect()))
 
 	return _merge_rects(boundaries)
@@ -236,6 +237,15 @@ func get_canvas_area() -> Rect2:
 ## Get an array of all strokes currently saved in the canvas.
 func get_strokes() -> Array[PackedScene]:
 	return strokes
+
+## Retreive all children of current canvas, which are GDA_Strokes.
+func get_stroke_nodes() -> Array[GDA_Stroke]:
+	var strokes_arr: Array[GDA_Stroke] = []
+
+	strokes_arr.assign(get_children()
+		.filter(func(s): return s is GDA_Stroke))
+
+	return strokes_arr
 
 ## Adds the passed strokes to the canvas.
 func import_strokes(new_strokes: Array[PackedScene]):
@@ -286,21 +296,27 @@ func _undo_erase(erased_strokes: Dictionary):
 		strokes.insert(insert_index, stroke_scene)
 		
 		var stroke = stroke_scene.instantiate()
-		add_child(stroke)
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
-		move_child(stroke, insert_index)
+		_add_stroke_nodes([ stroke ], insert_index)
+		
 
 # adds the given list of GDA_Stroke nodes to the canvas,
 # making sure they all exist at the start of the canvas child array,
 # with no other node types mixed with them.
-func _add_stroke_nodes(nodes: Array) -> void:
+func _add_stroke_nodes(nodes: Array, index: int = -1) -> void:
 	var stroke_nodes: Array[GDA_Stroke]
 	
 	stroke_nodes.assign(nodes)
 
+	var offset = 0
+
+	if index > 0:
+		offset = _stroke_instance_count - index
+
 	for stroke_node in stroke_nodes:
+		stroke_node.stroke_changed.connect(func(s): canvas_changed.emit(self))
 		add_child(stroke_node)
-		move_child(stroke_node, _stroke_instance_count)
+		move_child(stroke_node, _stroke_instance_count - offset)
 		_stroke_instance_count += 1
 
 # stroke_nodes must only contains nodes which have been added via. _add_stroke_nodes.
@@ -309,6 +325,8 @@ func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
 		stroke_node.queue_free()
 
 	_stroke_instance_count -= len(stroke_nodes)
+
+	canvas_changed.emit(self)
 
 
 ## Return the smallest possible Rect2 Which contains all the passed Rect2's.
@@ -325,11 +343,4 @@ func _merge_rects(rects: Array[Rect2]) -> Rect2:
 	return final_rect
 
 
-## Retreive all children of current canvas, which are GDA_Strokes.
-func _get_stroke_nodes() -> Array[GDA_Stroke]:
-	var strokes_arr: Array[GDA_Stroke] = []
 
-	strokes_arr.assign(get_children()
-		.filter(func(s): return s is GDA_Stroke))
-
-	return strokes_arr

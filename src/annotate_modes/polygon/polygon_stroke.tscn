@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dmktnlb6ova6t"]
 
-[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_jpqsp"]
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke/stroke.tscn" id="1_jpqsp"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.gd" id="2_rc0qe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qp6ug"]
