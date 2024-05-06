@@ -40,7 +40,7 @@ var _is_stroke_finished := true
 
 func _ready() -> void:
 	_stroke_resized()
-	
+
 ## Initialize a stroke with the given stroke size, color and starting position.
 ## Should only be called when the stroke is first created, and not when instantiated from a PackedScene saved to a canvas.
 func stroke_init(stroke_size: float, stroke_color: Color, first_point: Vector2) -> void:

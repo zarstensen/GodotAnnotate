@@ -243,7 +243,7 @@ func get_stroke_nodes() -> Array[GDA_Stroke]:
 	var strokes_arr: Array[GDA_Stroke] = []
 
 	strokes_arr.assign(get_children()
-		.filter(func(s): return s is GDA_Stroke))
+		.filter(func(s): return s is GDA_Stroke and not s.is_queued_for_deletion()))
 
 	return strokes_arr
 
