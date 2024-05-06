@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/GodotAnnotate/src/collision/canvas_collision_shape_icon.svg")
 class_name CanvasCollisionShape
 extends Node
 ##
