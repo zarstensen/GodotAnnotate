@@ -18,11 +18,11 @@ signal canvas_changed(canvas: AnnotateCanvas)
 ## Current size of the brush (size in pixels) used to paint strokes.
 ## Shortcut: shift + scroll via. annotate toolbar
 @export_range(1, 100, 0.1)
-var brush_size: float = GodotAnnotate.config.get_value("canvas", "default_brush_size", 50)
+var brush_size: float = GodotAnnotate.config.get_value("canvas", "default_brush_size", 50) if GodotAnnotate.config else 0
 
 
 @export
-var brush_color: Color = GodotAnnotate.config.get_value("canvas", "default_brush_color", Color(141 / 255.0, 165 / 255.0, 243 / 255.0))
+var brush_color: Color = GodotAnnotate.config.get_value("canvas", "default_brush_color", Color(141 / 255.0, 165 / 255.0, 243 / 255.0)) if GodotAnnotate.config else Color()
 
 @export_group("Advanced")
 
