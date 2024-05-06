@@ -12,7 +12,7 @@ const OVERLAP_INCR_PERC = 0.0001
 const MIN_FLOAT_TRES_VAL = 0.001
 
 @export
-var min_distance_hitbox: float = 0.25
+var min_distance_hitbox: float
 
 ## Attempts to insert the given point at the end of the stroke line.
 ## If the point is less than [param perc_min_point_dist], it will not be added,
@@ -61,6 +61,7 @@ func _stroke_resized() -> void:
 	for child in %CollisionArea.get_children():
 		child.queue_free()
 	
+	print("MDH: ", min_distance_hitbox)
 	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
 	
 	for capsule in capsules:

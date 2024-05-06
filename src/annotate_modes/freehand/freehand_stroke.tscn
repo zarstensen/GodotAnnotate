@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bjja2rjx6aot1"]
 
-[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke.tscn" id="1_c0xsr"]
+[ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke/stroke.tscn" id="1_c0xsr"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd" id="1_sgqdh"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wgbx6"]
@@ -9,10 +9,12 @@ size = Vector2(0, 0)
 
 [node name="Stroke" instance=ExtResource("1_c0xsr")]
 script = ExtResource("1_sgqdh")
-min_distance_hitbox = 2.0
+min_distance_hitbox = 0.0
 
 [node name="StrokeLine" type="Line2D" parent="." index="0"]
 unique_name_in_owner = true
+width = 0.0
+default_color = Color(0, 0, 0, 1)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2

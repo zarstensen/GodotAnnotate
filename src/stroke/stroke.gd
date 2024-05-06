@@ -5,7 +5,8 @@ extends Control
 ## Control node acting as the parent node to a godot annotate stroke.
 ##
 
-const Canvas = preload("res://addons/GodotAnnotate/src/annotate_canvas.gd")
+
+signal stroke_changed(stroke: GDA_Stroke)
 
 ## Size of the stroke lines (if relevant)
 @export
@@ -56,7 +57,13 @@ func stroke_init(stroke_size: float, stroke_color: Color, first_point: Vector2) 
 ## stroke_size, stroke_color or the size / position of the Stroke control node.
 func stroke_finished() -> bool:
 	_is_stroke_finished = true
-	_stroke_resized.call_deferred()
+
+	var update_stroke := func():
+		_stroke_resized()
+		stroke_changed.emit(self)
+
+	update_stroke.call_deferred()
+
 	return _stroke_finished()
 
 ## Check if the stroke collides with a given circle.
@@ -77,6 +84,9 @@ func collides_with_circle(circle: CircleShape2D, transform: Transform2D) -> bool
 			return true
 	
 	return false
+
+func get_collision_area() -> Area2D:
+	return %CollisionArea
 
 ## Virtual method calledwhenever the stroke is created for the first time, at the given point.
 func _stroke_created(first_point: Vector2) -> void:
@@ -111,3 +121,4 @@ func _on_resized() -> void:
 	# we do not want to notify the stroke of it being resized during annotation.
 	if _is_stroke_finished:
 		_stroke_resized()
+		stroke_changed.emit()
