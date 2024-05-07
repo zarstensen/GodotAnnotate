@@ -61,7 +61,6 @@ func _stroke_resized() -> void:
 	for child in %CollisionArea.get_children():
 		child.queue_free()
 	
-	print("MDH: ", min_distance_hitbox)
 	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
 	
 	for capsule in capsules:
