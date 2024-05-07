@@ -59,6 +59,8 @@ func _ready():
 	if not Engine.is_editor_hint() and not show_when_running:
 		queue_free()
 
+	set_notify_transform(true)
+
 	# restore lines from previously saved state.
 	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return s.instantiate() as GDA_Stroke) as Array[GDA_Stroke])
 
@@ -116,6 +118,9 @@ func _process(delta):
 	if Engine.is_editor_hint():
 		queue_redraw()
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSFORM_CHANGED:
+		canvas_changed.emit(self)
 
 func _draw():
 	# handles drawing of the cursor preview for the current stroke mode.
