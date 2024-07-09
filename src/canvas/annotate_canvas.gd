@@ -60,7 +60,7 @@ func _ready():
 		queue_free()
 
 	# restore lines from previously saved state.
-	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return s.instantiate() as GDA_Stroke) as Array[GDA_Stroke])
+	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return GDA_Stroke.load_stroke(s) as GDA_Stroke) as Array[GDA_Stroke])
 
 	# update stroke_variables list.
 
@@ -170,17 +170,14 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			if success:
 				# save stroke as packed scene.
-				var scene = PackedScene.new()
-				scene.pack(_active_stroke)
-				
-				strokes.append(scene)
+				strokes.append(_active_stroke.save_stroke())
 				
 				# add stroke creation to undo / redo history.
 
 				var ur := GodotAnnotate.undo_redo
 
 				ur.create_action("GodotAnnotateNewStroke")
-				ur.add_do_method(self, "_redo_stroke", scene)
+				ur.add_do_method(self, "_redo_stroke", _active_stroke.get_saved_stroke())
 				ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
 				# Stroke was already added at this point, so we do not want to execute redo_stroke.
 				ur.commit_action(false)
@@ -251,7 +248,7 @@ func get_stroke_nodes() -> Array[GDA_Stroke]:
 func import_strokes(new_strokes: Array[PackedScene]):
 	strokes += new_strokes
 
-	_add_stroke_nodes(new_strokes.map(func(s): return s.instantiate()))
+	_add_stroke_nodes(new_strokes.map(func(s): return GDA_Stroke.load_stroke(s)))
 
 # Undo Redo callbacks
 
@@ -262,7 +259,7 @@ func _undo_stroke(stroke_index: int):
 
 func _redo_stroke(stroke_scene: PackedScene):
 	strokes.append(stroke_scene)
-	_add_stroke_nodes([ stroke_scene.instantiate() ])
+	_add_stroke_nodes([ GDA_Stroke.load_stroke(stroke_scene) ])
 
 
 ## Erase all strokes at the passed indexes.
@@ -295,7 +292,7 @@ func _undo_erase(erased_strokes: Dictionary):
 
 		strokes.insert(insert_index, stroke_scene)
 		
-		var stroke = stroke_scene.instantiate()
+		var stroke = GDA_Stroke.load_stroke(stroke_scene)
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		_add_stroke_nodes([ stroke ], insert_index)
 		
