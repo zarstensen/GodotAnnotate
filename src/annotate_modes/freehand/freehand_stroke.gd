@@ -46,7 +46,7 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 	size = new_boundary.size
 
 	# since global_position has been modified,
-	# we need to re place the line origin back to world origin,
+	# we need to move the line origin back to world origin,
 	# in order to not offset the already drawn points.
 	%StrokeLine.global_position = Vector2.ZERO
 	

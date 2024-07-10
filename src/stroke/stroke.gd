@@ -145,4 +145,6 @@ func _on_resized() -> void:
 	# we do not want to notify the stroke of it being resized during annotation.
 	if _is_stroke_finished:
 		_stroke_resized()
-		on_stroke_changed()
+
+func _on_item_rect_changed() -> void:
+	on_stroke_changed()

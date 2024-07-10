@@ -102,7 +102,7 @@ func _process(delta):
 			var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
 			if stroke != null and stroke.collides_with_circle(_eraser.shape, eraser_transform):
 				erase_stroke_indexes.append(i)
-				erased_strokes[i] = strokes[i]
+				erased_strokes[i] = stroke
 
 		# Only create an undoable erase action, if something is actually erased.
 		if len(erase_stroke_indexes) > 0:
@@ -167,7 +167,7 @@ func on_editor_input(event: InputEvent) -> bool:
 						selection.clear()
 					
 					selection.add_node(stroke)
-			return true
+					return true
 
 		return false
 
@@ -189,7 +189,7 @@ func on_editor_input(event: InputEvent) -> bool:
 				var ur := GodotAnnotate.undo_redo
 
 				ur.create_action("GodotAnnotateNewStroke")
-				ur.add_do_method(self, "_redo_stroke", _active_stroke.get_saved_stroke())
+				ur.add_do_method(self, "_redo_stroke", _active_stroke)
 				ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
 				# Stroke was already added at this point, so we do not want to execute redo_stroke.
 				ur.commit_action(false)
@@ -269,14 +269,13 @@ func _undo_stroke(stroke_index: int):
 	strokes.remove_at(stroke_index)
 
 
-func _redo_stroke(stroke_scene: PackedScene):
-	strokes.append(stroke_scene)
-	_add_stroke_nodes([ GDA_Stroke.load_stroke(stroke_scene) ])
+func _redo_stroke(stroke: GDA_Stroke):
+	strokes.append(stroke.get_saved_stroke())
+	_add_stroke_nodes([ stroke ])
 
 
 ## Erase all strokes at the passed indexes.
 func _do_erase(erase_stroke_indexes: Array[int]):
-
 	var erase_nodes: Array[GDA_Stroke] = [ ]
 	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 
@@ -286,7 +285,7 @@ func _do_erase(erase_stroke_indexes: Array[int]):
 
 		# Keep track of how the new selection will look like after the strokes have been erased.
 		var selection_index := selected_nodes.find(stroke)
-		
+
 		if selection_index >= 0 :
 			selected_nodes.remove_at(selection_index)
 
@@ -319,11 +318,10 @@ func _undo_erase(erased_strokes: Dictionary):
 
 	for insert_index in indexes:
 
-		var stroke_scene = erased_strokes[insert_index] as PackedScene
+		var stroke = erased_strokes[insert_index] as GDA_Stroke
 
-		strokes.insert(insert_index, stroke_scene)
+		strokes.insert(insert_index, stroke.get_saved_stroke())
 		
-		var stroke = GDA_Stroke.load_stroke(stroke_scene)
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		_add_stroke_nodes([ stroke ], insert_index)
 		
@@ -350,7 +348,10 @@ func _add_stroke_nodes(nodes: Array, index: int = -1) -> void:
 # stroke_nodes must only contains nodes which have been added via. _add_stroke_nodes.
 func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
 	for stroke_node in stroke_nodes:
-		stroke_node.queue_free()
+		# stroke_node should NOT be freed here, as it may be undone,
+		# and it is critical the readded stroke instance is the same as the removed one, 
+		# otherwise transforms performed by the editor cannot be undone.
+		remove_child(stroke_node)
 
 	_stroke_instance_count -= len(stroke_nodes)
 
