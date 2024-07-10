@@ -122,7 +122,7 @@ func _draw():
 	if lock_canvas or _eraser != null:
 		return
 	
-	elif GodotAnnotate.selected_canvas == self:
+	elif GodotAnnotate.active_canvas == self:
 		get_annotate_mode().draw_cursor(get_local_mouse_position(),
 				brush_size,
 				brush_color,
@@ -134,6 +134,12 @@ func _validate_property(property: Dictionary):
 		or property.name == "strokes":
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
+## Should be called whenever the canvas is no longer the active canvas.
+func deactivate():
+	if _eraser:
+		_eraser.queue_free()
+		_eraser = null
+
 func on_editor_input(event: InputEvent) -> bool:
 
 	# TODO: if this gets any larger, it should be split up into multiple functions.
@@ -142,19 +148,25 @@ func on_editor_input(event: InputEvent) -> bool:
 		var mouse_event := event as InputEventMouseButton 
 		
 		if mouse_event != null:
+			# Stroke Selection
 			var select_shape := CircleShape2D.new()
 			select_shape.radius = 10 / get_viewport().global_canvas_transform.get_scale().x
 
 			var select_transform := Transform2D(0, get_global_mouse_position())
 
+			var selection = EditorInterface.get_selection()
+
 			for i in range(get_child_count()):
 				var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
 
-				if stroke != null and stroke.collides_with_circle(select_shape, select_transform):
-					EditorInterface.get_selection().clear()
-					EditorInterface.get_selection().add_node(stroke)
-
-			# select_strokes()
+				if stroke != null\
+					and stroke.collides_with_circle(select_shape, select_transform)\
+					and stroke != selection.get_selected_nodes()[-1]:
+						
+					if not Input.is_key_pressed(KEY_SHIFT):
+						selection.clear()
+					
+					selection.add_node(stroke)
 			return true
 
 		return false
@@ -266,16 +278,35 @@ func _redo_stroke(stroke_scene: PackedScene):
 func _do_erase(erase_stroke_indexes: Array[int]):
 
 	var erase_nodes: Array[GDA_Stroke] = [ ]
+	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 
 	for erase_count in range(erase_stroke_indexes.size()):
+		var stroke: GDA_Stroke = get_child(erase_stroke_indexes[erase_count])
+		erase_nodes.append(stroke)
+
+		# Keep track of how the new selection will look like after the strokes have been erased.
+		var selection_index := selected_nodes.find(stroke)
 		
-		erase_nodes.append(get_child(erase_stroke_indexes[erase_count]))
+		if selection_index >= 0 :
+			selected_nodes.remove_at(selection_index)
 
 		# subtract the target index by the amount of strokes deleted,
 		# since these strokes no longer exist in the array.
 		
 		var remove_index := erase_stroke_indexes[erase_count] - erase_count
 		strokes.remove_at(remove_index)
+
+	# If the new selection does not contain a stroke or a canvas, we add the current canvas, for a smoother workflow.
+
+	var valid_selection := false
+
+	for node in selected_nodes:
+		if node is GDA_Stroke or node is AnnotateCanvas:
+			valid_selection = true
+			break
+
+	if not valid_selection:
+		EditorInterface.get_selection().add_node(self)
 
 	_remove_stroke_nodes(erase_nodes)
 
