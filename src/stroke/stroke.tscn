@@ -24,4 +24,5 @@ collision_mask = 0
 unique_name_in_owner = true
 shape = SubResource("RectangleShape2D_v60vi")
 
+[connection signal="item_rect_changed" from="." to="." method="_on_item_rect_changed"]
 [connection signal="resized" from="." to="." method="_on_resized"]

@@ -7,7 +7,7 @@ extends EditorPlugin
 
 const CONFIG_FILE: String = "res://addons/GodotAnnotate/config.ini"
 
-static var selected_canvas: AnnotateCanvas
+static var active_canvas: AnnotateCanvas
 
 static var canvas_toolbar: Control
 
@@ -75,36 +75,38 @@ func _exit_tree():
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node and the AnnotateToolbar node if the canvas node does not consume the input.
 func _forward_canvas_gui_input(event: InputEvent):
-	if event is InputEventKey:
-		var ke: InputEventKey = event
-		if ke.key_label == KEY_F10:
-			EditorInterface.get_selection().clear()
-			EditorInterface.get_selection().add_node(selected_canvas.get_child(0))
-			pass
-		pass
-
-	if not selected_canvas:
+	if not active_canvas:
 		return false
 	
-	return selected_canvas.on_editor_input(event) or canvas_toolbar.on_editor_event(event)
+	return active_canvas.on_editor_input(event) or canvas_toolbar.on_editor_event(event)
 
 
 # returns true on all GodotAnnotate, so editor inputs can be handled by the plugin.
 func _handles(object):
-	return object is AnnotateCanvas
+	return object is AnnotateCanvas or object is GDA_Stroke
 
 
 ## Keeps track of currently selected node, as special action is required when an [AnnotateCanvas] node is selected.
 func _on_selection_changed():
 	canvas_toolbar.visible = false
-	selected_canvas = null
-	
-	var nodes := EditorInterface.get_selection().get_selected_nodes()
 
-	if len(nodes) == 1 and nodes[0] is AnnotateCanvas:
+	if active_canvas:
+		active_canvas.deactivate()
+		active_canvas = null
+	
+	var selected_nodes = EditorInterface.get_selection().get_selected_nodes()
+
+	for node in selected_nodes:
+		if node is AnnotateCanvas:
+			active_canvas = node
+			break
+		elif node is GDA_Stroke and node.get_parent() is AnnotateCanvas:
+			active_canvas = node.get_parent()
+			break
+
+	if active_canvas:
 		canvas_toolbar.visible = true
-		selected_canvas = nodes[0] as AnnotateCanvas
-		canvas_toolbar._on_new_canvas(selected_canvas)
+		canvas_toolbar._on_new_canvas(active_canvas)
 
 
 static func get_annotate_mode(mode_index: int) -> GDA_AnnotateMode:

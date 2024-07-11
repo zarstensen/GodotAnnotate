@@ -62,7 +62,7 @@ func _ready():
 	set_notify_transform(true)
 
 	# restore lines from previously saved state.
-	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return s.instantiate() as GDA_Stroke) as Array[GDA_Stroke])
+	_add_stroke_nodes(strokes.map(func(s) -> GDA_Stroke: return GDA_Stroke.load_stroke(s) as GDA_Stroke) as Array[GDA_Stroke])
 
 	# update stroke_variables list.
 
@@ -104,7 +104,7 @@ func _process(delta):
 			var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
 			if stroke != null and stroke.collides_with_circle(_eraser.shape, eraser_transform):
 				erase_stroke_indexes.append(i)
-				erased_strokes[i] = strokes[i]
+				erased_strokes[i] = stroke
 
 		# Only create an undoable erase action, if something is actually erased.
 		if len(erase_stroke_indexes) > 0:
@@ -127,7 +127,7 @@ func _draw():
 	if lock_canvas or _eraser != null:
 		return
 	
-	elif GodotAnnotate.selected_canvas == self:
+	elif GodotAnnotate.active_canvas == self:
 		get_annotate_mode().draw_cursor(get_local_mouse_position(),
 				brush_size,
 				brush_color,
@@ -139,6 +139,12 @@ func _validate_property(property: Dictionary):
 		or property.name == "strokes":
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
+## Should be called whenever the canvas is no longer the active canvas.
+func deactivate():
+	if _eraser:
+		_eraser.queue_free()
+		_eraser = null
+
 func on_editor_input(event: InputEvent) -> bool:
 
 	# TODO: if this gets any larger, it should be split up into multiple functions.
@@ -147,20 +153,26 @@ func on_editor_input(event: InputEvent) -> bool:
 		var mouse_event := event as InputEventMouseButton 
 		
 		if mouse_event != null:
+			# Stroke Selection
 			var select_shape := CircleShape2D.new()
 			select_shape.radius = 10 / get_viewport().global_canvas_transform.get_scale().x
 
 			var select_transform := Transform2D(0, get_global_mouse_position())
 
+			var selection = EditorInterface.get_selection()
+
 			for i in range(get_child_count()):
 				var stroke: GDA_Stroke = get_child(i) as GDA_Stroke
 
-				if stroke != null and stroke.collides_with_circle(select_shape, select_transform):
-					EditorInterface.get_selection().clear()
-					EditorInterface.get_selection().add_node(stroke)
-
-			# select_strokes()
-			return true
+				if stroke != null\
+					and stroke.collides_with_circle(select_shape, select_transform)\
+					and stroke != selection.get_selected_nodes()[-1]:
+						
+					if not Input.is_key_pressed(KEY_SHIFT):
+						selection.clear()
+					
+					selection.add_node(stroke)
+					return true
 
 		return false
 
@@ -175,21 +187,19 @@ func on_editor_input(event: InputEvent) -> bool:
 			
 			if success:
 				# save stroke as packed scene.
-				var scene = PackedScene.new()
-				scene.pack(_active_stroke)
-				
-				strokes.append(scene)
+				strokes.append(_active_stroke.save_stroke())
 				
 				# add stroke creation to undo / redo history.
 
 				var ur := GodotAnnotate.undo_redo
 
 				ur.create_action("GodotAnnotateNewStroke")
-				ur.add_do_method(self, "_redo_stroke", scene)
+				ur.add_do_method(self, "_redo_stroke", _active_stroke)
 				ur.add_undo_method(self, "_undo_stroke", len(strokes) - 1)
 				# Stroke was already added at this point, so we do not want to execute redo_stroke.
 				ur.commit_action(false)
 			else:
+				_remove_stroke_nodes([_active_stroke])
 				_active_stroke.queue_free()
 
 			_active_stroke = null
@@ -256,7 +266,7 @@ func get_stroke_nodes() -> Array[GDA_Stroke]:
 func import_strokes(new_strokes: Array[PackedScene]):
 	strokes += new_strokes
 
-	_add_stroke_nodes(new_strokes.map(func(s): return s.instantiate()))
+	_add_stroke_nodes(new_strokes.map(func(s): return GDA_Stroke.load_stroke(s)))
 
 # Undo Redo callbacks
 
@@ -265,25 +275,43 @@ func _undo_stroke(stroke_index: int):
 	strokes.remove_at(stroke_index)
 
 
-func _redo_stroke(stroke_scene: PackedScene):
-	strokes.append(stroke_scene)
-	_add_stroke_nodes([ stroke_scene.instantiate() ])
+func _redo_stroke(stroke: GDA_Stroke):
+	strokes.append(stroke.get_saved_stroke())
+	_add_stroke_nodes([ stroke ])
 
 
 ## Erase all strokes at the passed indexes.
 func _do_erase(erase_stroke_indexes: Array[int]):
-
 	var erase_nodes: Array[GDA_Stroke] = [ ]
+	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 
 	for erase_count in range(erase_stroke_indexes.size()):
-		
-		erase_nodes.append(get_child(erase_stroke_indexes[erase_count]))
+		var stroke: GDA_Stroke = get_child(erase_stroke_indexes[erase_count])
+		erase_nodes.append(stroke)
+
+		# Keep track of how the new selection will look like after the strokes have been erased.
+		var selection_index := selected_nodes.find(stroke)
+
+		if selection_index >= 0 :
+			selected_nodes.remove_at(selection_index)
 
 		# subtract the target index by the amount of strokes deleted,
 		# since these strokes no longer exist in the array.
 		
 		var remove_index := erase_stroke_indexes[erase_count] - erase_count
 		strokes.remove_at(remove_index)
+
+	# If the new selection does not contain a stroke or a canvas, we add the current canvas, for a smoother workflow.
+
+	var valid_selection := false
+
+	for node in selected_nodes:
+		if node is GDA_Stroke or node is AnnotateCanvas:
+			valid_selection = true
+			break
+
+	if not valid_selection:
+		EditorInterface.get_selection().add_node(self)
 
 	_remove_stroke_nodes(erase_nodes)
 
@@ -296,11 +324,10 @@ func _undo_erase(erased_strokes: Dictionary):
 
 	for insert_index in indexes:
 
-		var stroke_scene = erased_strokes[insert_index] as PackedScene
+		var stroke = erased_strokes[insert_index] as GDA_Stroke
 
-		strokes.insert(insert_index, stroke_scene)
+		strokes.insert(insert_index, stroke.get_saved_stroke())
 		
-		var stroke = stroke_scene.instantiate()
 		# move stroke back to its original index, so the z-order is the same as when the stroke was erased.
 		_add_stroke_nodes([ stroke ], insert_index)
 		
@@ -327,7 +354,10 @@ func _add_stroke_nodes(nodes: Array, index: int = -1) -> void:
 # stroke_nodes must only contains nodes which have been added via. _add_stroke_nodes.
 func _remove_stroke_nodes(stroke_nodes: Array[GDA_Stroke]) -> void:
 	for stroke_node in stroke_nodes:
-		stroke_node.queue_free()
+		# stroke_node should NOT be freed here, as it may be undone,
+		# and it is critical the readded stroke instance is the same as the removed one, 
+		# otherwise transforms performed by the editor cannot be undone.
+		remove_child(stroke_node)
 
 	_stroke_instance_count -= len(stroke_nodes)
 

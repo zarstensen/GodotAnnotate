@@ -14,6 +14,12 @@ const MIN_FLOAT_TRES_VAL = 0.001
 @export
 var min_distance_hitbox: float
 
+@export
+var points: PackedVector2Array
+
+@export
+var finished_size: Vector2
+
 ## Attempts to insert the given point at the end of the stroke line.
 ## If the point is less than [param perc_min_point_dist], it will not be added,
 ## unless [param force] is set to true.
@@ -46,7 +52,7 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 	size = new_boundary.size
 
 	# since global_position has been modified,
-	# we need to re place the line origin back to world origin,
+	# we need to move the line origin back to world origin,
 	# in order to not offset the already drawn points.
 	%StrokeLine.global_position = Vector2.ZERO
 	
@@ -59,9 +65,20 @@ func _stroke_resized() -> void:
 	# clear previous hitbox.
 
 	for child in %CollisionArea.get_children():
+		%CollisionArea.remove_child(child)
 		child.queue_free()
 	
-	print("MDH: ", min_distance_hitbox)
+	# Scale polygon points
+	if _is_stroke_finished:
+		var scaled_points := points.duplicate()
+
+		var scale_factor := (size - Vector2.ONE * stroke_size) / (finished_size - Vector2.ONE * stroke_size)
+
+		for i in range(len(scaled_points)):
+			scaled_points[i] = scaled_points[i] * scale_factor
+
+		%StrokeLine.points = scaled_points
+
 	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
 	
 	for capsule in capsules:
@@ -77,8 +94,22 @@ func _stroke_created(first_point: Vector2) -> void:
 
 	%StrokeLine.add_point(first_point)
 
+func _stroke_finished():
+	AnnotateModeHelper.move_line2d_origin(%StrokeLine, Vector2.ONE * stroke_size / 2)
+	points = %StrokeLine.points
+	finished_size = size
+	return true
+
 func _set_stroke_size(size: float) -> void:
+	var prev_size = %StrokeLine.width
 	%StrokeLine.width = size
+
+	if _is_stroke_finished:
+		# Since scaling is performed at the origin of the first line point, we need to reposition the line so start cap is at most tangent to the strokes rect.
+		# We also need to edit the finished size to take into account the new stroke size.
+		finished_size += Vector2.ONE * (size - prev_size)
+		%StrokeLine.position = Vector2.ONE * stroke_size / 2
+		_stroke_resized()
 
 func _set_stroke_color(color: Color) -> void:
 	%StrokeLine.default_color = color
