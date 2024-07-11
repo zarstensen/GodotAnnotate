@@ -14,6 +14,12 @@ const MIN_FLOAT_TRES_VAL = 0.001
 @export
 var min_distance_hitbox: float
 
+@export
+var points: PackedVector2Array
+
+@export
+var finished_size: Vector2
+
 ## Attempts to insert the given point at the end of the stroke line.
 ## If the point is less than [param perc_min_point_dist], it will not be added,
 ## unless [param force] is set to true.
@@ -61,6 +67,17 @@ func _stroke_resized() -> void:
 	for child in %CollisionArea.get_children():
 		child.queue_free()
 	
+	# Scale polygon points
+	if _is_stroke_finished:
+		var scaled_points := points.duplicate()
+
+		var scale_factor := (size - Vector2.ONE * stroke_size) / (finished_size - Vector2.ONE * stroke_size)
+
+		for i in range(len(scaled_points)):
+			scaled_points[i] = scaled_points[i] * scale_factor
+
+		%StrokeLine.points = scaled_points
+
 	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
 	
 	for capsule in capsules:
@@ -75,6 +92,12 @@ func _stroke_created(first_point: Vector2) -> void:
 	%StrokeLine.global_position = Vector2.ZERO
 
 	%StrokeLine.add_point(first_point)
+
+func _stroke_finished():
+	AnnotateModeHelper.move_line2d_origin(%StrokeLine, Vector2.ONE * stroke_size / 2)
+	points = %StrokeLine.points
+	finished_size = size
+	return true
 
 func _set_stroke_size(size: float) -> void:
 	%StrokeLine.width = size

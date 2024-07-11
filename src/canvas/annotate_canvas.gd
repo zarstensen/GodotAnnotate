@@ -194,6 +194,7 @@ func on_editor_input(event: InputEvent) -> bool:
 				# Stroke was already added at this point, so we do not want to execute redo_stroke.
 				ur.commit_action(false)
 			else:
+				_remove_stroke_nodes([_active_stroke])
 				_active_stroke.queue_free()
 
 			_active_stroke = null

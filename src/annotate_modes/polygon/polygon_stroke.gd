@@ -84,7 +84,7 @@ func _stroke_resized():
 	if len(%Border.points) < 2:
 		return
 
-	# Update polygon points
+	# Scale polygon points
 
 	if _is_stroke_finished:
 		print(points)
