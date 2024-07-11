@@ -100,7 +100,13 @@ func _stroke_finished():
 	return true
 
 func _set_stroke_size(size: float) -> void:
+	var prev_size = %StrokeLine.width
 	%StrokeLine.width = size
+
+	if _is_stroke_finished:
+		finished_size += Vector2.ONE * (size - prev_size)
+		%StrokeLine.position = Vector2.ONE * stroke_size / 2
+		_stroke_resized()
 
 func _set_stroke_color(color: Color) -> void:
 	%StrokeLine.default_color = color

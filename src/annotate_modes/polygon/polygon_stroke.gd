@@ -53,7 +53,15 @@ func set_cursor_pos(new_pos: Vector2):
 	%Fill.polygon = %Border.points
 
 func _set_stroke_size(size: float) -> void:
+	var prev_size = %Border.width
 	%Border.width = size
+
+	if _is_stroke_finished:
+		finished_size += Vector2.ONE * (size - prev_size)
+		%Border.position = Vector2.ONE * stroke_size / 2
+		%Fill.position = %Border.position
+		_stroke_resized()
+
 
 func _set_stroke_color(color: Color) -> void:
 	%Border.default_color = color

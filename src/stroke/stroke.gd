@@ -18,7 +18,7 @@ var stroke_size: float:
 			await ready
 
 		_set_stroke_size(stroke_size)
-
+		on_stroke_changed()
 	get:
 		return stroke_size
 
@@ -32,7 +32,7 @@ var stroke_color: Color:
 			await ready
 
 		_set_stroke_color(stroke_color)
-
+		on_stroke_changed()
 	get:
 		return stroke_color
 
