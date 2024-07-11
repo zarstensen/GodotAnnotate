@@ -27,6 +27,14 @@ static func expand_boundary_sized_point(boundary: Rect2, point: Vector2, size: f
 
 	return boundary
 
+## Relocate the passed lines origin, without effecting the globall position of the line points.
+## new_origin is in local space
+static func move_line2d_origin(line: Line2D, new_origin: Vector2):
+	var prev_origin = line.global_position
+	line.position = new_origin
+
+	for i in range(len(line.points)):
+		line.points[i] += prev_origin - line.global_position
 
 ## Regenerates all the CollisionShape2D nodes required for representing the strokes hitbox.
 static func gen_line2d_hitbox(line: Line2D, min_capsule_distance: float = 0.0) -> Array[CollisionShape2D]:

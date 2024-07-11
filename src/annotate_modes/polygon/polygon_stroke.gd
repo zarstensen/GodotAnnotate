@@ -35,6 +35,12 @@ var closed: bool:
 	get:
 		return closed
 
+@export
+var points: PackedVector2Array
+
+@export
+var finished_size: Vector2
+
 ## Insert a point in the polygon stroke at the given position.
 func annotate_point(new_point: Vector2):
 	# we don't insert the point at the end, since the last point is the preview point.
@@ -44,9 +50,7 @@ func annotate_point(new_point: Vector2):
 ## This updates where the preview point of the polygon stroke is placed.
 func set_cursor_pos(new_pos: Vector2):
 	%Border.set_point_position(%Border.get_point_count() -1, new_pos)
-	var polygon: PackedVector2Array = %Fill.polygon
-	polygon[len(polygon) - 1] = new_pos
-	%Fill.polygon = polygon
+	%Fill.polygon = %Border.points
 
 func _set_stroke_size(size: float) -> void:
 	%Border.width = size
@@ -80,6 +84,21 @@ func _stroke_resized():
 	if len(%Border.points) < 2:
 		return
 
+	# Update polygon points
+
+	if _is_stroke_finished:
+		print(points)
+		var scaled_points := points.duplicate()
+
+		var scale_factor := (size - Vector2.ONE * stroke_size) / (finished_size - Vector2.ONE * stroke_size)
+
+		for i in range(len(scaled_points)):
+			scaled_points[i] = scaled_points[i] * scale_factor
+
+		%Border.points = scaled_points
+		%Fill.polygon = %Border.points
+
+
 	# Generate border hitbox.
 	
 	var border_capsules := AnnotateModeHelper.gen_line2d_hitbox(%Border)
@@ -106,23 +125,23 @@ func _stroke_resized():
 		collision_shape.global_position = Vector2.ZERO
 
 func _stroke_finished() -> bool:
-
 	# Remove extra preview points.
 	%Border.remove_point(%Border.get_point_count() - 1)
+	AnnotateModeHelper.move_line2d_origin(%Border, Vector2.ONE * stroke_size / 2)
 
-	var polygon: PackedVector2Array = %Fill.polygon
-	polygon.remove_at(len(polygon) - 1)
-	%Fill.polygon = polygon
+	%Fill.position = Vector2.ONE * stroke_size / 2
+	%Fill.polygon = %Border.points
+
+
+	points = %Border.points
+	finished_size = size
 
 	# polygon stroke is not valid if only one vertex was placed.
 	return len(%Border.points) > 1
 
 func _annotate_point_impl(new_point: Vector2, index: int):
 	%Border.add_point(new_point, index)
-
-	var new_polygon: PackedVector2Array = %Fill.polygon
-	new_polygon.insert(index, new_point)
-	%Fill.polygon = new_polygon
+	%Fill.polygon = %Border.points
 
 	var new_boundary := AnnotateModeHelper.expand_boundary_sized_point(get_global_rect(), new_point, stroke_size)
 

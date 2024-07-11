@@ -11,6 +11,8 @@ size = Vector2(0, 0)
 script = ExtResource("2_rc0qe")
 fill = false
 closed = true
+points = PackedVector2Array()
+finished_size = Vector2(0, 0)
 
 [node name="Border" type="Line2D" parent="." index="0"]
 unique_name_in_owner = true
