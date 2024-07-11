@@ -65,6 +65,7 @@ func _stroke_resized() -> void:
 	# clear previous hitbox.
 
 	for child in %CollisionArea.get_children():
+		%CollisionArea.remove_child(child)
 		child.queue_free()
 	
 	# Scale polygon points

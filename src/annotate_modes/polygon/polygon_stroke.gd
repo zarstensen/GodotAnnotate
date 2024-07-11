@@ -18,6 +18,8 @@ var fill: bool:
 
 		%Fill.visible = fill
 
+		_gen_hitbox()
+		on_stroke_changed()
 	get:
 		return fill
 
@@ -32,6 +34,8 @@ var closed: bool:
 		if not fill:
 			%Border.closed = closed
 
+		_gen_hitbox()
+		on_stroke_changed()
 	get:
 		return closed
 
@@ -86,14 +90,6 @@ func _stroke_created(first_point: Vector2) -> void:
 	_annotate_point_impl(first_point, 1)
 
 func _stroke_resized():
-	# clear previous hitbox.
-
-	for child in %CollisionArea.get_children():
-		child.queue_free()
-
-	if len(%Border.points) < 2:
-		return
-
 	# Scale polygon points
 
 	if _is_stroke_finished:
@@ -107,31 +103,7 @@ func _stroke_resized():
 		%Border.points = scaled_points
 		%Fill.polygon = %Border.points
 
-
-	# Generate border hitbox.
-	
-	var border_capsules := AnnotateModeHelper.gen_line2d_hitbox(%Border)
-	
-	for capsule in border_capsules:
-		%CollisionArea.add_child(capsule)
-	
-	
-	if not fill:
-		return
-		
-	# generate fill hitbox.
-	
-	var fill_polygons := Geometry2D.decompose_polygon_in_convex(%Fill.polygon)
-	
-	for polygon in fill_polygons:
-		var collision_shape := CollisionShape2D.new()
-		%CollisionArea.add_child(collision_shape)
-
-		var polygon_shape := ConvexPolygonShape2D.new()
-		polygon_shape.set_point_cloud(polygon)
-		
-		collision_shape.shape = polygon_shape
-		collision_shape.global_position = Vector2.ZERO
+	_gen_hitbox()
 
 func _stroke_finished() -> bool:
 	# Remove extra preview points.
@@ -160,3 +132,36 @@ func _annotate_point_impl(new_point: Vector2, index: int):
 	%Border.global_position = Vector2.ZERO
 	%Fill.global_position = Vector2.ZERO
 
+func _gen_hitbox():
+	# clear previous hitbox.
+
+	for child in %CollisionArea.get_children():
+		%CollisionArea.remove_child(child)
+		child.queue_free()
+
+	if len(%Border.points) < 2:
+		return
+
+	# Generate border hitbox.
+	var border_capsules := AnnotateModeHelper.gen_line2d_hitbox(%Border)
+	
+	for capsule in border_capsules:
+		%CollisionArea.add_child(capsule)
+	
+	
+	if not fill:
+		return
+		
+	# generate fill hitbox.
+	
+	var fill_polygons := Geometry2D.decompose_polygon_in_convex(%Fill.polygon)
+	
+	for polygon in fill_polygons:
+		var collision_shape := CollisionShape2D.new()
+		%CollisionArea.add_child(collision_shape)
+
+		var polygon_shape := ConvexPolygonShape2D.new()
+		polygon_shape.set_point_cloud(polygon)
+		
+		collision_shape.shape = polygon_shape
+		collision_shape.position = %Fill.position
