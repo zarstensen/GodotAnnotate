@@ -5,13 +5,13 @@
 
 [![Godot Assets](https://img.shields.io/badge/Godot_Asset_Library-blue)](https://godotengine.org/asset-library/asset/2432)
 
-This is a [Godot](https://godotengine.org/) plugin which allows one to make planning  annotations and sketches directly in the 2D editor, without affecting runtime visuals, using a custom ![Node Icon](annotate_layer_icon.svg) 'AnnotateCanvas'  node.
+This is a [Godot](https://godotengine.org/) plugin which allows one to make planning annotations and sketches directly in the 2D editor using a custom 'AnnotateCanvas'  node.
 
 - [Features](#features)
   - [Annotate](#annotate)
-  - [Polygon Mode](#polygon-mode)
-  - [Erase](#erase)
-  - [Control Annotation Visibility](#control-annotation-visibility)
+  - [Multiple Modes](#polygon-mode)
+  - [Hitbox Generation](#erase)
+  - [Control Canvas Visibility](#control-annotation-visibility)
   - [Save Canvas As Image](#save-canvas-as-image)
 - [Usage](#usage)
   - [Controls](#controls)
@@ -56,7 +56,9 @@ Save the canvas to disk as an image file.
 
 To start annotating, add the 'AnnotateCanvas' node to a godot scene.
 
-### Controls
+### Toolbar
+
+### Keyboard Shortcuts
 
 **Left Mouse Button**
 : Annotate on the currenty selected 'AnnotateCanvas' node.
@@ -78,6 +80,16 @@ To start annotating, add the 'AnnotateCanvas' node to a godot scene.
 Locking an 'AnnotateCanvas' node does not prevent it from being drawn on, instead toggle the 'Advanced > Lock Canvas' property to prevent this.
 
 ## Installing
+> [!CAUTION]
+> Upgrading from **v0.3** to **v1.x or later** requires **DELETING ALL STROKES** saved in **ALL CANVASES** before upgrading, as strokes were fundamentally changed between these versions.
+
+### Latest Version
+TODO: write
+
+
+### Any Version
+TODO: write
+
 
 See [Installing Plugins](https://docs.godotengine.org/en/stable/tutorials/plugins/editor/installing_plugins.html), for how to add this plugin to your Godot project.
 
