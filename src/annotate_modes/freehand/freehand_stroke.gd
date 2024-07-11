@@ -104,6 +104,8 @@ func _set_stroke_size(size: float) -> void:
 	%StrokeLine.width = size
 
 	if _is_stroke_finished:
+		# Since scaling is performed at the origin of the first line point, we need to reposition the line so start cap is at most tangent to the strokes rect.
+		# We also need to edit the finished size to take into account the new stroke size.
 		finished_size += Vector2.ONE * (size - prev_size)
 		%StrokeLine.position = Vector2.ONE * stroke_size / 2
 		_stroke_resized()
