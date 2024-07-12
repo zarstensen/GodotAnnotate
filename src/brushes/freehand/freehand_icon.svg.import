@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5bid7rxgffn7"
-path="res://.godot/imported/polygon_icon.svg-4364f4364e6d09ff95672f2bf09fe1eb.ctex"
+uid="uid://523ky7ecuqti"
+path="res://.godot/imported/freehand_icon.svg-c269a61d04ffb73c555c855344d2760f.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg"
-dest_files=["res://.godot/imported/polygon_icon.svg-4364f4364e6d09ff95672f2bf09fe1eb.ctex"]
+source_file="res://addons/GodotAnnotate/src/brushes/freehand/freehand_icon.svg"
+dest_files=["res://.godot/imported/freehand_icon.svg-c269a61d04ffb73c555c855344d2760f.ctex"]
 
 [params]
 

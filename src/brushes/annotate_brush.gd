@@ -1,22 +1,22 @@
 @tool
-class_name GDA_AnnotateMode
+class_name GDA_AnnotateBrush
 extends Resource
 ###
-### Abstract / Interface class representing an annotation mode for the GodotAnnotate plugin.
+### Abstract / Interface class representing an annotation brush for the GodotAnnotate plugin.
 ### All methods defined should be seen as virtual methods, which have no effect if not implemented.
 ###
 
-## Returns the icon to be used to represent the AnnotateMode.
+## Returns the icon to be used to represent the AnnotateBrush.
 func get_icon_path() -> String:
 	return ""
 
-## Returns the name to be used to represent the AnnotateMode.
-func get_mode_name() -> String:
+## Returns the name to be used to represent the AnnotateBrush.
+func get_brush_name() -> String:
 	return ""
 
-## Each annotate mode has the posibility to expose variables the user can use to configure the stroke being created.
+## Each annotate brush has the posibility to expose variables the user can use to configure the stroke being created.
 ## For now each variable is a simple true false value.
-## The annotate mode informs the addon of the variables by returning them in this dictionary.
+## The annotate brush informs the addon of the variables by returning them in this dictionary.
 ## A key in this dictionary is the name of the variable, and the value is the default value of the variable.
 func get_stroke_variables() -> Dictionary:
 	return { }
@@ -41,15 +41,15 @@ func on_end_stroke(pos: Vector2, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> 
 func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> void:
 	pass
 
-## Called any time the AnnotateMode needs to handle an InputEvent during a stroke annotation.
+## Called any time the AnnotateBrush needs to handle an InputEvent during a stroke annotation.
 ## Return whether the event should be blocked from reaching any other input handlers.
 func on_annotate_input(event: InputEvent, stroke: GDA_Stroke, canvas: AnnotateCanvas) -> bool:
 	return false
 
-## Called when an AnnotateCanvas wants to check if an AnnotateMode wants to begin annotating.
+## Called when an AnnotateCanvas wants to check if an GDA_AnnotateBrush wants to begin annotating.
 func should_begin_stroke(event: InputEvent) -> bool:
 	return false
 
-## Called when an AnnotateCanvas wants to check if an AnnotateMode wnats to end annotating.
+## Called when an AnnotateCanvas wants to check if an GDA_AnnotateBrush wants to end annotating.
 func should_end_stroke(event: InputEvent) -> bool:
 	return false

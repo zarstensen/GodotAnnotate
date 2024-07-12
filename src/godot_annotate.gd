@@ -11,16 +11,16 @@ static var active_canvas: AnnotateCanvas
 
 static var canvas_toolbar: Control
 
-## List of scripts to load into the annotate_modes list.
-static var annotate_mode_scripts: Array[String] = [
-	"res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_mode.gd",
-	"res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_mode.gd",
+## List of scripts to load into the annotate_brushes list.
+static var annotate_brush_scripts: Array[String] = [
+	"res://addons/GodotAnnotate/src/brushes/freehand/freehand_brush.gd",
+	"res://addons/GodotAnnotate/src/brushes/rectangle/rectangle_brush.gd",
+	"res://addons/GodotAnnotate/src/brushes/capsule/capsule_brush.gd",
+	"res://addons/GodotAnnotate/src/brushes/polygon/polygon_brush.gd",
 ]
 
-## List of loaded GDA_ANnotateModes from annotate_mode_scripts array.
-static var annotate_modes: Array[GDA_AnnotateMode] = []
+## List of loaded GDA_AnnotateBrush from annotate_brush_scripts array.
+static var annotate_brushes: Array[GDA_AnnotateBrush] = []
 
 ## UndoRedoManager for the GodotAnnotate plugin.
 static var undo_redo: EditorUndoRedoManager
@@ -46,10 +46,10 @@ func _enter_tree():
 	
 	undo_redo = get_undo_redo()
 	
-	# load annotate modes
+	# load annotate brushes
 	
-	for script_path in annotate_mode_scripts:
-		annotate_modes.append(load(script_path).new() as GDA_AnnotateMode)
+	for script_path in annotate_brush_scripts:
+		annotate_brushes.append(load(script_path).new() as GDA_AnnotateBrush)
 	
 	# setup signals
 	
@@ -68,7 +68,7 @@ func _exit_tree():
 
 	canvas_toolbar.queue_free()
 
-	annotate_modes = [ ]
+	annotate_brushes = [ ]
 
 	config.save(CONFIG_FILE)
 
@@ -109,5 +109,5 @@ func _on_selection_changed():
 		canvas_toolbar._on_new_canvas(active_canvas)
 
 
-static func get_annotate_mode(mode_index: int) -> GDA_AnnotateMode:
-	return annotate_modes[mode_index]
+static func get_annotate_brush(brush_index: int) -> GDA_AnnotateBrush:
+	return annotate_brushes[brush_index]

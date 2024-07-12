@@ -1,16 +1,16 @@
 @tool
-extends "res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_mode.gd"
+extends "res://addons/GodotAnnotate/src/brushes/helpers/rectangle_like/rectangle_like_brush.gd"
 ###
-### Abstract AnnotateMode implementation for the rectangle like mode.
-### This mode implementation is for a capsule, which will be fitted inside a rectangle.
+### Abstract GDA_AnnotateBrush implementation for the rectangle like brush.
+### This brush implementation is for a capsule, which will be fitted inside a rectangle.
 ### 
 
-const CapsuleStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_stroke.tscn")
+const CapsuleStrokeScene := preload("res://addons/GodotAnnotate/src/brushes/capsule/capsule_stroke.tscn")
 
 func get_icon_path() -> String:
-	return "res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_icon.svg"
+	return "res://addons/GodotAnnotate/src/brushes/capsule/capsule_icon.svg"
 
-func get_mode_name() -> String:
+func get_brush_name() -> String:
 	return "Capsule"
 
 func get_stroke_variables() -> Dictionary:

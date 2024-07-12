@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b8awmm5apy4sv"]
 
 [ext_resource type="PackedScene" uid="uid://bfnr07x5qclc5" path="res://addons/GodotAnnotate/src/stroke/stroke.tscn" id="1_mt0x2"]
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.gd" id="2_gxb3w"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/brushes/helpers/rectangle_like/rectangle_like_stroke.gd" id="2_gxb3w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wgw0w"]
 resource_local_to_scene = true

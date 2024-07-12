@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.gd"
+extends "res://addons/GodotAnnotate/src/brushes/helpers/rectangle_like/rectangle_like_stroke.gd"
 # RectangleLikeStroke implementation, is very sparse since RectangleLikeStroke already does most of the heavy lifting.
 
 func _stroke_resized() -> void:

@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://c4g4m2f4r24k6"]
 
-[ext_resource type="PackedScene" uid="uid://b8awmm5apy4sv" path="res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_stroke.tscn" id="1_yl6o2"]
-[ext_resource type="Shader" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_stroke.gdshader" id="2_68ev7"]
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_stroke.gd" id="2_r7ajr"]
+[ext_resource type="PackedScene" uid="uid://b8awmm5apy4sv" path="res://addons/GodotAnnotate/src/brushes/helpers/rectangle_like/rectangle_like_stroke.tscn" id="1_yl6o2"]
+[ext_resource type="Shader" path="res://addons/GodotAnnotate/src/brushes/capsule/capsule_stroke.gdshader" id="2_68ev7"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/brushes/capsule/capsule_stroke.gd" id="2_r7ajr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kvlga"]
 resource_local_to_scene = true

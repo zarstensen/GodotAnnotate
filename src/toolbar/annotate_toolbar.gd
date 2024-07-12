@@ -7,19 +7,19 @@ var canvas: AnnotateCanvas
 const SIZE_SCROLL_PERC: float = 0.1
 
 func _ready() -> void:
-	# setup annotate mode dropdown
+	# setup annotate brush dropdown
 	
-	$AnnotateModeOption.clear()
+	$AnnotateBrushOption.clear()
 
-	for annotate_mode in GodotAnnotate.annotate_modes:
-		$AnnotateModeOption.add_icon_item(load(annotate_mode.get_icon_path()), annotate_mode.get_mode_name())
+	for annotate_brush in GodotAnnotate.annotate_brushes:
+		$AnnotateBrushOption.add_icon_item(load(annotate_brush.get_icon_path()), annotate_brush.get_brush_name())
 		
 # Called when a new annotate canvas node is selected.
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	canvas = new_canvas
 	
 	$ToggleAnnotateButton.set_pressed_no_signal(not canvas.lock_canvas)
-	$AnnotateModeOption.selected = canvas.annotate_mode_index
+	$AnnotateBrushOption.selected = canvas.annotate_brush_index
 
 	$BrushSizeSlider.value = canvas.brush_size
 	%BrushColorPickerButton.color = canvas.brush_color
@@ -32,8 +32,8 @@ func _on_canvas_to_image_confirmed(path: String, scale: float) -> void:
 func _on_toggle_annotate_button_toggled(toggled_on: bool) -> void:
 	canvas.lock_canvas = not toggled_on
 
-func _on_annotate_mode_item_selected(index: int) -> void:
-	canvas.annotate_mode_index = index
+func _on_annotate_brush_item_selected(index: int) -> void:
+	canvas.annotate_brush_index = index
 	_update_variables()
 
 func _on_brush_size_slider_value_changed(value:float) -> void:
@@ -79,18 +79,18 @@ func _update_variables():
 	for c in %StrokeVariablesContainer.get_children():
 		c.queue_free()
 
-	var annotate_mode_name =canvas.get_annotate_mode().get_mode_name()
+	var brush_name := canvas.get_annotate_brush().get_brush_name()
 
-	for variable_name in canvas.stroke_variables[annotate_mode_name]:
+	for variable_name in canvas.stroke_variables[brush_name]:
 		
 		var variable_button := CheckBox.new()
 
 		variable_button.text = variable_name
-		variable_button.button_pressed = canvas.stroke_variables[annotate_mode_name][variable_name]
+		variable_button.button_pressed = canvas.stroke_variables[brush_name][variable_name]
 		variable_button.toggled.connect(func(new_val: bool):
-			canvas.stroke_variables[annotate_mode_name][variable_name] = new_val
+			canvas.stroke_variables[brush_name][variable_name] = new_val
 			)
 
 		%StrokeVariablesContainer.add_child(variable_button)
 
-	%VariablesSeparator.visible = canvas.stroke_variables[annotate_mode_name].size() > 0
+	%VariablesSeparator.visible = canvas.stroke_variables[brush_name].size() > 0
