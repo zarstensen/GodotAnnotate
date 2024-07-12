@@ -24,20 +24,26 @@ var brush_size: float = GodotAnnotate.config.get_value("canvas", "default_brush_
 @export
 var brush_color: Color = GodotAnnotate.config.get_value("canvas", "default_brush_color", Color(141 / 255.0, 165 / 255.0, 243 / 255.0)) if GodotAnnotate.config else Color()
 
-@export_group("Advanced")
+@export_group("Visibility")
 
 ## Do not remove [AnnotateCanvas] node from scene when running outside editor.
 ## User will not be able to paint on the canvas, even if this is set to [code] true [/code]
 @export
 var show_when_running := false
 
+
+@export_group("Advanced")
+
 ## Lock [AnnotateCanvas] node from being drawn on.
+## The preffered way to toggle this is via. the toolbar.
 @export
 var lock_canvas := false
 
 @export
 ## Index of annotate brush currently being used on the canvas.
+## The preffered way to toggle this is via. the toolbar.
 var annotate_brush_index: int = 0
+
 ## Stroke currently being painted by the user.
 var _active_stroke: GDA_Stroke
 ## [code] true [/code] if user is currently trying to erase strokes.
