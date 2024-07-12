@@ -39,9 +39,15 @@ var closed: bool:
 	get:
 		return closed
 
+@export_group("Advanced")
+
+## Vector2 array representing all points in the original untransformed finished stroke.
+## This should be edited with caution, as not all relevant properties are updated when this is modified via. the editor.
 @export
 var points: PackedVector2Array
 
+## Size of the untransformed finished stroke.
+## This should be edited with caution, and should ideally only be modified by the GodotAnnotate plugin.
 @export
 var finished_size: Vector2
 
