@@ -11,12 +11,26 @@ const OVERLAP_INCR_PERC = 0.0001
 ## Minimum increment of point, if point overlaps with another point.
 const MIN_FLOAT_TRES_VAL = 0.001
 
+## Minimum distance (px's) two line points must be separated by, before a hitbox is generated.
+## A higher value results in a more rough hitbox, but improves performance by reducing the amount of CollisionShape2D's generated.
 @export
-var min_distance_hitbox: float
+var min_distance_hitbox: float:
+	get:
+		return min_distance_hitbox
+	set(v):
+		min_distance_hitbox = v
+		_gen_hitbox()
+		on_stroke_changed()
 
+@export_group("Advanced")
+
+## Vector2 array representing all points in the original untransformed finished stroke.
+## This should be edited with caution, as not all relevant properties are updated when this is modified via. the editor.
 @export
 var points: PackedVector2Array
 
+## Size of the untransformed finished stroke.
+## This should be edited with caution, and should ideally only be modified by the GodotAnnotate plugin.
 @export
 var finished_size: Vector2
 
@@ -61,13 +75,6 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 	return point
 
 func _stroke_resized() -> void:
-	
-	# clear previous hitbox.
-
-	for child in %CollisionArea.get_children():
-		%CollisionArea.remove_child(child)
-		child.queue_free()
-	
 	# Scale polygon points
 	if _is_stroke_finished:
 		var scaled_points := points.duplicate()
@@ -79,10 +86,7 @@ func _stroke_resized() -> void:
 
 		%StrokeLine.points = scaled_points
 
-	var capsules := AnnotateBrushHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
-	
-	for capsule in capsules:
-		%CollisionArea.add_child(capsule)
+	_gen_hitbox()
 
 func _stroke_created(first_point: Vector2) -> void:
 	var size_vec = Vector2.ONE * stroke_size
@@ -113,3 +117,17 @@ func _set_stroke_size(size: float) -> void:
 
 func _set_stroke_color(color: Color) -> void:
 	%StrokeLine.default_color = color
+
+func _gen_hitbox() -> void:
+	# clear previous hitbox.
+
+	for child in %CollisionArea.get_children():
+		%CollisionArea.remove_child(child)
+		child.queue_free()
+
+
+	# generate new hitbox.
+	var capsules := AnnotateBrushHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
+	
+	for capsule in capsules:
+		%CollisionArea.add_child(capsule)
