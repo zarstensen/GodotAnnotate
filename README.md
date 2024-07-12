@@ -5,42 +5,58 @@
 
 [![Godot Assets](https://img.shields.io/badge/Godot_Asset_Library-blue)](https://godotengine.org/asset-library/asset/2432)
 
-This is a [Godot](https://godotengine.org/) plugin which allows one to make planning annotations and sketches directly in the 2D editor using a custom 'AnnotateCanvas'  node.
+Godot Annotate is a [Godot](https://godotengine.org/) plugin which allows one to make mockups and sketches directly in the 2D editor using a custom 'AnnotateCanvas' node.
 
+<!-- omit in toc -->
+## Table of Contents
 - [Features](#features)
-  - [Annotate](#annotate)
-  - [Multiple Modes](#polygon-mode)
-  - [Hitbox Generation](#erase)
-  - [Control Canvas Visibility](#control-annotation-visibility)
+  - [Sketch](#sketch)
+  - [Multiple Modes / Brushes](#multiple-modes--brushes)
+  - [Edit Strokes Post Finish](#edit-strokes-post-finish)
+  - [Undo / Redo History](#undo--redo-history)
+  - [Generate Hitboxes from Canvas](#generate-hitboxes-from-canvas)
+  - [Control Canvas Visibility](#control-canvas-visibility)
   - [Save Canvas As Image](#save-canvas-as-image)
 - [Usage](#usage)
-  - [Controls](#controls)
+  - [Toolbar](#toolbar)
+    - [Toggle Annotate](#toggle-annotate)
+  - [Keyboard Shortcuts](#keyboard-shortcuts)
   - [Locking](#locking)
 - [Installing](#installing)
+  - [Latest Version](#latest-version)
+  - [Any Version](#any-version)
 - [Links](#links)
 - [License](#license)
 
 ## Features
 
-### Annotate
+### Sketch
 
-Annotate with variable brush size and color directly in the 2D editor using the 'AnnotateCanvas' node.
+Draw sketches or mockups with variable brush size and color directly in the 2D editor using the 'AnnotateCanvas' node.
 
 ![Annotate Example](examples/Annotate.gif)
 
-### Polygon Mode
+### Multiple Modes / Brushes
 
 Use polygon mode to draw straight lines between clicks.
 
 ![Polygon Mode Example](examples/AnnotatePoly.gif)
 
-### Erase
+### Edit Strokes Post Finish
 
 Erase any previously drawn annotate strokes.
 
 ![Erase Example](examples/Erase.gif)
 
-### Control Annotation Visibility
+### Undo / Redo History
+
+Each action performed in a 'AnnotateCanvas' is added to the editors undo / redo history, so you dont have to wory about drawing the perfect stroke first try every time.
+
+### Generate Hitboxes from Canvas
+
+Use the 'CanvasCollisionShape' node to convert all sketches in a 'AnnotateCanvas' to a series of CollisionShape2D's.
+
+### Control Canvas Visibility
 
 Only show annotations in the 2D editor (optionally show in run mode).
 
@@ -54,26 +70,19 @@ Save the canvas to disk as an image file.
 
 ## Usage
 
-To start annotating, add the 'AnnotateCanvas' node to a godot scene.
-
-### Toolbar
-
-### Keyboard Shortcuts
+To start annotating, add the 'AnnotateCanvas' node to a godot scene, then perform one of the following actions.
 
 **Left Mouse Button**
-: Annotate on the currenty selected 'AnnotateCanvas' node.
-
-**Alt + Left Mouse Button**
-: Annotate on the currently selected 'AnnotateCanvas' node using the polygon mode.
+: Draw a stroke on the currenty selected 'AnnotateCanvas' node.
 
 **Right Mouse Button**
-: Erase annotate strokes on the currently selected 'AnnotateCanvas' node.
+: Erase strokes on the currently selected 'AnnotateCanvas' node.
 
-**Shift + Mouse Scroll**
-: Change brush size.
 
-**Shift + Alt + S**
-: Save the selected 'AnnotateCanvas' to disk as an image.
+
+### Toolbar
+#### Toggle Annotate
+### Keyboard Shortcuts
 
 ### Locking
 
@@ -81,7 +90,7 @@ Locking an 'AnnotateCanvas' node does not prevent it from being drawn on, instea
 
 ## Installing
 > [!CAUTION]
-> Upgrading from **v0.3** to **v1.x or later** requires **DELETING ALL STROKES** saved in **ALL CANVASES** before upgrading, as strokes were fundamentally changed between these versions.
+> **v0.3.x** is not compatible with **v1.x** or later. This means all AnnotateCanvas nodes need to be **DELETED AND REDRAWN** if you want to update this plugin from v0.3.x to a later version. If you want to install a v0.3.x version of this plugin, please refer to the [Any Version](#any-version) isntall section.
 
 ### Latest Version
 TODO: write
