@@ -1,13 +1,13 @@
-[gd_scene load_steps=19 format=3 uid="uid://dqw1ri5u5knlv"]
+[gd_scene load_steps=21 format=3 uid="uid://dqw1ri5u5knlv"]
 
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar.gd" id="1_a6mhs"]
 [ext_resource type="Texture2D" uid="uid://cm7840dccia6w" path="res://addons/GodotAnnotate/src/toolbar/annotate_toolbar_icon.svg" id="2_f7hln"]
-[ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg" id="3_eol15"]
+[ext_resource type="Texture2D" uid="uid://523ky7ecuqti" path="res://addons/GodotAnnotate/src/brushes/freehand/freehand_icon.svg" id="3_eol15"]
 [ext_resource type="Texture2D" uid="uid://cfys5xqwj1gcd" path="res://addons/GodotAnnotate/src/toolbar/capture_canvas_toolbar_icon.svg" id="3_h3lcp"]
-[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_icon.svg" id="4_lm3uk"]
-[ext_resource type="Texture2D" uid="uid://cxpp6xfbualpa" path="res://addons/GodotAnnotate/src/annotate_modes/capsule/capsule_icon.svg" id="5_e4j21"]
-[ext_resource type="Texture2D" uid="uid://5bid7rxgffn7" path="res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg" id="6_wmqt8"]
-[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_mode_option.gd" id="8_osfq7"]
+[ext_resource type="Texture2D" uid="uid://bpttrl01isjnx" path="res://addons/GodotAnnotate/src/brushes/rectangle/rectangle_icon.svg" id="4_lm3uk"]
+[ext_resource type="Texture2D" uid="uid://cxpp6xfbualpa" path="res://addons/GodotAnnotate/src/brushes/capsule/capsule_icon.svg" id="5_e4j21"]
+[ext_resource type="Texture2D" uid="uid://5bid7rxgffn7" path="res://addons/GodotAnnotate/src/brushes/polygon/polygon_icon.svg" id="6_wmqt8"]
+[ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/annotate_brush_option.gd" id="7_kpro1"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/color_picker_container.gd" id="9_p7mxn"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/canvas_to_image_button.gd" id="10_qqlcj"]
 [ext_resource type="Script" path="res://addons/GodotAnnotate/src/toolbar/new_brush_size_panel.gd" id="12_detrw"]
@@ -40,6 +40,14 @@ unicode = 115
 [sub_resource type="Shortcut" id="Shortcut_ug4eo"]
 events = [SubResource("InputEventKey_i472w")]
 
+[sub_resource type="InputEventKey" id="InputEventKey_n01w8"]
+device = -1
+keycode = 67
+unicode = 99
+
+[sub_resource type="Shortcut" id="Shortcut_hsuvm"]
+events = [SubResource("InputEventKey_n01w8")]
+
 [node name="AnnotateToolbar" type="HBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,15 +58,15 @@ script = ExtResource("1_a6mhs")
 
 [node name="ToggleAnnotateButton" type="Button" parent="."]
 layout_mode = 2
-tooltip_text = "Toggle Annotate Mode"
+tooltip_text = "Toggle Annotate Mode (ON) and Select Mode (OFF)"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 shortcut = SubResource("Shortcut_iqfxe")
 icon = ExtResource("2_f7hln")
 
-[node name="AnnotateModeOption" type="OptionButton" parent="."]
+[node name="AnnotateBrushOption" type="OptionButton" parent="."]
 layout_mode = 2
-tooltip_text = "Annotate Mode List"
+tooltip_text = "Brush List"
 theme_type_variation = &"FlatButton"
 shortcut = SubResource("Shortcut_b3sh8")
 flat = true
@@ -78,7 +86,7 @@ popup/item_2/id = 2
 popup/item_3/text = "Polygon"
 popup/item_3/icon = ExtResource("6_wmqt8")
 popup/item_3/id = 3
-script = ExtResource("8_osfq7")
+script = ExtResource("7_kpro1")
 
 [node name="CanvasToImageButton" type="Button" parent="."]
 layout_mode = 2
@@ -112,7 +120,7 @@ value = 1.0
 alignment = 1
 
 [node name="ColorPickerContainer" type="AspectRatioContainer" parent="."]
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("9_p7mxn")
@@ -124,6 +132,7 @@ custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 tooltip_text = "Brush Color"
 theme_type_variation = &"FlatButton"
+shortcut = SubResource("Shortcut_hsuvm")
 flat = true
 color = Color(1, 1, 1, 1)
 
@@ -131,7 +140,9 @@ color = Color(1, 1, 1, 1)
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 size_flags_vertical = 1
-tooltip_text = "Brush Size (% of Max Brush Size)"
+tooltip_text = "(Shift+Scroll)
+Brush Size (% of Max Brush Size)
+(Right Click to edit Max Brush Size)"
 min_value = 1.0
 value = 1.0
 rounded = true
@@ -176,10 +187,10 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [connection signal="toggled" from="ToggleAnnotateButton" to="." method="_on_toggle_annotate_button_toggled"]
-[connection signal="draw" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_draw"]
-[connection signal="item_selected" from="AnnotateModeOption" to="." method="_on_annotate_mode_item_selected"]
-[connection signal="item_selected" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_item_selected"]
-[connection signal="visibility_changed" from="AnnotateModeOption" to="AnnotateModeOption" method="_on_visibility_changed"]
+[connection signal="draw" from="AnnotateBrushOption" to="AnnotateBrushOption" method="_on_draw"]
+[connection signal="item_selected" from="AnnotateBrushOption" to="." method="_on_annotate_brush_item_selected"]
+[connection signal="item_selected" from="AnnotateBrushOption" to="AnnotateBrushOption" method="_on_item_selected"]
+[connection signal="visibility_changed" from="AnnotateBrushOption" to="AnnotateBrushOption" method="_on_visibility_changed"]
 [connection signal="canvas_to_image_confirmed" from="CanvasToImageButton" to="." method="_on_canvas_to_image_confirmed"]
 [connection signal="pressed" from="CanvasToImageButton" to="CanvasToImageButton" method="_on_pressed"]
 [connection signal="file_selected" from="CanvasToImageButton/CanvasImageDialog" to="CanvasToImageButton" method="_on_canvas_image_dialog_file_selected"]

@@ -1,13 +1,13 @@
 @tool
-extends GDA_AnnotateMode
+extends GDA_AnnotateBrush
 ###
-### AnnotateMode implementation for the Freehand mode.
+### GDA_AnnotateBrush implementation for the Freehand brush.
 ### Draws a stroke which follows a dragging mouse.
 ###
 
-const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
-const FreehandStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.tscn")
-const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_stroke.gd")
+const AnnotateBrushHelper := preload("res://addons/GodotAnnotate/src/brushes/helpers/annotate_brush_helper.gd")
+const FreehandStrokeScene := preload("res://addons/GodotAnnotate/src/brushes/freehand/freehand_stroke.tscn")
+const FreehandStroke := preload("res://addons/GodotAnnotate/src/brushes/freehand/freehand_stroke.gd")
 
 ## Percentage of brush radius must be between a new point inserted with [method insert_point],
 ## for it to be added to the [member points] array.
@@ -15,9 +15,9 @@ const FreehandStroke := preload("res://addons/GodotAnnotate/src/annotate_modes/f
 var min_point_distance = 0.25
 
 func get_icon_path() -> String:
-	return "res://addons/GodotAnnotate/src/annotate_modes/freehand/freehand_icon.svg"
+	return "res://addons/GodotAnnotate/src/brushes/freehand/freehand_icon.svg"
 
-func get_mode_name() -> String:
+func get_brush_name() -> String:
 	return "Freehand"
 
 func draw_cursor(pos: Vector2, brush_diameter: float, brush_color: Color, canvas: CanvasItem) -> void:
@@ -37,8 +37,8 @@ func on_annotate_process(delta: float, stroke: GDA_Stroke, canvas: AnnotateCanva
 	freehand_stroke.try_annotate_point(stroke.get_global_mouse_position(), min_point_distance, false)
 
 func should_begin_stroke(event: InputEvent) -> bool:
-	return AnnotateModeHelper.mouse_drag_should_begin_stroke(event)
+	return AnnotateBrushHelper.mouse_drag_should_begin_stroke(event)
 
 func should_end_stroke(event: InputEvent) -> bool:
-	return AnnotateModeHelper.mouse_drag_should_end_stroke(event)
+	return AnnotateBrushHelper.mouse_drag_should_end_stroke(event)
 

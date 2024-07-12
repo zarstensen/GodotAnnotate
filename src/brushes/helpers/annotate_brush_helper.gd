@@ -1,5 +1,5 @@
 # This file contains should_begin_stroke, and should_end_stroke implementations,
-# for annotate modes which require a left click drag motion to draw their stroke.
+# for annotate brushes which require a left click drag motion to draw their stroke.
 
 static func mouse_drag_should_begin_stroke(event: InputEvent) -> bool:
 	if not event is InputEventMouseButton:
