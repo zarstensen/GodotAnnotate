@@ -75,7 +75,7 @@ func _exit_tree():
 
 ## Forwards relevant 2d editor user inputs to an [AnnotateCanvas] node and the AnnotateToolbar node if the canvas node does not consume the input.
 func _forward_canvas_gui_input(event: InputEvent):
-	if not active_canvas:
+	if not is_instance_valid(active_canvas):
 		return false
 	
 	return active_canvas.on_editor_input(event) or canvas_toolbar.on_editor_event(event)
@@ -90,7 +90,7 @@ func _handles(object):
 func _on_selection_changed():
 	canvas_toolbar.visible = false
 
-	if active_canvas:
+	if is_instance_valid(active_canvas):
 		active_canvas.deactivate()
 		active_canvas = null
 	
@@ -104,7 +104,7 @@ func _on_selection_changed():
 			active_canvas = node.get_parent()
 			break
 
-	if active_canvas:
+	if is_instance_valid(active_canvas):
 		canvas_toolbar.visible = true
 		canvas_toolbar._on_new_canvas(active_canvas)
 
