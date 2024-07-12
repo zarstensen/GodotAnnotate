@@ -1,7 +1,7 @@
 @tool
 extends GDA_Stroke
 
-const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
+const AnnotateBrushHelper := preload("res://addons/GodotAnnotate/src/brushes/helpers/annotate_brush_helper.gd")
 
 @export
 var fill: bool:
@@ -108,7 +108,7 @@ func _stroke_resized():
 func _stroke_finished() -> bool:
 	# Remove extra preview points.
 	%Border.remove_point(%Border.get_point_count() - 1)
-	AnnotateModeHelper.move_line2d_origin(%Border, Vector2.ONE * stroke_size / 2)
+	AnnotateBrushHelper.move_line2d_origin(%Border, Vector2.ONE * stroke_size / 2)
 
 	%Fill.position = Vector2.ONE * stroke_size / 2
 	%Fill.polygon = %Border.points
@@ -124,7 +124,7 @@ func _annotate_point_impl(new_point: Vector2, index: int):
 	%Border.add_point(new_point, index)
 	%Fill.polygon = %Border.points
 
-	var new_boundary := AnnotateModeHelper.expand_boundary_sized_point(get_global_rect(), new_point, stroke_size)
+	var new_boundary := AnnotateBrushHelper.expand_boundary_sized_point(get_global_rect(), new_point, stroke_size)
 
 	global_position = new_boundary.position
 	size = new_boundary.size
@@ -143,7 +143,7 @@ func _gen_hitbox():
 		return
 
 	# Generate border hitbox.
-	var border_capsules := AnnotateModeHelper.gen_line2d_hitbox(%Border)
+	var border_capsules := AnnotateBrushHelper.gen_line2d_hitbox(%Border)
 	
 	for capsule in border_capsules:
 		%CollisionArea.add_child(capsule)

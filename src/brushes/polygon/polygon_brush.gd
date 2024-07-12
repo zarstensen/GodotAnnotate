@@ -1,17 +1,17 @@
 @tool
-extends GDA_AnnotateMode
+extends GDA_AnnotateBrush
 ##
-## Annotate Mode implementation for the polygon stroke.
+## Annotate Brush implementation for the polygon stroke.
 ## The stroke is annotated by clicking multiple times on the canvas, and is finished by right-clicking or hitting the enter key.
 ##
 
-const PolygonStroke = preload ("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.gd")
-const PolygonStrokeScene = preload ("res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_stroke.tscn")
+const PolygonStroke = preload ("res://addons/GodotAnnotate/src/brushes/polygon/polygon_stroke.gd")
+const PolygonStrokeScene = preload ("res://addons/GodotAnnotate/src/brushes/polygon/polygon_stroke.tscn")
 
 func get_icon_path() -> String:
-	return "res://addons/GodotAnnotate/src/annotate_modes/polygon/polygon_icon.svg"
+	return "res://addons/GodotAnnotate/src/brushes/polygon/polygon_icon.svg"
 
-func get_mode_name() -> String:
+func get_brush_name() -> String:
 	return "Polygon"
 
 func get_stroke_variables() -> Dictionary:

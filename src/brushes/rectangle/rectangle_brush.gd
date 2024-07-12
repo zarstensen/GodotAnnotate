@@ -1,16 +1,16 @@
 @tool
-extends "res://addons/GodotAnnotate/src/annotate_modes/helpers/rectangle_like/rectangle_like_mode.gd"
+extends "res://addons/GodotAnnotate/src/brushes/helpers/rectangle_like/rectangle_like_brush.gd"
 ###
-### Abstract AnnotateMode implementation for the rectangle like mode.
-### This mode and the stroke is the simplest possible implementation of the rectangle like mode, since the shape we want is actually a rectangle.
+### Abstract GDA_AnnotateBrush implementation for the rectangle like brush.
+### This brush and the stroke is the simplest possible implementation of the rectangle like brush, since the shape we want is a rectangle.
 ### 
 
-const RectangleStrokeScene := preload("res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_stroke.tscn")
+const RectangleStrokeScene := preload("res://addons/GodotAnnotate/src/brushes/rectangle/rectangle_stroke.tscn")
 
 func get_icon_path() -> String:
-    return "res://addons/GodotAnnotate/src/annotate_modes/rectangle/rectangle_icon.svg"
+    return "res://addons/GodotAnnotate/src/brushes/rectangle/rectangle_icon.svg"
 
-func get_mode_name() -> String:
+func get_brush_name() -> String:
     return "Rectangle"
 
 func get_stroke_variables() -> Dictionary:

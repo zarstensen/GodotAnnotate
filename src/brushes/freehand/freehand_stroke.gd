@@ -1,10 +1,10 @@
 @tool
 extends GDA_Stroke
 ##
-## Freehand stroke returned by the FreehandMode annotate mode.
+## Freehand stroke returned by the FreehandBrush.
 ##
 
-const AnnotateModeHelper := preload("res://addons/GodotAnnotate/src/annotate_modes/helpers/annotate_mode_helper.gd")
+const AnnotateBrushHelper := preload("res://addons/GodotAnnotate/src/brushes/helpers/annotate_brush_helper.gd")
 
 ## Percentage of point position to increment point position by, if overlapping with another point.
 const OVERLAP_INCR_PERC = 0.0001
@@ -46,7 +46,7 @@ func try_annotate_point(point: Vector2, perc_min_point_dist: float, force: bool)
 			# ignore points which are too close to each other, to reduce memory usage.
 			return
 	
-	var new_boundary := AnnotateModeHelper.expand_boundary_sized_point(get_global_rect(), point, stroke_size)
+	var new_boundary := AnnotateBrushHelper.expand_boundary_sized_point(get_global_rect(), point, stroke_size)
 
 	global_position = new_boundary.position
 	size = new_boundary.size
@@ -79,7 +79,7 @@ func _stroke_resized() -> void:
 
 		%StrokeLine.points = scaled_points
 
-	var capsules := AnnotateModeHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
+	var capsules := AnnotateBrushHelper.gen_line2d_hitbox(%StrokeLine, min_distance_hitbox)
 	
 	for capsule in capsules:
 		%CollisionArea.add_child(capsule)
@@ -95,7 +95,7 @@ func _stroke_created(first_point: Vector2) -> void:
 	%StrokeLine.add_point(first_point)
 
 func _stroke_finished():
-	AnnotateModeHelper.move_line2d_origin(%StrokeLine, Vector2.ONE * stroke_size / 2)
+	AnnotateBrushHelper.move_line2d_origin(%StrokeLine, Vector2.ONE * stroke_size / 2)
 	points = %StrokeLine.points
 	finished_size = size
 	return true

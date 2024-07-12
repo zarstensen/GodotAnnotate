@@ -36,8 +36,8 @@ var show_when_running := false
 var lock_canvas := false
 
 @export
-## Index of annotate mode currently being used on the canvas.
-var annotate_mode_index: int = 0
+## Index of annotate brush currently being used on the canvas.
+var annotate_brush_index: int = 0
 ## Stroke currently being painted by the user.
 var _active_stroke: GDA_Stroke
 ## [code] true [/code] if user is currently trying to erase strokes.
@@ -47,7 +47,7 @@ var _eraser: Eraser
 ## Array of Strokes currently stored in the canvas.
 var strokes: Array[PackedScene] = [ ]
 
-## Dictionary between annotate modes, and an array of GDA_AnnotateMode.StrokeVariables
+## Dictionary between annotate brushes, and an array of GDA_AnnotateBrush.StrokeVariables
 ## Is updated on every call to ready.
 @export
 var stroke_variables := {}
@@ -66,31 +66,31 @@ func _ready():
 
 	# update stroke_variables list.
 
-	for annotate_mode: GDA_AnnotateMode in GodotAnnotate.annotate_modes:
+	for annotate_brush: GDA_AnnotateBrush in GodotAnnotate.annotate_brushes:
 
-		var mode_name = annotate_mode.get_mode_name()
+		var brush_name = annotate_brush.get_brush_name()
 
-		if not stroke_variables.has(mode_name):
-			stroke_variables[mode_name] = {}
+		if not stroke_variables.has(brush_name):
+			stroke_variables[brush_name] = {}
 
-		# remove variables no longer present in the annotate mode.
+		# remove variables no longer present in the annotate brush.
 
-		var annotate_mode_stroke_variables = annotate_mode.get_stroke_variables()
+		var annotate_brush_stroke_variables = annotate_brush.get_stroke_variables()
 
-		for canvas_variable_name in stroke_variables[mode_name]:
-			if not annotate_mode_stroke_variables.has(canvas_variable_name):
-				stroke_variables[mode_name].erase(canvas_variable_name)
+		for canvas_variable_name in stroke_variables[brush_name]:
+			if not annotate_brush_stroke_variables.has(canvas_variable_name):
+				stroke_variables[brush_name].erase(canvas_variable_name)
 
 		# add any missing variables, setting them to their default value.
 
-		for stroke_variable in annotate_mode_stroke_variables:
-			if not stroke_variables[mode_name].has(stroke_variable):
-				stroke_variables[mode_name][stroke_variable] = annotate_mode_stroke_variables[stroke_variable]
+		for stroke_variable in annotate_brush_stroke_variables:
+			if not stroke_variables[brush_name].has(stroke_variable):
+				stroke_variables[brush_name][stroke_variable] = annotate_brush_stroke_variables[stroke_variable]
 
 func _process(delta):
 
 	if _active_stroke:
-		get_annotate_mode().on_annotate_process(delta, _active_stroke, self)
+		get_annotate_brush().on_annotate_process(delta, _active_stroke, self)
 	
 	if _eraser != null:
 		_eraser.position = get_local_mouse_position()
@@ -123,19 +123,19 @@ func _notification(what: int) -> void:
 		canvas_changed.emit(self)
 
 func _draw():
-	# handles drawing of the cursor preview for the current stroke mode.
+	# handles drawing of the cursor preview for the current annotate brush.
 	if lock_canvas or _eraser != null:
 		return
 	
 	elif GodotAnnotate.active_canvas == self:
-		get_annotate_mode().draw_cursor(get_local_mouse_position(),
+		get_annotate_brush().draw_cursor(get_local_mouse_position(),
 				brush_size,
 				brush_color,
 				self)
 
 func _validate_property(property: Dictionary):
-	# annotate_mode_index and strokes should ONLY be modified through this script.
-	if property.name == "annotate_mode_index" \
+	# annotate_brush_index and strokes should ONLY be modified through this script.
+	if property.name == "annotate_brush_index" \
 		or property.name == "strokes":
 			property.usage = PROPERTY_USAGE_NO_EDITOR
 
@@ -152,7 +152,7 @@ func on_editor_input(event: InputEvent) -> bool:
 	if lock_canvas:
 		var mouse_event := event as InputEventMouseButton 
 		
-		if mouse_event != null:
+		if mouse_event != null and mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			# Stroke Selection
 			var select_shape := CircleShape2D.new()
 			select_shape.radius = 10 / get_viewport().global_canvas_transform.get_scale().x
@@ -168,7 +168,7 @@ func on_editor_input(event: InputEvent) -> bool:
 					and stroke.collides_with_circle(select_shape, select_transform)\
 					and stroke != selection.get_selected_nodes()[-1]:
 						
-					if not Input.is_key_pressed(KEY_SHIFT):
+					if not mouse_event.shift_pressed:
 						selection.clear()
 					
 					selection.add_node(stroke)
@@ -178,10 +178,10 @@ func on_editor_input(event: InputEvent) -> bool:
 
 	if _active_stroke:
 		
-		if get_annotate_mode().should_end_stroke(event):
+		if get_annotate_brush().should_end_stroke(event):
 			
 			# finalize stroke annotating
-			get_annotate_mode().on_end_stroke(get_local_mouse_position(), _active_stroke, self)
+			get_annotate_brush().on_end_stroke(get_local_mouse_position(), _active_stroke, self)
 			
 			var success := _active_stroke.stroke_finished()
 			
@@ -206,7 +206,7 @@ func on_editor_input(event: InputEvent) -> bool:
 
 			return true
 			
-		return get_annotate_mode().on_annotate_input(event, _active_stroke, self)
+		return get_annotate_brush().on_annotate_input(event, _active_stroke, self)
 	
 	elif event is InputEventMouseButton and _active_stroke == null:
 		# erasing
@@ -221,10 +221,10 @@ func on_editor_input(event: InputEvent) -> bool:
 			return true
 		
 	
-	# Check if the current annotate mode wants to begin a new stroke,
+	# Check if the current annotate brush wants to begin a new stroke,
 	# If so, add the stroke to the scene, so the user can see the stroke being drawn in realtime.
-	if get_annotate_mode().should_begin_stroke(event):
-		_active_stroke = get_annotate_mode().on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, stroke_variables[get_annotate_mode().get_mode_name()], self)
+	if get_annotate_brush().should_begin_stroke(event):
+		_active_stroke = get_annotate_brush().on_begin_stroke(get_local_mouse_position(), brush_size, brush_color, stroke_variables[get_annotate_brush().get_brush_name()], self)
 		_add_stroke_nodes([ _active_stroke ])
 		
 		return true
@@ -236,9 +236,9 @@ func on_editor_input(event: InputEvent) -> bool:
 func capture_canvas(file: String, scale: float) -> void:
 	add_child(AnnotateCanvasCaptureViewport.new(self, file, scale))
 
-## Retrieve annotate mode which is currently active on the canvas.
-func get_annotate_mode() -> GDA_AnnotateMode:
-	return GodotAnnotate.get_annotate_mode(annotate_mode_index)
+## Retrieve annotate brush which is currently active on the canvas.
+func get_annotate_brush() -> GDA_AnnotateBrush:
+	return GodotAnnotate.get_annotate_brush(annotate_brush_index)
 
 ## Return the smallest Rect2, which contains all the strokes currently stored in the canvas
 func get_canvas_area() -> Rect2:
