@@ -26,7 +26,6 @@
   - [Any Version](#any-version)
 - [Links](#links)
 - [License](#license)
-- [Footnotes](#footnotes)
 
 ## Features
 
@@ -114,7 +113,7 @@ This adds a series of [**CollisionShape2D**](https://docs.godotengine.org/en/sta
 
 - Press the **Capture Canvas** ![](src/toolbar/capture_canvas_toolbar_icon.svg) button.
 - Choose the upscale factor in the following popup window[^1].
-- Specify the path of the image file, and press '**Ok**'
+- Specify the path of the image file, and press **Ok**
 
 ## Installing
 > [!IMPORTANT]
@@ -149,8 +148,6 @@ See [**Installing Plugins from Github**](https://docs.godotengine.org/en/stable/
 
 See [LICENSE](LICENSE)
 
-
-## Footnotes
 [^1]: The upscale factor is based on the window resolution, so if the canvas takes up a total of 100 x 100 px's worth of window space, an upscale factor of 1 would produce an 100 x 100 px image, whilst an upscale factor of 2 would produce a 200 x 200 px image.
 
 [canvas-icon]: src/canvas/annotate_canvas_icon.svg
