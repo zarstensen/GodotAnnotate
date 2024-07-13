@@ -19,6 +19,9 @@ var min_distance_hitbox: float:
 		return min_distance_hitbox
 	set(v):
 		min_distance_hitbox = v
+
+		await ready
+
 		_gen_hitbox()
 		on_stroke_changed()
 
