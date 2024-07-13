@@ -18,7 +18,7 @@ func _ready() -> void:
 func _on_new_canvas(new_canvas: AnnotateCanvas) -> void:
 	canvas = new_canvas
 	
-	$ToggleAnnotateButton.set_pressed_no_signal(not canvas.lock_canvas)
+	$ToggleAnnotateButton.set_pressed_no_signal(not canvas.annotate_mode)
 	$AnnotateBrushOption.selected = canvas.annotate_brush_index
 
 	$BrushSizeSlider.value = canvas.brush_size
@@ -30,7 +30,7 @@ func _on_canvas_to_image_confirmed(path: String, scale: float) -> void:
 	canvas.capture_canvas(path, scale)
 
 func _on_toggle_annotate_button_toggled(toggled_on: bool) -> void:
-	canvas.lock_canvas = not toggled_on
+	canvas.annotate_mode = not toggled_on
 
 func _on_annotate_brush_item_selected(index: int) -> void:
 	canvas.annotate_brush_index = index

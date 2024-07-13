@@ -34,10 +34,10 @@ var show_when_running := false
 
 @export_group("Advanced")
 
-## Lock [AnnotateCanvas] node from being drawn on.
+## Current [AnnotateCanvas] mode, if true, the canvas is in the Annotate Mode, if false it is in the Edit Mode.
 ## The preffered way to toggle this is via. the toolbar.
 @export
-var lock_canvas := false
+var annotate_mode := false
 
 @export
 ## Index of annotate brush currently being used on the canvas.
@@ -130,7 +130,7 @@ func _notification(what: int) -> void:
 
 func _draw():
 	# handles drawing of the cursor preview for the current annotate brush.
-	if lock_canvas or _eraser != null:
+	if annotate_mode or get_meta("_edit_lock_", false) or _eraser != null:
 		return
 	
 	elif GodotAnnotate.active_canvas == self:
@@ -155,7 +155,10 @@ func on_editor_input(event: InputEvent) -> bool:
 
 	# TODO: if this gets any larger, it should be split up into multiple functions.
 
-	if lock_canvas:
+	if get_meta("_edit_lock_", false):
+		return false
+
+	if annotate_mode:
 		var mouse_event := event as InputEventMouseButton 
 		
 		if mouse_event != null and mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
