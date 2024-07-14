@@ -40,8 +40,12 @@ func _update_collision(canvas):
 
         for child: CollisionShape2D in collision_area.get_children():
             var duplicate_shape: CollisionShape2D = child.duplicate()
-            duplicate_shape.global_transform = child.global_transform
-            get_parent().add_child.call_deferred(duplicate_shape)
+
+            var add_shape = func():
+                get_parent().add_child(duplicate_shape)
+                duplicate_shape.global_transform = child.global_transform
+            
+            add_shape.call_deferred()
             _collision_shapes.append(duplicate_shape)
 
 # free all CollisionShape2D nodes currently managed by this node.
