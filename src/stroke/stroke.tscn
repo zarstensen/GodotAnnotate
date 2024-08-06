@@ -7,6 +7,7 @@ resource_local_to_scene = true
 size = Vector2(0, 0)
 
 [node name="Stroke" type="Control"]
+show_behind_parent = true
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_3blkm")
