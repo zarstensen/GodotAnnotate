@@ -50,6 +50,7 @@ static func load_stroke(saved_stroke: PackedScene):
 
 func _ready() -> void:
 	_stroke_resized()
+	show_behind_parent = true
 
 ## Initialize a stroke with the given stroke size, color and starting position.
 ## Should only be called when the stroke is first created, and not when instantiated from a PackedScene saved to a canvas.
